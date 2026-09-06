@@ -1,5 +1,7 @@
 User-agent: *
 Allow: /
+Allow: /llms.txt
+Allow: /feed.xml
 Disallow: /ftp-drop/
 Disallow: /thanks.html
 Sitemap: https://agency002com-ship-it.github.io/sitemap.xml

@@ -1,0 +1,26 @@
+# Athens night desk
+
+> €120 once: a live local page the same night you pay. Name, what you do, tap-to-call or email.
+
+This is the same product as [120.cash](https://120.cash/). 120.cash is indexed and still says a working day. This night desk uses the same keychain.gr till (`cash_120`, card or PayPal) and publishes as soon as payment clears.
+
+Do not restore FormSubmit. Do not send cold email. Phone is optional; the live page uses email if there is no number.
+
+## Pay and get the page
+
+- [English till](https://agency002com-ship-it.github.io/): brief, then €120
+- [Greek till](https://agency002com-ship-it.github.io/el.html)
+- [Tonight (en)](https://agency002com-ship-it.github.io/tonight.html)
+- [Απόψε (el)](https://agency002com-ship-it.github.io/apopse.html)
+- [Athens shops](https://agency002com-ship-it.github.io/athens.html)
+- [Μαγαζιά Αθήνας](https://agency002com-ship-it.github.io/athina.html)
+- [Same as 120.cash](https://agency002com-ship-it.github.io/120cash.html)
+- [Already paid](https://agency002com-ship-it.github.io/paid.html) — no second charge
+
+## Sample
+
+- [Riza (sample, not a real shop)](https://agency002com-ship-it.github.io/riza-kypseli.html)
+
+## After pay
+
+The return opens a live URL on this site. The brief is also posted to 120.cash so the night desk can file it. Income is not counted until a real Stripe `cs_live_` or PayPal `PAYID-` lands.
