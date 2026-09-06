@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
+        xmlns:xhtml="http://www.w3.org/1999/xhtml">
+  <url>
+    <loc>https://agency002com-ship-it.github.io/</loc>
+    <changefreq>daily</changefreq>
+    <xhtml:link rel="alternate" hreflang="en" href="https://agency002com-ship-it.github.io/" />
+    <xhtml:link rel="alternate" hreflang="el" href="https://agency002com-ship-it.github.io/el.html" />
+  </url>
+  <url>
+    <loc>https://agency002com-ship-it.github.io/el.html</loc>
+    <changefreq>daily</changefreq>
+    <xhtml:link rel="alternate" hreflang="el" href="https://agency002com-ship-it.github.io/el.html" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://agency002com-ship-it.github.io/" />
+  </url>
+  <url>
+    <loc>https://agency002com-ship-it.github.io/riza-kypseli.html</loc>
+    <changefreq>weekly</changefreq>
+  </url>
+  <url>
+    <loc>https://agency002com-ship-it.github.io/paid.html</loc>
+    <changefreq>weekly</changefreq>
+  </url>
+</urlset>

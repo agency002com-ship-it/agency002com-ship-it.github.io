@@ -1,0 +1,5 @@
+User-agent: *
+Allow: /
+Disallow: /ftp-drop/
+Disallow: /thanks.html
+Sitemap: https://agency002com-ship-it.github.io/sitemap.xml
