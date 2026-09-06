@@ -109,6 +109,7 @@ if (Test-Path $ftp) {
     'orange-worker.js',
     'orange-keychain-worker.js',
     'patch-keychain.py',
+    'patch-agency.py',
     'hub-hook.ps1',
     'RUN-SHIFT002.ps1'
   )) {
@@ -247,4 +248,4 @@ if (Test-NeedFlip) {
 } else {
   Write-Host '120.cash and keychain cash_120 already same-night.'
 }
-Write-Host 'Done. HubWatch, hourly, and logon retry until the live pages stay flipped.'
+Write-Host 'Done. HubWatch, hourly, and logon retry until the live pages stay flipped.

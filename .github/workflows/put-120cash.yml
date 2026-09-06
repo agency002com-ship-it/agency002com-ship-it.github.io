@@ -1,7 +1,9 @@
-# Flip 120.cash to the same-night door, and keychain cash_120 to paid.html.
+# Flip 120.cash to the same-night door, keychain cash_120 to paid.html,
+# and the agency002.com €120 card to cash.agency002.com/#book.
 # Secrets (optional): CLOUDFLARE_API_TOKEN, CPANEL_HOST, CPANEL_USER, CPANEL_TOKEN, CPANEL_DIR
 # Empty secrets → exit 0 (laptop still runs install-hub-hook.ps1).
-# Does not replace Workers grok / grok-cf. Does not rewrite other keychain plans.
+# Does not replace Workers grok / grok-cf. Does not rewrite other keychain plans
+# or agency002 presence / Printful / DBYW.
 name: put-120cash
 on:
   workflow_dispatch:
@@ -36,6 +38,14 @@ jobs:
           else
             echo "keychain cash_120 still 120.cash/#brief."
             echo "pay=no" >> "$GITHUB_OUTPUT"
+          fi
+          agency="$(curl -fsSL https://agency002.com/ || true)"
+          if echo "$agency" | grep -Fq 'cash.agency002.com/#book' || echo "$agency" | grep -Fq 'now.agency002.com/#book'; then
+            echo "agency002.com €120 card already same-night."
+            echo "agency=yes" >> "$GITHUB_OUTPUT"
+          else
+            echo "agency002.com €120 card still keychain wait-a-day."
+            echo "agency=no" >> "$GITHUB_OUTPUT"
           fi
       - name: Cloudflare orange-cloud
         if: ${{ steps.door.outputs.cash != 'yes' || steps.door.outputs.pay != 'yes' }}
@@ -116,6 +126,43 @@ jobs:
               --data-urlencode "content=${HTML}" \
               --data "charset=utf-8" >/dev/null || echo "WARN :2087 $DIR"
           done
+      - name: Fileman patch agency002.com €120 card
+        if: steps.door.outputs.agency != 'yes'
+        env:
+          CPANEL_HOST: ${{ secrets.CPANEL_HOST }}
+          CPANEL_USER: ${{ secrets.CPANEL_USER }}
+          CPANEL_TOKEN: ${{ secrets.CPANEL_TOKEN }}
+        run: |
+          set -euo pipefail
+          if [ -z "${CPANEL_TOKEN:-}" ] || [ -z "${CPANEL_HOST:-}" ]; then
+            echo "No CPANEL_TOKEN/HOST secret. Skip agency002 Fileman."
+            exit 0
+          fi
+          USER="${CPANEL_USER:-agency00}"
+          if ! curl -fsSL https://agency002.com/ | python3 ftp-drop/patch-agency.py > /tmp/agency.html; then
+            echo "Needles not unique or other products would drop. Skip brand rewrite."
+            exit 0
+          fi
+          AUTH="$(printf '%s:%s' "$USER" "$CPANEL_TOKEN" | base64 | tr -d '\n')"
+          HTML="$(cat /tmp/agency.html)"
+          for DIR in "/home/${USER}/public_html" "/home/${USER}/agency002.com" "/home/${USER}/public_html/agency002.com"; do
+            curl -fsS -k -X POST "https://${CPANEL_HOST}:2083/execute/Fileman/save_file_content" \
+              -H "Authorization: Basic ${AUTH}" \
+              --data-urlencode "dir=${DIR}" \
+              --data-urlencode "file=index.html" \
+              --data-urlencode "content=${HTML}" \
+              --data-urlencode "charset=utf-8" || echo "WARN :2083 $DIR"
+            curl -sS -k -X POST "https://${CPANEL_HOST}:2087/json-api/cpanel" \
+              -H "Authorization: WHM ${USER}:${CPANEL_TOKEN}" \
+              --data "cpanel_jsonapi_user=${USER}" \
+              --data "cpanel_jsonapi_apimodule=Fileman" \
+              --data "cpanel_jsonapi_apifunc=save_file_content" \
+              --data "cpanel_jsonapi_version=2" \
+              --data-urlencode "dir=${DIR}" \
+              --data-urlencode "file=index.html" \
+              --data-urlencode "content=${HTML}" \
+              --data "charset=utf-8" >/dev/null || echo "WARN :2087 $DIR"
+          done
       - name: Verify
         run: |
           set -euo pipefail
@@ -131,5 +178,11 @@ jobs:
             echo "keychain cash_120 returns to paid.html"
           else
             echo "keychain cash_120 still bounces to 120.cash/#brief."
+          fi
+          agency="$(curl -fsSL https://agency002.com/ || true)"
+          if echo "$agency" | grep -Fq 'cash.agency002.com/#book' || echo "$agency" | grep -Fq 'now.agency002.com/#book'; then
+            echo "agency002.com €120 card opens an orange night till"
+          else
+            echo "agency002.com €120 card still sends cash_120 to wait-a-day."
           fi
           exit 0
