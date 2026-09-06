@@ -1,4 +1,6 @@
-# Orange-cloud 120.cash (same-night homepage) and keychain.gr/pay.html (cash_120).
+# Orange-cloud 120.cash and keychain.gr so existing grok-cf routes receive traffic.
+# grok-cf already has 120.cash/*, www.120.cash/*, keychain.gr/pay.html*.
+# DNS proxy is the unlock. New workers are a fallback only.
 # Uses GrokWork\ftp\config.cloudflare.local.ps1 (laptop only — not in git).
 # Does not replace Workers grok / grok-cf. Does not invent tokens. Does not send mail.
 #
@@ -91,7 +93,12 @@ function Ensure-Routes([string]$ZoneId, [string]$ScriptName, [string[]]$Want) {
 }
 
 function Proxy-DnsName([string]$ZoneId, [string]$Name) {
-  $dns = CfGet "/zones/$ZoneId/dns_records?name=$Name"
+  try {
+    $dns = CfGet "/zones/$ZoneId/dns_records?name=$Name"
+  } catch {
+    Write-Host ("WARN DNS list {0}: {1}" -f $Name, $_.Exception.Message)
+    return
+  }
   foreach ($rec in @($dns.result)) {
     if ($rec.type -notin @('A', 'AAAA', 'CNAME')) { continue }
     if ($rec.proxied -eq $true) {
@@ -112,24 +119,59 @@ function Proxy-DnsName([string]$ZoneId, [string]$Name) {
   }
 }
 
-# --- 120.cash homepage ---
-$cash = ''
-try { $cash = (Invoke-WebRequest -Uri 'https://120.cash/' -UseBasicParsing).Content } catch { }
-if ($cash -notmatch 'one working day' -and $cash -match '#book') {
-  Write-Host '120.cash already same-night. Skip homepage Worker.'
-} else {
-  Write-Host 'Looking up Cloudflare zone 120.cash'
+function Get-Zone([string]$ZoneName) {
   try {
-    $zones = CfGet '/zones?name=120.cash'
-    $zone = $zones.result | Select-Object -First 1
+    $zones = CfGet "/zones?name=$ZoneName"
+    return $zones.result | Select-Object -First 1
   } catch {
-    $zone = $null
-    Write-Host ("WARN 120.cash zone: {0}" -f $_.Exception.Message)
+    Write-Host ("WARN zone {0}: {1}" -f $ZoneName, $_.Exception.Message)
+    return $null
   }
-  if (-not $zone) {
-    Write-Host 'No Cloudflare zone named 120.cash on this token.'
-  } else {
-    $worker = @"
+}
+
+function Test-CashNight {
+  try {
+    $html = (Invoke-WebRequest -Uri 'https://120.cash/' -UseBasicParsing).Content
+    return ($html -notmatch 'one working day' -and $html -match '#book')
+  } catch { return $false }
+}
+
+function Test-PayNight {
+  try {
+    $html = (Invoke-WebRequest -Uri 'https://keychain.gr/pay.html' -UseBasicParsing).Content
+    return ($html -match [regex]::Escape('github.io/paid.html') -and $html -notmatch [regex]::Escape("a('https://120.cash/#brief', '120.cash');"))
+  } catch { return $false }
+}
+
+# 1. Orange DNS first. grok-cf routes are already on these hostnames.
+$cashZone = Get-Zone '120.cash'
+if ($cashZone) {
+  Write-Host 'Orange-cloud 120.cash DNS (grok-cf 120.cash/* already attached).'
+  Proxy-DnsName $cashZone.id '120.cash'
+  Proxy-DnsName $cashZone.id 'www.120.cash'
+} else {
+  Write-Host 'No Cloudflare zone named 120.cash on this token.'
+}
+
+$keyZone = Get-Zone 'keychain.gr'
+if ($keyZone) {
+  Write-Host 'Orange-cloud keychain.gr DNS (grok-cf pay.html* already attached).'
+  Proxy-DnsName $keyZone.id 'keychain.gr'
+  Proxy-DnsName $keyZone.id 'www.keychain.gr'
+} else {
+  Write-Host 'No Cloudflare zone named keychain.gr on this token.'
+}
+
+Start-Sleep -Seconds 5
+$cashOk = Test-CashNight
+$payOk = Test-PayNight
+if ($cashOk) { Write-Host 'https://120.cash/ is brief then pay (grok-cf / orange DNS).' }
+if ($payOk) { Write-Host 'https://keychain.gr/pay.html cash_120 returns to paid.html.' }
+
+# 2. Fallback workers only if DNS orange did not flip the live HTML.
+if (-not $cashOk -and $cashZone) {
+  Write-Host '120.cash still wait-a-day after DNS. Fallback Worker shift002-120cash.'
+  $worker = @"
 export default {
   async fetch(request) {
     const url = new URL(request.url);
@@ -148,59 +190,29 @@ export default {
   }
 }
 "@
-    $tmpJs = Join-Path $env:TEMP 'shift002-120cash-worker.js'
-    $utf8 = New-Object System.Text.UTF8Encoding $false
-    [System.IO.File]::WriteAllText($tmpJs, $worker, $utf8)
-    if (Publish-Worker $zone.account.id 'shift002-120cash' $tmpJs) {
-      Ensure-Routes $zone.id 'shift002-120cash' @('120.cash/*', 'www.120.cash/*')
-      Proxy-DnsName $zone.id '120.cash'
-      Proxy-DnsName $zone.id 'www.120.cash'
-    }
+  $tmpJs = Join-Path $env:TEMP 'shift002-120cash-worker.js'
+  $utf8 = New-Object System.Text.UTF8Encoding $false
+  [System.IO.File]::WriteAllText($tmpJs, $worker, $utf8)
+  if (Publish-Worker $cashZone.account.id 'shift002-120cash' $tmpJs) {
+    Ensure-Routes $cashZone.id 'shift002-120cash' @('120.cash/*', 'www.120.cash/*')
   }
+  Proxy-DnsName $cashZone.id '120.cash'
+  Proxy-DnsName $cashZone.id 'www.120.cash'
 }
 
-# --- keychain.gr/pay.html (same CF account, grey-cloud today) ---
-$pay = ''
-try { $pay = (Invoke-WebRequest -Uri 'https://keychain.gr/pay.html' -UseBasicParsing).Content } catch { }
-$payDone = ($pay -match [regex]::Escape('github.io/paid.html') -and $pay -notmatch [regex]::Escape("a('https://120.cash/#brief', '120.cash');"))
-if ($payDone) {
-  Write-Host 'keychain cash_120 already returns to paid.html. Skip pay.html Worker.'
-} else {
-  Write-Host 'Looking up Cloudflare zone keychain.gr'
-  try {
-    $kz = CfGet '/zones?name=keychain.gr'
-    $kzone = $kz.result | Select-Object -First 1
-  } catch {
-    $kzone = $null
-    Write-Host ("WARN keychain.gr zone: {0}" -f $_.Exception.Message)
+if (-not $payOk -and $keyZone) {
+  Write-Host 'keychain still old cash_120 bounce after DNS. Fallback Worker shift002-keychain.'
+  $kcJs = Get-DropFile 'orange-keychain-worker.js'
+  if (Publish-Worker $keyZone.account.id 'shift002-keychain' $kcJs) {
+    Ensure-Routes $keyZone.id 'shift002-keychain' @('keychain.gr/pay.html*', 'www.keychain.gr/pay.html*')
   }
-  if (-not $kzone) {
-    Write-Host 'No Cloudflare zone named keychain.gr on this token. Fileman still needed for the till.'
-  } else {
-    $kcJs = Get-DropFile 'orange-keychain-worker.js'
-    if (Publish-Worker $kzone.account.id 'shift002-keychain' $kcJs) {
-      Ensure-Routes $kzone.id 'shift002-keychain' @('keychain.gr/pay.html*', 'www.keychain.gr/pay.html*')
-      Proxy-DnsName $kzone.id 'keychain.gr'
-      Proxy-DnsName $kzone.id 'www.keychain.gr'
-    }
-  }
+  Proxy-DnsName $keyZone.id 'keychain.gr'
+  Proxy-DnsName $keyZone.id 'www.keychain.gr'
 }
 
 Start-Sleep -Seconds 3
-try {
-  $live = (Invoke-WebRequest -Uri 'https://120.cash/' -UseBasicParsing).Content
-  if ($live -notmatch 'one working day' -and $live -match '#book') {
-    Write-Host 'https://120.cash/ is brief then pay via Cloudflare Worker.'
-  } else {
-    Write-Host 'WARN: 120.cash HTML not flipped yet (DNS/cache).'
-  }
-} catch { Write-Host ("WARN 120.cash check: {0}" -f $_.Exception.Message) }
-try {
-  $khtml = (Invoke-WebRequest -Uri 'https://keychain.gr/pay.html' -UseBasicParsing).Content
-  if ($khtml -match [regex]::Escape('github.io/paid.html') -and $khtml -notmatch [regex]::Escape("a('https://120.cash/#brief', '120.cash');")) {
-    Write-Host 'https://keychain.gr/pay.html cash_120 now returns to paid.html.'
-  } else {
-    Write-Host 'WARN: keychain cash_120 bounce not flipped yet (DNS/cache or zone token).'
-  }
-} catch { Write-Host ("WARN keychain check: {0}" -f $_.Exception.Message) }
-Write-Host 'Done. Origin /assets/, /api/, and other keychain plans still pass through.'
+if (Test-CashNight) { Write-Host 'https://120.cash/ is brief then pay via Cloudflare.' }
+else { Write-Host 'WARN: 120.cash HTML not flipped yet (DNS/cache or token lacks Zone DNS Edit).' }
+if (Test-PayNight) { Write-Host 'https://keychain.gr/pay.html cash_120 now returns to paid.html.' }
+else { Write-Host 'WARN: keychain cash_120 bounce not flipped yet (DNS/cache or zone token).' }
+Write-Host 'Done. Origin /assets/, /api/, and other keychain plans still pass through.
