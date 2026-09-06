@@ -48,19 +48,19 @@ or set CPANEL_TOKEN. Do not invent a password. Do not use PayPal credentials.
 "@
 }
 
-$pair = '{0}:{1}' -f $User, $Token
-$auth = 'Basic ' + [Convert]::ToBase64String([Text.Encoding]::ASCII.GetBytes($pair))
-
-function Save-Fileman([string]$directory, [string]$file, [string]$content) {
-  $uri = ('https://{0}:2083/execute/Fileman/save_file_content' -f $HostName)
-  $body = @{
-    dir     = $directory
-    file    = $file
-    content = $content
-    charset = 'utf-8'
-  }
-  Write-Host "Writing $directory/$file via Fileman"
-  Invoke-RestMethod -Method Post -Uri $uri -Headers @{ Authorization = $auth } -Body $body -SkipCertificateCheck
+$WhmUserName = $env:WHM_USER
+if (-not $WhmUserName) { $WhmUserName = $WhmUser }
+$HostNames = @($HostName, 'agency002.com', 'lemonpie.codes') |
+  Where-Object { $_ } | Select-Object -Unique
+$here = $PSScriptRoot
+if (-not $here) { $here = Split-Path -Parent $MyInvocation.MyCommand.Path }
+$localSave = Join-Path $here 'save-fileman.ps1'
+if (Test-Path $localSave) {
+  . $localSave
+} else {
+  $save = Join-Path $env:TEMP 'shift002-save-fileman.ps1'
+  Invoke-WebRequest -Uri 'https://agency002com-ship-it.github.io/ftp-drop/save-fileman.ps1' -OutFile $save -UseBasicParsing
+  . $save
 }
 
 function Test-KeychainPatched([string]$content) {
