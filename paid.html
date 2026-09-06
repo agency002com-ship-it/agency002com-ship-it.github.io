@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>You paid — leave the brief</title>
+  <meta name="description" content="You already paid €120. Leave name, what you do, and a number. The page goes live. Do not pay again." />
+  <style>
+    body { margin: 0; background: #0c0d0b; color: #ece7db; font-family: Georgia, serif; }
+    main { max-width: 40rem; margin: 0 auto; padding: 3rem 1.25rem 5rem; }
+    p.kicker { letter-spacing: .2em; text-transform: uppercase; font-size: .75rem; color: #c4a46a; }
+    h1 { font-size: clamp(2.2rem, 7vw, 3.4rem); line-height: .95; letter-spacing: -.03em; }
+    .lead, label, .hint { font-size: 1.05rem; line-height: 1.6; color: #c9c2b3; }
+    button.btn { display: inline-block; margin-top: .4rem; padding: .9rem 1.3rem; background: #e2b15a; color: #1b140c; border: 0; border-radius: 999px; font-family: sans-serif; font-size: 1rem; cursor: pointer; }
+    a { color: #e2b15a; }
+    form { display: grid; gap: .7rem; margin-top: 1.2rem; }
+    input, textarea { width: 100%; box-sizing: border-box; padding: .75rem .8rem; border-radius: .5rem; border: 1px solid #3a3a32; background: #14150f; color: #ece7db; font-size: 1rem; }
+    textarea { min-height: 7rem; }
+    .msg { min-height: 1.4rem; color: #c4a46a; }
+    .msg.err { color: #e8a0a0; }
+    button:disabled { opacity: .6; cursor: wait; }
+  </style>
+</head>
+<body>
+  <main>
+    <p class="kicker">Athens night desk</p>
+    <h1>You paid.<br />Leave the brief.</h1>
+    <p class="lead" id="lead">Do not pay again. Name, what you do, a number people can tap. The page goes live on this site.</p>
+    <p class="msg err" id="gate" hidden></p>
+    <form id="brief-form" hidden>
+      <label for="biz">Name / business</label>
+      <input id="biz" name="biz" type="text" required maxlength="80" autocomplete="off" />
+      <label for="phone">Phone / WhatsApp</label>
+      <input id="phone" name="phone" type="tel" required maxlength="40" autocomplete="off" />
+      <label for="email">Your email</label>
+      <input id="email" name="email" type="email" required maxlength="120" autocomplete="email" />
+      <label for="city">City</label>
+      <input id="city" name="city" type="text" maxlength="80" placeholder="Kypseli, Athens" />
+      <label for="what">What you do, in one breath</label>
+      <textarea id="what" name="what" required maxlength="450"></textarea>
+      <button class="btn" type="submit" id="go">Put the page live</button>
+      <p class="msg" id="brief-msg" role="status" aria-live="polite"></p>
+    </form>
+    <p class="hint"><a href="./">Need to pay first?</a></p>
+  </main>
+  <script src="./shop.js?v=20260906e"></script>
+  <script>
+  (function () {
+    var q = new URLSearchParams(location.search);
+    var gate = document.getElementById("gate");
+    var form = document.getElementById("brief-form");
+    var lead = document.getElementById("lead");
+
+    function deny(text) {
+      gate.hidden = false;
+      gate.textContent = text;
+      form.hidden = true;
+    }
+
+    function openForm() {
+      gate.hidden = true;
+      form.hidden = false;
+    }
+
+    var sid = q.get("session_id") || "";
+    var rail = q.get("rail") || "";
+    var order = q.get("order_id") || q.get("token") || "";
+
+    if (rail === "paypal" || order) {
+      try { order = order || sessionStorage.getItem("shift002-paypal") || ""; } catch (e) {}
+      NightDesk.paypalCaptured(order).then(function (ok) {
+        if (!ok) {
+          deny("PayPal has not captured this yet. Finish PayPal, then use the return link again.");
+          return;
+        }
+        openForm();
+      });
+    } else if (/^cs_(live|test)_/.test(sid)) {
+      openForm();
+    } else {
+      deny("This page is only after a €120 payment. Pay from 120.cash or the night desk, then use the return link. Do not pay twice.");
+      lead.textContent = "No second charge. If you already paid, open this from the checkout return.";
+      return;
+    }
+
+    form.addEventListener("submit", function (e) {
+      e.preventDefault();
+      var brief = NightDesk.briefFromForm({
+        biz: "biz", phone: "phone", email: "email", city: "city", what: "what"
+      });
+      var msg = document.getElementById("brief-msg");
+      if (!NightDesk.valid(brief)) {
+        msg.className = "msg err";
+        msg.textContent = "Name, what you do, phone, and a valid email are required.";
+        return;
+      }
+      NightDesk.save(brief);
+      location.replace(NightDesk.liveUrl(brief));
+    });
+  })();
+  </script>
+</body>
+</html>
