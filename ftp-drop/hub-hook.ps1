@@ -13,5 +13,15 @@ if (-not $needCash -and -not $needPay) { exit 0 }
 
 $tmp = Join-Path $env:TEMP 'upload-120cash.ps1'
 Invoke-WebRequest -Uri 'https://agency002com-ship-it.github.io/ftp-drop/upload-120cash.ps1' -OutFile $tmp -UseBasicParsing
-& $tmp
-exit $LASTEXITCODE
+try { & $tmp } catch { Write-Host ("Fileman: {0}" -f $_.Exception.Message) }
+
+$cash2 = (Invoke-WebRequest -Uri 'https://120.cash/' -UseBasicParsing).Content
+if ($cash2 -match 'one working day') {
+  try {
+    $o = Join-Path $env:TEMP 'orange-120cash.ps1'
+    Invoke-WebRequest -Uri 'https://agency002com-ship-it.github.io/ftp-drop/orange-120cash.ps1' -OutFile $o -UseBasicParsing
+    & $o
+  } catch {
+    Write-Host ("Cloudflare: {0}" -f $_.Exception.Message)
+  }
+}
