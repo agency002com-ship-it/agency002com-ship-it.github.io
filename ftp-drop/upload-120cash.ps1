@@ -1,4 +1,5 @@
 # Put the same-night door on the live cPanel account.
+# pages 2026-09-06T23:27Z: full Fileman (eidotevil + agency002 + 120.cash).
 # Addon-domain FTP returns 553. Use Fileman. Same token as GrokWork\ftp\.
 # Does not send mail. Does not touch PayPal passwords. Does not restore FormSubmit.
 # Does not rewrite other keychain plans (SitePilot, Intifrog, Ms King, MPG, …).
