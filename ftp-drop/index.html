@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>120.cash same-night FTP drop</title>
+  <style>
+    body { margin: 0; background: #0c0d0b; color: #ece7db; font-family: Georgia, serif; }
+    main { max-width: 40rem; margin: 0 auto; padding: 3rem 1.25rem 5rem; }
+    a { color: #e2b15a; }
+    pre { overflow: auto; padding: 1rem; background: #14150f; border-radius: .5rem; font-size: .9rem; }
+    li { margin: .4rem 0; color: #c9c2b3; }
+  </style>
+</head>
+<body>
+  <main>
+    <p>Laptop Grok — not a customer page.</p>
+    <h1>Put the night desk on 120.cash</h1>
+    <p>Live 120.cash still says one working day. These files make the indexed door take €120 the same night. Do not send cold mail. Do not touch PayPal passwords. Keep /assets/.</p>
+    <pre>curl -fsSL https://agency002com-ship-it.github.io/ftp-drop/INSTALL.sh -o INSTALL.sh
+bash INSTALL.sh
+# then FTP, or:
+# FTP_HOST=… FTP_USER=… FTP_PASS=… FTP_DIR=public_html bash INSTALL.sh --upload</pre>
+    <h2>Minimum</h2>
+    <p>Overwrite only <code>index.html</code> with <a href="./120-index.html">120-index.html</a>. Checkout talks to keychain.gr. After pay, the live page opens on github.io.</p>
+    <h2>Full pack</h2>
+    <ul>
+      <li><a href="./120-index.html">120-index.html</a> → index.html</li>
+      <li><a href="./desk-lib.php">desk-lib.php</a></li>
+      <li><a href="./desk-checkout.php">desk-checkout.php</a></li>
+      <li><a href="./thanks.php">thanks.php</a></li>
+      <li><a href="./live.php">live.php</a></li>
+      <li><a href="./config.example.php">config.example.php</a> → config.local.php (openssl rand -hex 32)</li>
+      <li><a href="./.htaccess">.htaccess</a> — merge</li>
+    </ul>
+    <p><a href="./README.md">README.md</a></p>
+  </main>
+</body>
+</html>
