@@ -1,4 +1,4 @@
-# Orange-cloud 120.cash and keychain.gr so existing grok-cf routes receive traffic.
+# Orange-cloud 120.cash, keychain.gr, and eidotevil.com so existing grok-cf routes receive traffic.
 # grok-cf already intercepts 120.cash / www / tonight / now / live / book and keychain pay.html.
 # DNS proxy is the unlock. New workers are a fallback only.
 # Uses GrokWork\ftp\config.cloudflare.local.ps1 (laptop only — not in git).
@@ -142,6 +142,13 @@ function Test-PayNight {
   } catch { return $false }
 }
 
+function Test-EidoNight {
+  try {
+    $html = (Invoke-WebRequest -Uri 'https://eidotevil.com/' -UseBasicParsing).Content
+    return ($html -match [regex]::Escape('tonight.agency002.com/#book'))
+  } catch { return $false }
+}
+
 # 1. Orange DNS first. grok-cf already intercepts these hostnames when traffic hits Cloudflare.
 $cashZone = Get-Zone '120.cash'
 if ($cashZone) {
@@ -159,6 +166,16 @@ if ($keyZone) {
   Proxy-DnsName $keyZone.id 'www.keychain.gr'
 } else {
   Write-Host 'No Cloudflare zone named keychain.gr on this token.'
+}
+
+$eidoZone = Get-Zone 'eidotevil.com'
+if ($eidoZone) {
+  Write-Host 'Orange-cloud eidotevil.com DNS (indexed catalog; do not overlay 120-index).'
+  Proxy-DnsName $eidoZone.id 'eidotevil.com'
+  Proxy-DnsName $eidoZone.id 'www.eidotevil.com'
+  Ensure-Routes $eidoZone.id 'grok-cf' @('eidotevil.com/*', 'www.eidotevil.com/*')
+} else {
+  Write-Host 'No Cloudflare zone named eidotevil.com on this token.'
 }
 
 Start-Sleep -Seconds 5
@@ -194,4 +211,6 @@ if (Test-CashNight) { Write-Host 'https://120.cash/ is brief then pay via Cloudf
 else { Write-Host 'WARN: 120.cash HTML not flipped yet (DNS/cache or token lacks Zone DNS Edit).' }
 if (Test-PayNight) { Write-Host 'https://keychain.gr/pay.html cash_120 now returns to paid.html.' }
 else { Write-Host 'WARN: keychain cash_120 bounce not flipped yet (DNS/cache or zone token).' }
+if (Test-EidoNight) { Write-Host 'https://eidotevil.com/ cash_120 now opens tonight.agency002.com.' }
+else { Write-Host 'WARN: eidotevil.com still sends cash_120 to wait-a-day (need orange DNS or Fileman).' }
 Write-Host 'Done. Origin /assets/, /api/, and other keychain plans still pass through.'
