@@ -1,25 +1,11 @@
 name: pages
 on:
-  push:
-    branches: ["main"]
-permissions:
-  contents: read
-  pages: write
-  id-token: write
-concurrency:
-  group: pages
-  cancel-in-progress: false
+  workflow_dispatch:
+
+# User site agency002com-ship-it.github.io already deploys from the main branch.
+# The old push-triggered deploy-pages job failed (~10 min) and did not serve the till.
 jobs:
-  deploy:
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
+  note:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/configure-pages@v5
-      - uses: actions/upload-pages-artifact@v3
-        with:
-          path: .
-      - id: deployment
-        uses: actions/deploy-pages@v4
+      - run: echo "Pages ships from the main branch. This workflow is manual only."
