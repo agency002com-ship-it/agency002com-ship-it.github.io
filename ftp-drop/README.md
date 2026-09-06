@@ -7,13 +7,23 @@ The overnight door already works at https://agency002com-ship-it.github.io
 This drop is the same product on the indexed domain, same till.
 
 Addon-domain **FTP returns 553**. Do not fight lftp. Use cPanel Fileman
-(same path as `GrokWork\ftp\`):
+(same path as `GrokWork\ftp\`).
+
+One run wires the existing HubWatch loop and writes the door now:
 
 ```
-powershell -File upload-120cash.ps1
+powershell -File install-hub-hook.ps1
 ```
 
-The script (keychain first — that is the indexed money door today):
+https://agency002com-ship-it.github.io/ftp-drop/install-hub-hook.ps1
+
+That:
+
+1. Patches `C:\Users\Pasja\Hub\watch.ps1` (every 3 hours). Silent when flipped.
+2. Drops `Desktop\PUT-NIGHT-DOOR.bat` (always wget's the latest Fileman script).
+3. Runs `upload-120cash.ps1` now — **WHM `:2087` passthrough** if `:2083` fails.
+
+`upload-120cash.ps1` (keychain first — that is the indexed money door today):
 
 1. Patches **only** `cash_120` on live `keychain.gr/pay.html` so after pay the
    buyer lands on github.io `paid.html` (brief → live page the same night)

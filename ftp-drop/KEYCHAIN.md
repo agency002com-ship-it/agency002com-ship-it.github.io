@@ -7,17 +7,19 @@ Live 120.cash “Pay €120” already opens `https://keychain.gr/pay.html?plan=
 After pay, live keychain still sends the buyer to `https://120.cash/#brief` (working day)
 unless Fileman has patched it.
 
-One command does **both** the homepage and this return:
+One command does **both** the homepage and this return, then leaves HubWatch
+to retry every 3 hours:
 
 ```
-powershell -File upload-120cash.ps1
+powershell -File install-hub-hook.ps1
 ```
 
-https://agency002com-ship-it.github.io/ftp-drop/upload-120cash.ps1
+https://agency002com-ship-it.github.io/ftp-drop/install-hub-hook.ps1
 
-It loads `GrokWork\ftp\config.cpanel.local.ps1`, patches `cash_120` on
-`keychain.gr/pay.html` first (thank-you + `doorBounce`), then writes 120.cash
-`index.html`. Same cPanel account, same IP.
+Fileman itself: https://agency002com-ship-it.github.io/ftp-drop/upload-120cash.ps1
+(`:2083`, then **WHM `:2087`**). Loads `GrokWork\ftp\config.cpanel.local.ps1`,
+patches `cash_120` on `keychain.gr/pay.html` first (thank-you + `doorBounce`),
+then writes 120.cash `index.html`. Same cPanel account, same IP.
 
 After a real card pay, keychain must bounce to:
 

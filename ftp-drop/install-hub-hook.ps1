@@ -59,4 +59,4 @@ try {
   Write-Host ("Fileman this run: {0}" -f $_.Exception.Message)
   if (-not $patched) { throw }
 }
-Write-Host 'Done. HubWatch will retry every 3 hours until the live pages stay flipped.
+Write-Host 'Done. HubWatch will retry every 3 hours until the live pages stay flipped.'

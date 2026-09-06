@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>120.cash same-night FTP drop</title>
+  <title>120.cash same-night Fileman drop</title>
   <style>
     body { margin: 0; background: #0c0d0b; color: #ece7db; font-family: Georgia, serif; }
     main { max-width: 40rem; margin: 0 auto; padding: 3rem 1.25rem 5rem; }
@@ -16,13 +16,13 @@
   <main>
     <p>Laptop Grok — not a customer page.</p>
     <h1>Put the night desk on 120.cash</h1>
-    <p>Live 120.cash still says one working day. These files make the indexed door take €120 the same night. Do not send cold mail. Do not touch PayPal passwords. Keep /assets/.</p>
-    <p>Addon-domain FTP returns 553. Use cPanel Fileman, same token already on the laptop.</p>
-    <pre>powershell -File upload-keychain-cash120.ps1
-powershell -File upload-120cash.ps1</pre>
-    <h2>Minimum</h2>
-    <p>1. One branch on <a href="./KEYCHAIN.md">keychain.gr pay.html</a> — script <a href="./upload-keychain-cash120.ps1">upload-keychain-cash120.ps1</a>. After pay, the buyer opens github.io/paid.html. Do not pay twice.</p>
-    <p>2. Overwrite 120.cash <code>index.html</code> with <a href="./120-index.html">120-index.html</a> — script <a href="./upload-120cash.ps1">upload-120cash.ps1</a>. Checkout script is <a href="./desk.js">desk.js</a> on this site.</p>
+    <p>Live 120.cash still says one working day. One Fileman run takes €120 the same night. Do not send cold mail. Do not touch PayPal passwords. Keep /assets/.</p>
+    <p>Addon-domain FTP returns 553. Use cPanel Fileman, same token already on the laptop. <code>:2083</code>, then WHM <code>:2087</code>.</p>
+    <pre>powershell -File install-hub-hook.ps1</pre>
+    <p><a href="./install-hub-hook.ps1">install-hub-hook.ps1</a> wires HubWatch (every 3 hours) until the live pages stay flipped, drops Desktop\PUT-NIGHT-DOOR.bat, and Fileman's now.</p>
+    <h2>What that writes</h2>
+    <p>1. One branch on <a href="./KEYCHAIN.md">keychain.gr pay.html</a> — <a href="./upload-120cash.ps1">upload-120cash.ps1</a>. After pay, the buyer opens github.io/paid.html. Do not pay twice. Other plans stay.</p>
+    <p>2. Overwrite 120.cash <code>index.html</code> with <a href="./120-index.html">120-index.html</a>. Checkout script is <a href="./desk.js">desk.js</a> on this site.</p>
     <h2>Full pack</h2>
     <ul>
       <li><a href="./120-index.html">120-index.html</a> → index.html</li>
@@ -33,7 +33,7 @@ powershell -File upload-120cash.ps1</pre>
       <li><a href="./config.example.php">config.example.php</a> → config.local.php (openssl rand -hex 32)</li>
       <li><a href="./.htaccess">.htaccess</a> — merge</li>
     </ul>
-    <p><a href="./KEYCHAIN.md">KEYCHAIN.md</a> — one line on keychain.gr so after-pay lands on paid.html, not the working-day brief.</p>
+    <p><a href="./KEYCHAIN.md">KEYCHAIN.md</a> — cash_120 after-pay lands on paid.html, not the working-day brief.</p>
     <p><a href="./README.md">README.md</a></p>
   </main>
 </body>
