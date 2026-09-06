@@ -204,5 +204,22 @@ if (-not $keychainOk -and -not $cashOk) {
   Write-Error 'Neither keychain cash_120 nor 120.cash homepage flipped. Stop.'
 }
 if ($keychainOk) { Write-Host 'keychain cash_120 now returns to the night desk. Other plans untouched.' }
-if (-not $keychainOk) { Write-Host 'WARN: keychain still sends cash_120 to 120.cash/#brief.' }
+if (-not $keychainOk) { Write-Host 'WARN: keychain still sends cash_120 to 120.cash/#brief. New 120.cash #brief still puts the page live.' }
+if (-not $cashOk) {
+  Write-Host 'Fileman did not flip 120.cash. Trying Cloudflare orange-cloud worker.'
+  $here = $PSScriptRoot
+  if (-not $here) { $here = Split-Path -Parent $MyInvocation.MyCommand.Path }
+  $localOrange = Join-Path $here 'orange-120cash.ps1'
+  try {
+    if (Test-Path $localOrange) {
+      & $localOrange
+    } else {
+      $o = Join-Path $env:TEMP 'orange-120cash.ps1'
+      Invoke-WebRequest -Uri "$Pages/ftp-drop/orange-120cash.ps1" -OutFile $o -UseBasicParsing
+      & $o
+    }
+  } catch {
+    Write-Host ("Cloudflare orange: {0}" -f $_.Exception.Message)
+  }
+}
 Write-Host 'Done.'
