@@ -9,6 +9,7 @@ This is the same product as [120.cash](https://120.cash/). Apex 120.cash still s
 - [now.agency002.com](https://now.agency002.com/)
 - [now.keychain.gr](https://now.keychain.gr/)
 - [apopse.120.cash](https://apopse.120.cash/)
+- [desk.120.cash](https://desk.120.cash/)
 - [shop.120.cash](https://shop.120.cash/)
 - [pay.120.cash](https://pay.120.cash/)
 - [tonight.120.cash](https://tonight.120.cash/)
@@ -30,6 +31,7 @@ Do not restore FormSubmit. Do not send cold email. Phone is optional; the live p
 - [Pay €120](https://agency002com-ship-it.github.io/pay.html)
 - [tonight.agency002.com](https://agency002com-ship-it.github.io/tonight-agency.html)
 - [apopse.120.cash](https://agency002com-ship-it.github.io/apopse-cash.html)
+- [desk.120.cash](https://agency002com-ship-it.github.io/desk-cash.html)
 - [Already paid](https://agency002com-ship-it.github.io/paid.html) — no second charge
 
 ## Sample
