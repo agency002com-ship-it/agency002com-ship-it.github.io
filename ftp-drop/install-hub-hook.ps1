@@ -52,6 +52,8 @@ if (Test-Path $desktop) {
   Write-Host "Wrote $bat"
 }
 
+# HubWatch is every 3 hours. Also an hourly task that only Fileman's while
+# 120.cash still says working day. schtasks /Create works here; Register-ScheduledTask does not.
 $hub = Join-Path $env:USERPROFILE 'Hub'
 if (-not (Test-Path $hub)) { New-Item -ItemType Directory -Path $hub | Out-Null }
 $runner = Join-Path $hub 'shift002-night-door.bat'
@@ -87,6 +89,10 @@ if (Test-Path $ftp) {
     'upload-120cash.ps1',
     'save-fileman.ps1',
     'orange-120cash.ps1',
+    'orange-120cash.sh',
+    'orange-worker.js',
+    'orange-keychain-worker.js',
+    'patch-keychain.py',
     'hub-hook.ps1'
   )) {
     try {
@@ -96,6 +102,71 @@ if (Test-Path $ftp) {
       Write-Host ("WARN copy ${name}: {0}" -f $_.Exception.Message)
     }
   }
+}
+
+# One laptop run can arm GitHub Actions so 120.cash stays flipped after sleep.
+# Tokens stay on disk / in gh secrets. Never echoed. Never committed.
+# Do not let a missing gh/secret abort Fileman below.
+$PagesRepo = 'agency002com-ship-it/agency002com-ship-it.github.io'
+try {
+  $CfTok = $env:CLOUDFLARE_API_TOKEN
+  foreach ($cfg in @(
+    (Join-Path $ftp 'config.cloudflare.local.ps1'),
+    (Join-Path $ftp 'config.cf.local.ps1')
+  )) {
+    if (-not (Test-Path $cfg)) { continue }
+    . $cfg
+    if (-not $CfTok) { $CfTok = $CloudflareToken }
+    if (-not $CfTok) { $CfTok = $CfApiToken }
+    if (-not $CfTok) { $CfTok = $CF_API_TOKEN }
+    if (-not $CfTok) { $CfTok = $ApiToken }
+  }
+  $CpTok = $env:CPANEL_TOKEN
+  $CpHost = $env:CPANEL_HOST
+  $CpUser = $env:CPANEL_USER
+  foreach ($cfg in @(
+    (Join-Path $ftp 'config.cpanel.local.ps1'),
+    (Join-Path $ftp 'config.local.ps1')
+  )) {
+    if (-not (Test-Path $cfg)) { continue }
+    . $cfg
+    if (-not $CpTok) { $CpTok = $CpanelToken }
+    if (-not $CpTok) { $CpTok = $WhmToken }
+    if (-not $CpHost) { $CpHost = $CpanelHost }
+    if (-not $CpHost) { $CpHost = $WhmHost }
+    if (-not $CpUser) { $CpUser = $CpanelUser }
+  }
+  if (-not $CpHost) { $CpHost = 'agency002.com' }
+  if (-not $CpUser) { $CpUser = 'agency00' }
+
+  function Set-NightDoorSecret([string]$Name, [string]$Value) {
+    if (-not $Value) { return }
+    if (-not (Get-Command gh -ErrorAction SilentlyContinue)) {
+      Write-Host "WARN: gh not on PATH. Skip GitHub secret $Name"
+      return
+    }
+    try {
+      $Value | & gh secret set $Name --repo $PagesRepo
+      Write-Host "Set github.io Actions secret $Name (value not printed)"
+    } catch {
+      Write-Host ("WARN gh secret ${Name}: {0}" -f $_.Exception.Message)
+    }
+  }
+  Set-NightDoorSecret 'CLOUDFLARE_API_TOKEN' $CfTok
+  Set-NightDoorSecret 'CPANEL_TOKEN' $CpTok
+  Set-NightDoorSecret 'CPANEL_HOST' $CpHost
+  Set-NightDoorSecret 'CPANEL_USER' $CpUser
+  Set-NightDoorSecret 'CPANEL_DIR' ("/home/{0}/120.cash" -f $CpUser)
+  if (Get-Command gh -ErrorAction SilentlyContinue) {
+    try {
+      & gh workflow run put-120cash.yml --repo $PagesRepo
+      Write-Host 'Triggered github.io workflow put-120cash (no token printed)'
+    } catch {
+      Write-Host ("WARN workflow run: {0}" -f $_.Exception.Message)
+    }
+  }
+} catch {
+  Write-Host ("WARN GitHub secrets: {0}" -f $_.Exception.Message)
 }
 
 $modes = Join-Path $env:USERPROFILE 'GrokModes'
@@ -119,9 +190,12 @@ try {
 }
 
 $cashAfter = ''
+$payAfter = ''
 try { $cashAfter = (Invoke-WebRequest -Uri 'https://120.cash/' -UseBasicParsing).Content } catch { }
-if ($cashAfter -match 'one working day') {
-  Write-Host 'Trying Cloudflare orange-cloud if Fileman left 120.cash on wait-a-day.'
+try { $payAfter = (Invoke-WebRequest -Uri 'https://keychain.gr/pay.html' -UseBasicParsing).Content } catch { }
+$needOrange = ($cashAfter -match 'one working day') -or ($payAfter -match [regex]::Escape("a('https://120.cash/#brief', '120.cash');"))
+if ($needOrange) {
+  Write-Host 'Trying Cloudflare orange-cloud (120.cash homepage and/or keychain cash_120 bounce).'
   $otmp = Join-Path $env:TEMP 'orange-120cash.ps1'
   try {
     Invoke-WebRequest -Uri $OrangeUrl -OutFile $otmp -UseBasicParsing
@@ -130,6 +204,6 @@ if ($cashAfter -match 'one working day') {
     Write-Host ("Cloudflare this run: {0}" -f $_.Exception.Message)
   }
 } else {
-  Write-Host '120.cash already same-night. Skipping Cloudflare.'
+  Write-Host '120.cash and keychain cash_120 already same-night. Skipping Cloudflare.'
 }
 Write-Host 'Done. HubWatch, hourly, and logon retry until the live pages stay flipped.'
