@@ -22,8 +22,12 @@
     };
   }
 
+  function usablePhone(phone) {
+    return digits(phone).replace(/\D/g, "").length >= 8;
+  }
+
   function valid(b) {
-    if (!b.businessName || !b.phone || !b.whatYouDo) return false;
+    if (!b.businessName || !b.whatYouDo) return false;
     if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(b.email || "")) return false;
     return true;
   }
@@ -106,9 +110,34 @@
     var wa = tel.replace(/^\+/, "");
     var greek = b.language === "el";
     var call = greek ? "Κλήση " : "Call ";
+    var mail = greek ? "Email " : "Email ";
     var note = greek
       ? "Φτιάχτηκε τη νύχτα στην Αθήνα. Έτοιμο το πρωί."
       : "Built in the Athens night. Ready when you woke up.";
+    var hasPhone = usablePhone(b.phone);
+    var actions = "";
+    if (hasPhone) {
+      actions +=
+        '<a class="call" href="tel:' +
+        esc(tel) +
+        '">' +
+        call +
+        esc(b.phone) +
+        '</a><a class="wa" href="https://wa.me/' +
+        esc(wa) +
+        '">WhatsApp</a>';
+    }
+    if (b.email) {
+      actions +=
+        '<a class="' +
+        (hasPhone ? "wa" : "call") +
+        '" href="mailto:' +
+        esc(b.email) +
+        '">' +
+        mail +
+        esc(b.email) +
+        "</a>";
+    }
     el.innerHTML =
       "<main>" +
       '<p class="city">' +
@@ -117,14 +146,9 @@
       esc(b.businessName) +
       '</h1><p class="offer">' +
       esc(b.whatYouDo) +
-      '</p></div><div class="actions"><a class="call" href="tel:' +
-      esc(tel) +
-      '">' +
-      call +
-      esc(b.phone) +
-      '</a><a class="wa" href="https://wa.me/' +
-      esc(wa) +
-      '">WhatsApp</a><p class="note">' +
+      '</p></div><div class="actions">' +
+      actions +
+      '<p class="note">' +
       note +
       "</p></div></main>";
   }
@@ -262,5 +286,6 @@
     stripePaid: stripePaid,
     notifyDesk: notifyDesk,
     digits: digits,
+    usablePhone: usablePhone,
   };
 })(window);

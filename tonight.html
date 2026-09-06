@@ -58,7 +58,7 @@
     <p class="lead">€120 once. Your name, what you actually do, a number a stranger can tap on a phone. Pay, and the URL is live on the way back.</p>
     <p class="body">Someone looking for you after hours should open one link and call. That is the page. Built on this desk while the shop is closed.</p>
     <ol>
-      <li>Name, phone, one honest sentence.</li>
+      <li>Name, one honest sentence, email. Phone if you have one.</li>
       <li>Pay €120 — card or PayPal.</li>
       <li>The return opens the live URL. Send that link.</li>
     </ol>
@@ -70,8 +70,8 @@
       <input id="lang" name="lang" type="hidden" value="en" />
       <label for="biz">Name / business</label>
       <input id="biz" name="biz" type="text" required maxlength="80" autocomplete="off" placeholder="e.g. Maria's Bakery" />
-      <label for="phone">Phone / WhatsApp</label>
-      <input id="phone" name="phone" type="tel" required maxlength="40" autocomplete="off" placeholder="+30 …" />
+      <label for="phone">Phone / WhatsApp (optional)</label>
+      <input id="phone" name="phone" type="tel" maxlength="40" autocomplete="off" placeholder="+30 …" />
       <label for="email">Your email</label>
       <input id="email" name="email" type="email" required maxlength="120" autocomplete="email" placeholder="you@shop.gr" />
       <label for="city">City</label>
@@ -84,7 +84,7 @@
     </form>
     <p class="hint"><a href="./">Short till</a> · <a href="./riza-kypseli.html">Sample (not a real shop)</a> · <a href="./paid.html">Already paid on 120.cash</a></p>
   </main>
-  <script src="./shop.js?v=20260906i"></script>
+  <script src="./shop.js?v=20260906j"></script>
   <script>
   (function () {
     if (/checkout=cancelled/.test(location.search)) {
@@ -106,7 +106,7 @@
       });
       if (!NightDesk.valid(brief)) {
         msg.className = "msg err";
-        msg.textContent = "Name, what you do, phone, and a valid email are required.";
+        msg.textContent = "Name, what you do, and a valid email are required.";
         return;
       }
       msg.className = "msg";
