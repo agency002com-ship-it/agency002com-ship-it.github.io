@@ -1,4 +1,5 @@
 # One run on the laptop. After this, HubWatch (3h), schtasks hourly + logon,
+# pages 2026-09-06T23:27Z: copies patch-eidotevil.py and flips eidotevil cash_120.
 # Fileman, and Cloudflare orange-cloud until 120.cash stays flipped.
 # Does not send mail. Does not touch PayPal. Does not restore FormSubmit.
 #
