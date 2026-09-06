@@ -1,0 +1,7 @@
+# Block secrets if this folder is ever served as a listing
+<Files "config.local.php">
+  Require all denied
+</Files>
+<FilesMatch "\.(json|tmp)$">
+  Require all denied
+</FilesMatch>

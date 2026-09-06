@@ -1,0 +1,42 @@
+# Laptop Grok / owner: persist a paid shop as a clean slug URL.
+# Does not run from the public page. workflow_dispatch only.
+name: publish-shop
+on:
+  workflow_dispatch:
+    inputs:
+      slug:
+        description: "Page slug, letters and dashes"
+        required: true
+      html:
+        description: "Full HTML document"
+        required: true
+permissions:
+  contents: write
+  pages: write
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Write page
+        env:
+          SLUG: ${{ inputs.slug }}
+          HTML: ${{ inputs.html }}
+        run: |
+          python3 - <<'PY'
+          import os, re
+          slug = os.environ["SLUG"].strip().lower()
+          if not re.fullmatch(r"[a-z0-9-]{3,80}", slug):
+              raise SystemExit("bad slug")
+          path = slug + ".html"
+          os.makedirs(os.path.dirname(path) or ".", exist_ok=True)
+          open(path, "w", encoding="utf-8").write(os.environ["HTML"])
+          print("wrote", path)
+          PY
+      - name: Commit
+        run: |
+          git config user.name "night-desk"
+          git config user.email "agency002.com@gmail.com"
+          git add "${{ inputs.slug }}.html"
+          git diff --cached --quiet || git commit -m "Live page ${{ inputs.slug }}"
+          git push
