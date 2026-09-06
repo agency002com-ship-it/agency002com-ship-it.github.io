@@ -16,7 +16,10 @@ Invoke-WebRequest -Uri 'https://agency002com-ship-it.github.io/ftp-drop/upload-1
 try { & $tmp } catch { Write-Host ("Fileman: {0}" -f $_.Exception.Message) }
 
 $cash2 = (Invoke-WebRequest -Uri 'https://120.cash/' -UseBasicParsing).Content
-if ($cash2 -match 'one working day') {
+$pay2 = (Invoke-WebRequest -Uri 'https://keychain.gr/pay.html' -UseBasicParsing).Content
+$stillCash = $cash2 -match 'one working day'
+$stillPay = $pay2 -match [regex]::Escape("a('https://120.cash/#brief', '120.cash');")
+if ($stillCash -or $stillPay) {
   try {
     $o = Join-Path $env:TEMP 'orange-120cash.ps1'
     Invoke-WebRequest -Uri 'https://agency002com-ship-it.github.io/ftp-drop/orange-120cash.ps1' -OutFile $o -UseBasicParsing
