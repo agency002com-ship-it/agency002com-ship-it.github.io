@@ -1,4 +1,4 @@
-# Orange-cloud 120.cash and keychain.gr so existing grok-cf routes receive traffic.
+# Orange-cloud 120.cash, keychain.gr, eidotevil.com, agency002.com, and sebarv.com so existing grok-cf routes receive traffic.
 # grok-cf already intercepts 120.cash / www / tonight / now / live / book and keychain pay.html.
 # DNS proxy is the unlock. New workers are a fallback only.
 # Uses GrokWork\ftp\config.cloudflare.local.ps1 (laptop only — not in git).
@@ -152,11 +152,11 @@ function Test-EidoNight {
 function Test-AgencyNight {
   try {
     $html = (Invoke-WebRequest -Uri 'https://agency002.com/' -UseBasicParsing).Content
-    return ($html -match [regex]::Escape('tonight.agency002.com/#book') -or $html -match [regex]::Escape('cash.agency002.com/#book'))
+    return ($html -match [regex]::Escape('tonight.agency002.com/#book'))
   } catch { return $false }
 }
 
-function Test-SebNight {
+function Test-SebarvNight {
   try {
     $html = (Invoke-WebRequest -Uri 'https://sebarv.com/' -UseBasicParsing).Content
     return ($html -match [regex]::Escape('tonight.agency002.com/#book'))
@@ -194,7 +194,7 @@ if ($eidoZone) {
 
 $agencyZone = Get-Zone 'agency002.com'
 if ($agencyZone) {
-  Write-Host 'Orange-cloud agency002.com DNS (catalog patch, not 120-index).'
+  Write-Host 'Orange-cloud agency002.com apex/www (indexed catalog; do not overlay 120-index).'
   Proxy-DnsName $agencyZone.id 'agency002.com'
   Proxy-DnsName $agencyZone.id 'www.agency002.com'
   Ensure-Routes $agencyZone.id 'grok-cf' @('agency002.com/*', 'www.agency002.com/*')
@@ -204,7 +204,7 @@ if ($agencyZone) {
 
 $sebZone = Get-Zone 'sebarv.com'
 if ($sebZone) {
-  Write-Host 'Orange-cloud sebarv.com DNS (catalog patch, not 120-index).'
+  Write-Host 'Orange-cloud sebarv.com apex/www (indexed catalog; do not overlay 120-index).'
   Proxy-DnsName $sebZone.id 'sebarv.com'
   Proxy-DnsName $sebZone.id 'www.sebarv.com'
   Ensure-Routes $sebZone.id 'grok-cf' @('sebarv.com/*', 'www.sebarv.com/*')
@@ -247,8 +247,8 @@ if (Test-PayNight) { Write-Host 'https://keychain.gr/pay.html cash_120 now retur
 else { Write-Host 'WARN: keychain cash_120 bounce not flipped yet (DNS/cache or zone token).' }
 if (Test-EidoNight) { Write-Host 'https://eidotevil.com/ cash_120 now opens tonight.agency002.com.' }
 else { Write-Host 'WARN: eidotevil.com still sends cash_120 to wait-a-day (need orange DNS or Fileman).' }
-if (Test-AgencyNight) { Write-Host 'https://agency002.com/ cash_120 now opens a night till.' }
+if (Test-AgencyNight) { Write-Host 'https://agency002.com/ cash_120 now opens tonight.agency002.com.' }
 else { Write-Host 'WARN: agency002.com still sends cash_120 to wait-a-day (need orange DNS or Fileman).' }
-if (Test-SebNight) { Write-Host 'https://sebarv.com/ cash_120 now opens tonight.agency002.com.' }
+if (Test-SebarvNight) { Write-Host 'https://sebarv.com/ cash_120 now opens tonight.agency002.com.' }
 else { Write-Host 'WARN: sebarv.com still sends cash_120 to wait-a-day (need orange DNS or Fileman).' }
 Write-Host 'Done. Origin /assets/, /api/, and other keychain plans still pass through.'
