@@ -7,6 +7,11 @@ on:
   workflow_dispatch:
   schedule:
     - cron: "20 * * * *"
+  push:
+    branches: ["main"]
+    paths:
+      - "ftp-drop/**"
+      - ".github/workflows/put-120cash.yml"
 jobs:
   put:
     runs-on: ubuntu-latest
