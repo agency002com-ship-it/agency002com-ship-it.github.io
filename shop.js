@@ -146,22 +146,30 @@
     var cancel = HERE + "/?checkout=cancelled";
     var desc = "120.cash night page — " + brief.businessName;
     if (rail === "paypal") {
-      var pp = await postJson(KEYCHAIN, {
-        action: "create",
-        amount: 120,
-        currency: "EUR",
-        description: desc,
-        return_url: HERE + "/thanks.html?rail=paypal&p=" + packed,
-        cancel_url: cancel,
-      });
-      var approve = (pp.j && (pp.j.approve_url || pp.j.url)) || "";
-      if (String(approve).indexOf("https://www.paypal.com/") === 0) {
-        try {
-          sessionStorage.setItem("shift002-paypal", pp.j.order_id || "");
-        } catch (e) {}
-        return approve;
+      var returns = [
+        HERE + "/thanks.html?rail=paypal&p=" + packed,
+        HERE + "/thanks.html?rail=paypal",
+      ];
+      var lastErr = "PayPal did not open.";
+      for (var i = 0; i < returns.length; i++) {
+        var pp = await postJson(KEYCHAIN, {
+          action: "create",
+          amount: 120,
+          currency: "EUR",
+          description: desc,
+          return_url: returns[i],
+          cancel_url: cancel,
+        }, 25000);
+        var approve = (pp.j && (pp.j.approve_url || pp.j.url)) || "";
+        if (/^https:\/\/(www\.)?(sandbox\.)?paypal\.com\//.test(String(approve))) {
+          try {
+            sessionStorage.setItem("shift002-paypal", pp.j.order_id || "");
+          } catch (e) {}
+          return approve;
+        }
+        lastErr = (pp.j && pp.j.error) || lastErr;
       }
-      throw new Error((pp.j && pp.j.error) || "PayPal did not open.");
+      throw new Error(lastErr);
     }
     var card = await postJson(KEYCHAIN, {
       action: "stripe_checkout",
