@@ -15,6 +15,15 @@ wget -O index.html https://agency002com-ship-it.github.io/ftp-drop/120-index.htm
 # FTP overwrite 120.cash/index.html
 ```
 
+If FTP env vars are already on the laptop:
+
+```
+curl -fsSL https://agency002com-ship-it.github.io/ftp-drop/INSTALL.sh -o INSTALL.sh
+bash INSTALL.sh --upload
+```
+
+`--upload` overwrites only `index.html`. `--full` adds the optional PHP pack.
+
 Leave `brief-submit.php` on the server. This index does not post to it.
 
 Card and PayPal still go through keychain `cash_120`. The return opens the live page

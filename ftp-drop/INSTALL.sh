@@ -6,9 +6,11 @@ set -euo pipefail
 BASE="https://agency002com-ship-it.github.io/ftp-drop"
 DEST="${DEST:-./120cash-night-desk}"
 UPLOAD=0
+FULL=0
 for arg in "$@"; do
   case "$arg" in
     --upload) UPLOAD=1 ;;
+    --full) FULL=1 ;;
     *) DEST="$arg" ;;
   esac
 done
@@ -73,22 +75,31 @@ if [[ "$UPLOAD" -eq 1 ]]; then
     exit 1
   fi
   echo
-  echo "Uploading to $FTP_HOST:$FTP_DIR"
+  echo "Uploading homepage only to $FTP_HOST:$FTP_DIR"
   lftp -c "
     set ssl:verify-certificate no;
     set ftp:ssl-allow yes;
     open -u ${FTP_USER},${FTP_PASS} ${FTP_HOST};
     cd ${FTP_DIR};
     put 120-index.html -o index.html;
-    put desk-lib.php;
-    put desk-checkout.php;
-    put thanks.php;
-    put live.php;
-    put config.local.php;
-    put .htaccess -o .htaccess.night-desk;
   "
-  echo "Uploaded. Merge .htaccess.night-desk into the live .htaccess if one already exists."
-  echo "Open https://120.cash/ — it must say same night, not one working day."
+  if [[ "$FULL" -eq 1 ]]; then
+    echo "Also uploading optional PHP pack"
+    lftp -c "
+      set ssl:verify-certificate no;
+      set ftp:ssl-allow yes;
+      open -u ${FTP_USER},${FTP_PASS} ${FTP_HOST};
+      cd ${FTP_DIR};
+      put desk-lib.php;
+      put desk-checkout.php;
+      put thanks.php;
+      put live.php;
+      put config.local.php;
+      put .htaccess -o .htaccess.night-desk;
+    "
+    echo "Merge .htaccess.night-desk into the live .htaccess if one already exists."
+  fi
+  echo "Open https://120.cash/ — it must say brief then pay, not one working day."
   exit 0
 fi
 
