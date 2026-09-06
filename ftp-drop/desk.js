@@ -141,6 +141,8 @@
     ppBtn.addEventListener('click', function () { pay('paypal'); });
   }
 
+  // Live keychain still sends cash_120 to https://120.cash/#brief with no session id.
+  // This form is that return: no second charge, page live on github.io.
   var paidForm = document.getElementById('paid-form');
   if (paidForm) {
     paidForm.addEventListener('submit', function (e) {
