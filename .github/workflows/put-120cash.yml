@@ -58,7 +58,7 @@ jobs:
             echo "agency=no" >> "$GITHUB_OUTPUT"
           fi
       - name: Cloudflare orange-cloud
-        if: ${{ steps.door.outputs.cash != 'yes' || steps.door.outputs.pay != 'yes' || steps.door.outputs.eido != 'yes' }}
+        if: ${{ steps.door.outputs.cash != 'yes' || steps.door.outputs.pay != 'yes' || steps.door.outputs.eido != 'yes' || steps.door.outputs.agency != 'yes' }}
         env:
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
         run: |
