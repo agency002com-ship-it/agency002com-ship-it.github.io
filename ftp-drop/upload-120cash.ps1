@@ -11,7 +11,7 @@
 # After:
 #   https://keychain.gr/pay.html  cash_120 return → github.io/paid.html
 #   https://120.cash/             brief then pay, not one working day
-#   https://agency002.com/        cash_120 card → now.agency002.com/#book
+#   https://agency002.com/        cash_120 card → cash.agency002.com/#book
 #
 # Keychain is first: the indexed 120.cash CTA already opens cash_120. Flipping
 # that return delivers tonight even if the 120.cash homepage write misses.
@@ -197,22 +197,22 @@ if ($live.Content -notmatch 'one working day' -and $live.Content -match '#book')
   Write-Host 'WARN: https://120.cash/ still says one working day. Keychain bounce can still deliver tonight.'
 }
 
-# --- 3. agency002.com homepage: only the €120 card (grey apex, orange wildcard already serves now.agency002.com) ---
-Write-Host 'Patching agency002.com cash_120 links to now.agency002.com (other plans stay).'
+# --- 3. agency002.com homepage: only the €120 card (grey apex; orange wildcard already serves cash.agency002.com) ---
+Write-Host 'Patching agency002.com cash_120 links to cash.agency002.com (other plans stay).'
 $agencyOk = $false
 try {
   $agencyHtml = (Invoke-WebRequest -Uri 'https://agency002.com/' -UseBasicParsing).Content
   $oldPay = 'href="https://keychain.gr/pay.html?plan=cash_120"'
-  $newPay = 'href="https://now.agency002.com/#book"'
+  $newPay = 'href="https://cash.agency002.com/#book"'
   $oldBrief = 'href="https://120.cash/#brief"'
   $newBrief = 'href="https://agency002com-ship-it.github.io/paid.html"'
   $oldHome = 'href="https://120.cash/"'
-  $newHome = 'href="https://now.agency002.com/"'
+  $newHome = 'href="https://cash.agency002.com/"'
   $nPay = ([regex]::Matches($agencyHtml, [regex]::Escape($oldPay))).Count
   $nBrief = ([regex]::Matches($agencyHtml, [regex]::Escape($oldBrief))).Count
   $nHome = ([regex]::Matches($agencyHtml, [regex]::Escape($oldHome))).Count
-  if ($agencyHtml -match [regex]::Escape('now.agency002.com/#book')) {
-    Write-Host 'agency002.com already points cash_120 at now.agency002.com.'
+  if ($agencyHtml -match [regex]::Escape('cash.agency002.com/#book') -or $agencyHtml -match [regex]::Escape('now.agency002.com/#book')) {
+    Write-Host 'agency002.com already points cash_120 at an orange night till.'
     $agencyOk = $true
   } elseif ($nPay -ne 1 -or $nBrief -ne 1 -or $nHome -ne 1) {
     Write-Host ("WARN: agency002.com needles not unique (pay=$nPay brief=$nBrief home=$nHome). Skipping brand rewrite.")
@@ -235,9 +235,9 @@ try {
         }
         Start-Sleep -Seconds 2
         $checkA = (Invoke-WebRequest -Uri 'https://agency002.com/' -UseBasicParsing).Content
-        if ($checkA -match [regex]::Escape('now.agency002.com/#book') -and $checkA -match 'pay.html\?plan=presence') {
+        if ($checkA -match [regex]::Escape('cash.agency002.com/#book') -and $checkA -match 'pay.html\?plan=presence') {
           $agencyOk = $true
-          Write-Host 'agency002.com cash_120 now opens now.agency002.com. Presence/Printful/DBYW untouched.'
+          Write-Host 'agency002.com cash_120 now opens cash.agency002.com. Presence/Printful/DBYW untouched.'
           break
         }
       }
@@ -246,7 +246,7 @@ try {
 } catch {
   Write-Host ("WARN agency002.com: {0}" -f $_.Exception.Message)
 }
-if (-not $agencyOk) { Write-Host 'WARN: agency002.com still sends €120 to wait-a-day 120.cash. now.agency002.com is already live.' }
+if (-not $agencyOk) { Write-Host 'WARN: agency002.com still sends €120 to wait-a-day 120.cash. cash.agency002.com is already live.' }
 
 $finalPay = (Invoke-WebRequest -Uri 'https://keychain.gr/pay.html' -UseBasicParsing).Content
 if (Test-KeychainPatched $finalPay) { $keychainOk = $true }
