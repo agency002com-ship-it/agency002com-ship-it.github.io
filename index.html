@@ -6,6 +6,7 @@
   <title>Night desk — €120 live page tonight</title>
   <meta name="description" content="Athens night desk. €120 once: your name, what you do, a number people can tap. Pay, and the page is live on the return. Not a working day." />
   <link rel="canonical" href="https://agency002com-ship-it.github.io/" />
+  <link rel="alternate" type="application/rss+xml" title="Athens night desk" href="https://agency002com-ship-it.github.io/feed.xml" />
   <link rel="alternate" hreflang="en" href="https://agency002com-ship-it.github.io/" />
   <link rel="alternate" hreflang="el" href="https://agency002com-ship-it.github.io/el.html" />
   <link rel="alternate" hreflang="x-default" href="https://agency002com-ship-it.github.io/" />
@@ -23,6 +24,7 @@
     "@type": "ProfessionalService",
     "name": "Athens night desk",
     "url": "https://agency002com-ship-it.github.io/",
+    "sameAs": ["https://120.cash/", "https://agency002.com/"],
     "image": "https://agency002com-ship-it.github.io/riza-kypseli.html",
     "description": "€120 live local page: name, what you do, tap-to-call. Built the same night after payment.",
     "areaServed": ["Athens", "Greece", "European Union"],
@@ -104,7 +106,7 @@
     <p class="kicker">Athens night desk</p>
     <h1>You sleep.<br />The page goes live.</h1>
     <p class="lead">€120 once. Name, what you do, a number people can tap. Pay, and the URL is live on the way back. Not a quote. Not a working day.</p>
-    <p class="hint"><a href="./tonight.html">Why tonight, not a working day</a> · <a href="./apopse.html" lang="el">Γιατί απόψε</a></p>
+    <p class="hint"><a href="./tonight.html">Why tonight, not a working day</a> · <a href="./apopse.html" lang="el">Γιατί απόψε</a> · <a href="./athens.html">Athens shops</a></p>
     <p>
       <a class="ghost" href="./riza-kypseli.html">See a sample (not a real shop)</a>
       <a class="ghost" href="./paid.html">Already paid on 120.cash?</a>
@@ -114,6 +116,7 @@
       <li>Pay €120 — card or PayPal, same till as 120.cash.</li>
       <li>The return opens your live page. Send that link.</li>
     </ol>
+
     <h2 id="book">Leave the brief, then pay</h2>
     <p class="hint">The page is built from this after money, not after a meeting.</p>
     <p class="msg err" id="cancel-msg" hidden>Cancelled — nothing was charged.</p>
@@ -121,8 +124,8 @@
       <input id="lang" name="lang" type="hidden" value="en" />
       <label for="biz">Name / business</label>
       <input id="biz" name="biz" type="text" required maxlength="80" autocomplete="off" placeholder="e.g. Maria's Bakery" />
-      <label for="phone">Phone / WhatsApp</label>
-      <input id="phone" name="phone" type="tel" required maxlength="40" autocomplete="off" placeholder="+30 …" />
+      <label for="phone">Phone / WhatsApp (optional)</label>
+      <input id="phone" name="phone" type="tel" maxlength="40" autocomplete="off" placeholder="+30 …" />
       <label for="email">Your email</label>
       <input id="email" name="email" type="email" required maxlength="120" autocomplete="email" placeholder="you@shop.gr" />
       <label for="city">City</label>
@@ -134,7 +137,7 @@
       <p class="msg" id="brief-msg" role="status" aria-live="polite"></p>
     </form>
   </main>
-  <script src="./shop.js?v=20260906i"></script>
+  <script src="./shop.js?v=20260906j"></script>
   <script>
   (function () {
     if (/checkout=cancelled/.test(location.search)) {
@@ -156,7 +159,7 @@
       });
       if (!NightDesk.valid(brief)) {
         msg.className = "msg err";
-        msg.textContent = "Name, what you do, phone, and a valid email are required.";
+        msg.textContent = "Name, what you do, and a valid email are required.";
         return;
       }
       msg.className = "msg";

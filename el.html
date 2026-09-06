@@ -6,6 +6,7 @@
   <title>Νυχτερινό γραφείο — σελίδα €120 απόψε</title>
   <meta name="description" content="Νυχτερινό γραφείο Αθήνας. €120 μία φορά: το όνομά σου, τι κάνεις, ένα τηλέφωνο. Πληρώνεις, και η σελίδα είναι live στην επιστροφή. Όχι εργάσιμη μέρα." />
   <link rel="canonical" href="https://agency002com-ship-it.github.io/el.html" />
+  <link rel="alternate" type="application/rss+xml" title="Νυχτερινό γραφείο Αθήνας" href="https://agency002com-ship-it.github.io/feed.xml" />
   <link rel="alternate" hreflang="el" href="https://agency002com-ship-it.github.io/el.html" />
   <link rel="alternate" hreflang="en" href="https://agency002com-ship-it.github.io/" />
   <link rel="alternate" hreflang="x-default" href="https://agency002com-ship-it.github.io/" />
@@ -21,6 +22,7 @@
     "@type": "ProfessionalService",
     "name": "Νυχτερινό γραφείο Αθήνας",
     "url": "https://agency002com-ship-it.github.io/el.html",
+    "sameAs": ["https://120.cash/", "https://agency002.com/"],
     "inLanguage": "el",
     "description": "€120: σελίδα με όνομα, τι κάνεις, κλήση. Έτοιμη την ίδια νύχτα μετά την πληρωμή.",
     "areaServed": ["Αθήνα", "Ελλάδα", "Ευρωπαϊκή Ένωση"],
@@ -101,8 +103,8 @@
     <p class="langs"><a href="./" lang="en">English</a><a href="./el.html" aria-current="page">Ελληνικά</a></p>
     <p class="kicker">Νυχτερινό γραφείο Αθήνας</p>
     <h1>Εσύ κοιμάσαι.<br />Η σελίδα βγαίνει live.</h1>
-    <p class="lead">€120 μία φορά. Όνομα, τι κάνεις, τηλέφωνο που πατάει ο πελάτης. Πληρώνεις, και τον σύνδεσμο τον έχεις στην επιστροφή. Όχι προσφορά. Όχι εργάσιμη μέρα.</p>
-    <p class="hint"><a href="./apopse.html">Γιατί απόψε, όχι εργάσιμη</a> · <a href="./tonight.html" lang="en">Why tonight</a></p>
+    <p class="lead">€120 μία φορά. Όνομα, τι κάνεις, email. Τηλέφωνο αν το έχεις. Πληρώνεις, και τον σύνδεσμο τον έχεις στην επιστροφή. Όχι προσφορά. Όχι εργάσιμη μέρα.</p>
+    <p class="hint"><a href="./apopse.html">Γιατί απόψε, όχι εργάσιμη</a> · <a href="./tonight.html" lang="en">Why tonight</a> · <a href="./athina.html">Μαγαζιά Αθήνας</a></p>
     <p>
       <a class="ghost" href="./riza-kypseli.html">Δείγμα σελίδας (όχι πραγματικό μαγαζί)</a>
       <a class="ghost" href="./paid.html">Πλήρωσα ήδη στο 120.cash;</a>
@@ -112,6 +114,7 @@
       <li>Πληρώνεις €120 — κάρτα ή PayPal, το ίδιο ταμείο με το 120.cash.</li>
       <li>Η επιστροφή ανοίγει τη σελίδα σου. Στέλνεις αυτόν τον σύνδεσμο.</li>
     </ol>
+
     <h2 id="book">Brief, μετά πληρωμή</h2>
     <p class="hint">Η σελίδα φτιάχνεται από αυτό, μετά τα λεφτά. Όχι μετά από ραντεβού.</p>
     <p class="msg err" id="cancel-msg" hidden>Ακυρώθηκε — δεν χρεώθηκε τίποτα.</p>
@@ -119,8 +122,8 @@
       <input id="lang" name="lang" type="hidden" value="el" />
       <label for="biz">Όνομα / επιχείρηση</label>
       <input id="biz" name="biz" type="text" required maxlength="80" autocomplete="off" placeholder="π.χ. Ο φούρνος της Μαρίας" />
-      <label for="phone">Τηλέφωνο / WhatsApp</label>
-      <input id="phone" name="phone" type="tel" required maxlength="40" autocomplete="off" placeholder="+30 …" />
+      <label for="phone">Τηλέφωνο / WhatsApp (όχι υποχρεωτικό)</label>
+      <input id="phone" name="phone" type="tel" maxlength="40" autocomplete="off" placeholder="+30 …" />
       <label for="email">Email</label>
       <input id="email" name="email" type="email" required maxlength="120" autocomplete="email" placeholder="you@shop.gr" />
       <label for="city">Πόλη</label>
@@ -132,7 +135,7 @@
       <p class="msg" id="brief-msg" role="status" aria-live="polite"></p>
     </form>
   </main>
-  <script src="./shop.js?v=20260906i"></script>
+  <script src="./shop.js?v=20260906j"></script>
   <script>
   (function () {
     if (/checkout=cancelled/.test(location.search)) {
@@ -154,7 +157,7 @@
       });
       if (!NightDesk.valid(brief)) {
         msg.className = "msg err";
-        msg.textContent = "Θέλω όνομα, τι κάνεις, τηλέφωνο, και ένα σωστό email.";
+        msg.textContent = "Θέλω όνομα, τι κάνεις, και ένα σωστό email.";
         return;
       }
       msg.className = "msg";
