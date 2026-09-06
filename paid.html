@@ -26,13 +26,13 @@
   <main>
     <p class="kicker">Athens night desk</p>
     <h1>You paid.<br />Leave the brief.</h1>
-    <p class="lead" id="lead">Do not pay again. Name, what you do, a number people can tap. The page goes live on this site.</p>
+    <p class="lead" id="lead">Do not pay again. Name, what you do, email. Phone if you have one. The page goes live on this site.</p>
     <p class="msg err" id="gate" hidden></p>
     <form id="brief-form" hidden inert>
       <label for="biz">Name / business</label>
       <input id="biz" name="biz" type="text" required maxlength="80" autocomplete="off" />
-      <label for="phone">Phone / WhatsApp</label>
-      <input id="phone" name="phone" type="tel" required maxlength="40" autocomplete="off" />
+      <label for="phone">Phone / WhatsApp (optional)</label>
+      <input id="phone" name="phone" type="tel" maxlength="40" autocomplete="off" />
       <label for="email">Your email</label>
       <input id="email" name="email" type="email" required maxlength="120" autocomplete="email" />
       <label for="city">City</label>
@@ -44,7 +44,7 @@
     </form>
     <p class="hint"><a href="./">Need to pay first?</a></p>
   </main>
-  <script src="./shop.js?v=20260906i"></script>
+  <script src="./shop.js?v=20260906j"></script>
   <script>
   (function () {
     var q = new URLSearchParams(location.search);
@@ -109,7 +109,7 @@
       var msg = document.getElementById("brief-msg");
       if (!NightDesk.valid(brief)) {
         msg.className = "msg err";
-        msg.textContent = "Name, what you do, phone, and a valid email are required.";
+        msg.textContent = "Name, what you do, and a valid email are required.";
         return;
       }
       NightDesk.save(brief);
