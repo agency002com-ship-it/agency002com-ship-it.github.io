@@ -8,6 +8,9 @@ This is the same product as [120.cash](https://120.cash/). Apex 120.cash still s
 - [now.120.cash](https://now.120.cash/)
 - [live.120.cash](https://live.120.cash/)
 - [book.120.cash](https://book.120.cash/)
+- [pay.120.cash](https://pay.120.cash/)
+- [go.120.cash](https://go.120.cash/)
+- [get.120.cash](https://get.120.cash/)
 
 Those use the same keychain.gr till (`cash_120`, card or PayPal) and publish as soon as payment clears.
 
@@ -23,6 +26,7 @@ Do not restore FormSubmit. Do not send cold email. Phone is optional; the live p
 - [Μαγαζιά Αθήνας](https://agency002com-ship-it.github.io/athina.html)
 - [Same as 120.cash](https://agency002com-ship-it.github.io/120cash.html)
 - [Book a page](https://agency002com-ship-it.github.io/book.html)
+- [Pay €120](https://agency002com-ship-it.github.io/pay.html)
 - [Already paid](https://agency002com-ship-it.github.io/paid.html) — no second charge
 
 ## Sample
