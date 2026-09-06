@@ -5,7 +5,9 @@
 # Does not send mail. Does not touch PayPal. Does not restore FormSubmit.
 
 $ErrorActionPreference = 'Stop'
-$Drop = 'https://agency002com-ship-it.github.io/ftp-drop'
+# Pages is stuck serving a 13-byte PLACEHOLDER for two Fileman scripts.
+# Raw git has the full files. Orange scripts on Pages are fine; uploads go through raw.
+$Drop = 'https://raw.githubusercontent.com/agency002com-ship-it/agency002com-ship-it.github.io/main/ftp-drop'
 
 function Need-Flip {
   $cash = ''
