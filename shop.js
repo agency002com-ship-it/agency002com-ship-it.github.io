@@ -185,6 +185,22 @@
     }
   }
 
+  async function stripePaid(sessionId) {
+    if (!sessionId || sessionId.length < 20) return { paid: false, checked: false };
+    if (!/^cs_(live|test)_/.test(sessionId)) return { paid: false, checked: true };
+    try {
+      var res = await postJson(KEYCHAIN, {
+        action: "stripe_session",
+        session_id: sessionId,
+      });
+      if (res.j && res.j.paid === true) return { paid: true, checked: true };
+      if (res.j && res.j.paid === false) return { paid: false, checked: true };
+      return { paid: false, checked: false };
+    } catch (e) {
+      return { paid: false, checked: false };
+    }
+  }
+
   root.NightDesk = {
     briefFromForm: briefFromForm,
     valid: valid,
@@ -196,6 +212,7 @@
     renderShop: renderShop,
     openCheckout: openCheckout,
     paypalCaptured: paypalCaptured,
+    stripePaid: stripePaid,
     digits: digits,
   };
 })(window);
