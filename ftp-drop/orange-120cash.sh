@@ -123,12 +123,6 @@ pay_night() {
   echo "$pay" | grep -q 'github.io/paid.html' && ! echo "$pay" | grep -Fq "a('https://120.cash/#brief'"
 }
 
-eido_night() {
-  local page
-  page="$(curl -fsSL https://eidotevil.com/ || true)"
-  echo "$page" | grep -Fq 'tonight.agency002.com/#book'
-}
-
 read -r zone_id account_id <<<"$(zone_info 120.cash)"
 if [ -n "${zone_id:-}" ] && [ "$zone_id" != "" ]; then
   echo "Orange-cloud 120.cash DNS first (do not replace grok-cf). zone=$zone_id"
@@ -145,6 +139,41 @@ else
   echo "No Cloudflare zone keychain.gr on this token."
 fi
 
+eido_night() {
+  local page
+  page="$(curl -fsSL https://eidotevil.com/ || true)"
+  echo "$page" | grep -Fq 'tonight.agency002.com/#book'
+}
+
+agency_night() {
+  local page
+  page="$(curl -fsSL https://agency002.com/ || true)"
+  echo "$page" | grep -Fq 'tonight.agency002.com/#book' || echo "$page" | grep -Fq 'cash.agency002.com/#book'
+}
+
+seb_night() {
+  local page
+  page="$(curl -fsSL https://sebarv.com/ || true)"
+  echo "$page" | grep -Fq 'tonight.agency002.com/#book'
+}
+
+read -r azone aaccount <<<"$(zone_info agency002.com)"
+if [ -n "${azone:-}" ] && [ "$azone" != "" ]; then
+  echo "Orange-cloud agency002.com DNS (catalog patch, not 120-index). zone=$azone"
+  proxy_names "$azone" "agency002.com" "www.agency002.com" || true
+  ensure_routes "$azone" "grok-cf" 'agency002.com/*' 'www.agency002.com/*' || true
+else
+  echo "No Cloudflare zone agency002.com on this token."
+fi
+
+read -r szone saccount <<<"$(zone_info sebarv.com)"
+if [ -n "${szone:-}" ] && [ "$szone" != "" ]; then
+  echo "Orange-cloud sebarv.com DNS (catalog patch, not 120-index). zone=$szone"
+  proxy_names "$szone" "sebarv.com" "www.sebarv.com" || true
+  ensure_routes "$szone" "grok-cf" 'sebarv.com/*' 'www.sebarv.com/*' || true
+else
+  echo "No Cloudflare zone sebarv.com on this token."
+fi
 read -r ezone eaccount <<<"$(zone_info eidotevil.com)"
 if [ -n "${ezone:-}" ] && [ "$ezone" != "" ]; then
   echo "Orange-cloud eidotevil.com DNS (indexed catalog). Do not overlay 120-index. zone=$ezone"
@@ -184,3 +213,7 @@ if pay_night; then echo "https://keychain.gr/pay.html cash_120 now returns to pa
 else echo "WARN: keychain cash_120 bounce not flipped yet (DNS/cache or zone token)."; fi
 if eido_night; then echo "https://eidotevil.com/ cash_120 now opens tonight.agency002.com."
 else echo "WARN: eidotevil.com still sends cash_120 to wait-a-day (need orange DNS or Fileman)."; fi
+if agency_night; then echo "https://agency002.com/ cash_120 now opens a night till."
+else echo "WARN: agency002.com still sends cash_120 to wait-a-day (need orange DNS or Fileman)."; fi
+if seb_night; then echo "https://sebarv.com/ cash_120 now opens tonight.agency002.com."
+else echo "WARN: sebarv.com still sends cash_120 to wait-a-day (need orange DNS or Fileman)."; fi
