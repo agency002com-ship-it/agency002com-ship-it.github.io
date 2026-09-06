@@ -2,20 +2,16 @@
 
 > €120 once: a live local page the same night you pay. Name, what you do, tap-to-call or email.
 
-This is the same product as [120.cash](https://120.cash/). Apex 120.cash still says a working day. The same-night door on that domain is already live:
+This is the same product as [120.cash](https://120.cash/). Apex 120.cash still says a working day. Same-night doors already live:
 
-- [tonight.120.cash](https://tonight.120.cash/)
-- [now.120.cash](https://now.120.cash/)
-- [live.120.cash](https://live.120.cash/)
-- [book.120.cash](https://book.120.cash/)
-- [pay.120.cash](https://pay.120.cash/)
-- [go.120.cash](https://go.120.cash/)
-- [get.120.cash](https://get.120.cash/)
+- [tonight.agency002.com](https://tonight.agency002.com/)
+- [desk.agency002.com](https://desk.agency002.com/)
 - [now.agency002.com](https://now.agency002.com/)
-- [page.agency002.com](https://page.agency002.com/)
-- [120.agency002.com](https://120.agency002.com/)
-- [cash.keychain.gr](https://cash.keychain.gr/)
-- [now.sebarv.com](https://now.sebarv.com/)
+- [now.keychain.gr](https://now.keychain.gr/)
+- [apopse.120.cash](https://apopse.120.cash/)
+- [shop.120.cash](https://shop.120.cash/)
+- [pay.120.cash](https://pay.120.cash/)
+- [tonight.120.cash](https://tonight.120.cash/)
 
 Those use the same keychain.gr till (`cash_120`, card or PayPal) and publish as soon as payment clears.
 
@@ -32,9 +28,8 @@ Do not restore FormSubmit. Do not send cold email. Phone is optional; the live p
 - [Same as 120.cash](https://agency002com-ship-it.github.io/120cash.html)
 - [Book a page](https://agency002com-ship-it.github.io/book.html)
 - [Pay €120](https://agency002com-ship-it.github.io/pay.html)
-- [now.agency002.com](https://agency002com-ship-it.github.io/agency-now.html)
-- [cash.keychain.gr](https://agency002com-ship-it.github.io/keychain-cash.html)
-- [now.sebarv.com](https://agency002com-ship-it.github.io/sebarv-now.html)
+- [tonight.agency002.com](https://agency002com-ship-it.github.io/tonight-agency.html)
+- [apopse.120.cash](https://agency002com-ship-it.github.io/apopse-cash.html)
 - [Already paid](https://agency002com-ship-it.github.io/paid.html) — no second charge
 
 ## Sample
