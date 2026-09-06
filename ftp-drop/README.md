@@ -27,9 +27,10 @@ That:
 2. Registers hourly `Shift002NightDoor` and logon `Shift002NightDoorLogon`.
 3. Drops `Desktop\PUT-NIGHT-DOOR.bat`, `Desktop\RUN-SHIFT002.ps1`, and a Startup copy. Copies scripts next to
    the cPanel token. Writes `GrokModes\DO-TONIGHT.txt`.
-4. Runs `upload-120cash.ps1` now — **WHM `:2087` passthrough** if `:2083` fails.
-5. If 120.cash still says one working day **or** keychain still bounces to
-   `120.cash/#brief`, runs `orange-120cash.ps1` (homepage Worker + pay.html Worker).
+4. Orange-clouds DNS first so existing grok-cf routes on `120.cash/*` and
+   `keychain.gr/pay.html*` start receiving traffic. Fallback Workers only if
+   live HTML is still wait-a-day.
+5. Runs `upload-120cash.ps1` — **WHM `:2087` passthrough** if `:2083` fails.
 
 `upload-120cash.ps1` (keychain first — that is the indexed money door today):
 

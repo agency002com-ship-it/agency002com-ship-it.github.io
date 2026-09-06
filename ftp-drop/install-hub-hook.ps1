@@ -197,6 +197,28 @@ if (Test-Path $modes) {
   Write-Host 'Wrote GrokModes\DO-TONIGHT.txt'
 }
 
+function Test-NeedFlip {
+  $cashAfter = ''
+  $payAfter = ''
+  try { $cashAfter = (Invoke-WebRequest -Uri 'https://120.cash/' -UseBasicParsing).Content } catch { }
+  try { $payAfter = (Invoke-WebRequest -Uri 'https://keychain.gr/pay.html' -UseBasicParsing).Content } catch { }
+  return (($cashAfter -match 'one working day') -or ($payAfter -match [regex]::Escape("a('https://120.cash/#brief', '120.cash');")))
+}
+
+# Orange DNS first: grok-cf already has 120.cash/* and keychain.gr/pay.html*.
+# Fileman is origin permanence. Do not skip Fileman if orange already flipped —
+# HubWatch will skip later once live HTML stays same-night.
+if (Test-NeedFlip) {
+  Write-Host 'Orange-cloud DNS first (existing grok-cf routes).'
+  $otmp = Join-Path $env:TEMP 'orange-120cash.ps1'
+  try {
+    Invoke-WebRequest -Uri $OrangeUrl -OutFile $otmp -UseBasicParsing
+    & $otmp
+  } catch {
+    Write-Host ("Cloudflare first: {0}" -f $_.Exception.Message)
+  }
+}
+
 Write-Host 'Running Fileman now (keychain cash_120, then 120.cash).'
 $tmp = Join-Path $env:TEMP 'upload-120cash.ps1'
 Invoke-WebRequest -Uri $UploadUrl -OutFile $tmp -UseBasicParsing
@@ -207,13 +229,8 @@ try {
   if (-not $patched -and -not $scheduled) { throw }
 }
 
-$cashAfter = ''
-$payAfter = ''
-try { $cashAfter = (Invoke-WebRequest -Uri 'https://120.cash/' -UseBasicParsing).Content } catch { }
-try { $payAfter = (Invoke-WebRequest -Uri 'https://keychain.gr/pay.html' -UseBasicParsing).Content } catch { }
-$needOrange = ($cashAfter -match 'one working day') -or ($payAfter -match [regex]::Escape("a('https://120.cash/#brief', '120.cash');"))
-if ($needOrange) {
-  Write-Host 'Trying Cloudflare orange-cloud (120.cash homepage and/or keychain cash_120 bounce).'
+if (Test-NeedFlip) {
+  Write-Host 'Still wait-a-day. Cloudflare orange-cloud again (fallback workers).'
   $otmp = Join-Path $env:TEMP 'orange-120cash.ps1'
   try {
     Invoke-WebRequest -Uri $OrangeUrl -OutFile $otmp -UseBasicParsing
@@ -222,6 +239,6 @@ if ($needOrange) {
     Write-Host ("Cloudflare this run: {0}" -f $_.Exception.Message)
   }
 } else {
-  Write-Host '120.cash and keychain cash_120 already same-night. Skipping Cloudflare.'
+  Write-Host '120.cash and keychain cash_120 already same-night.'
 }
 Write-Host 'Done. HubWatch, hourly, and logon retry until the live pages stay flipped.'
