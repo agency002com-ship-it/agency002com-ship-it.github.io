@@ -1,9 +1,8 @@
 /* Shared night-desk helpers for the public GitHub Pages door. */
 (function (root) {
   var KEYCHAIN = "https://keychain.gr/api/owner-checkout.php";
-  var DESK = "https://120.cash/desk-checkout.php";
+  var HERE = "https://agency002com-ship-it.github.io";
   var STORE = "shift002-brief";
-  var FULFILL = "https://agency002com-ship-it.github.io";
 
   function trim(s, n) {
     return String(s || "").trim().slice(0, n);
@@ -21,7 +20,7 @@
 
   function valid(b) {
     if (!b.businessName || !b.phone || !b.whatYouDo) return false;
-    if (!/[^\s@]+@[^\s@]+\.[^\s@]+$/.test(b.email || "")) return false;
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(b.email || "")) return false;
     return true;
   }
 
@@ -63,7 +62,9 @@
     try {
       var pad = s.length % 4;
       if (pad) s += "====".slice(pad);
-      var json = decodeURIComponent(escape(atob(s.replace(/-/g, "+").replace(/_/g, "/"))));
+      var json = decodeURIComponent(
+        escape(atob(s.replace(/-/g, "+").replace(/_/g, "/"))),
+      );
       var o = JSON.parse(json);
       var b = {
         businessName: trim(o.n, 80),
@@ -83,11 +84,7 @@
   }
 
   function liveUrl(b) {
-    return FULFILL + "/live.html#" + encode(b);
-  }
-
-  function packed(brief) {
-    return encodeURIComponent(encode(brief));
+    return HERE + "/live.html#" + encode(b);
   }
 
   function esc(s) {
@@ -118,66 +115,64 @@
       '">WhatsApp</a><p class="note">Built in the Athens night. Ready when you woke up.</p></div></main>';
   }
 
-  async function postJson(url, body) {
+  function postJson(url, body, ms) {
+    var wait = ms || 15000;
     var ctrl = typeof AbortController === "function" ? new AbortController() : null;
-    var timer = ctrl ? setTimeout(function () { ctrl.abort(); }, 8000) : null;
-    try {
-      var r = await fetch(url, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(body),
-        signal: ctrl ? ctrl.signal : undefined,
+    var timer = ctrl ? setTimeout(function () { ctrl.abort(); }, wait) : null;
+    return fetch(url, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(body),
+      signal: ctrl ? ctrl.signal : undefined,
+    })
+      .then(function (r) {
+        return r
+          .json()
+          .then(function (j) {
+            return { ok: r.ok, status: r.status, j: j };
+          })
+          .catch(function () {
+            return { ok: r.ok, status: r.status, j: {} };
+          });
+      })
+      .finally(function () {
+        if (timer) clearTimeout(timer);
       });
-      var j = {};
-      try {
-        j = await r.json();
-      } catch (e) {}
-      return { ok: r.ok, status: r.status, j: j };
-    } finally {
-      if (timer) clearTimeout(timer);
-    }
   }
 
   async function openCheckout(brief, rail) {
     save(brief);
-    var b = packed(brief);
-    var cancel = FULFILL + "/?checkout=cancelled";
+    var packed = encode(brief);
+    var cancel = HERE + "/?checkout=cancelled";
+    var desc = "120.cash night page — " + brief.businessName;
     if (rail === "paypal") {
-      try {
-        var pp = await postJson(KEYCHAIN, {
-          action: "create",
-          amount: 120,
-          currency: "EUR",
-          description: "120.cash night page — " + brief.businessName,
-          return_url: FULFILL + "/thanks.html?rail=paypal&b=" + b + "&p=" + b,
-          cancel_url: cancel,
-        });
-        if (pp.j && pp.j.approve_url) {
-          try {
-            sessionStorage.setItem("shift002-paypal", pp.j.order_id || "");
-          } catch (e) {}
-          return pp.j.approve_url;
-        }
-      } catch (e) {}
-    } else {
-      try {
-        var card = await postJson(KEYCHAIN, {
-          action: "stripe_checkout",
-          plan: "cash_120",
-          description: "120.cash night page — " + brief.businessName,
-          success_url: FULFILL + "/thanks.html?session_id={CHECKOUT_SESSION_ID}&b=" + b + "&p=" + b,
-          cancel_url: cancel,
-        });
-        if (card.j && card.j.url && String(card.j.url).indexOf("https://checkout.stripe.com/") === 0) {
-          return card.j.url;
-        }
-      } catch (e) {}
+      var pp = await postJson(KEYCHAIN, {
+        action: "create",
+        amount: 120,
+        currency: "EUR",
+        description: desc,
+        return_url: HERE + "/thanks.html?rail=paypal&p=" + packed,
+        cancel_url: cancel,
+      });
+      var approve = (pp.j && (pp.j.approve_url || pp.j.url)) || "";
+      if (String(approve).indexOf("https://www.paypal.com/") === 0) {
+        try {
+          sessionStorage.setItem("shift002-paypal", pp.j.order_id || "");
+        } catch (e) {}
+        return approve;
+      }
+      throw new Error((pp.j && pp.j.error) || "PayPal did not open.");
     }
-    try {
-      var desk = await postJson(DESK, Object.assign({ rail: rail }, brief));
-      if (desk.j && desk.j.url) return desk.j.url;
-    } catch (e) {}
-    throw new Error(rail === "paypal" ? "PayPal did not open." : "Card till did not open.");
+    var card = await postJson(KEYCHAIN, {
+      action: "stripe_checkout",
+      plan: "cash_120",
+      description: desc,
+      success_url: HERE + "/thanks.html?session_id={CHECKOUT_SESSION_ID}&p=" + packed,
+      cancel_url: cancel,
+    });
+    var url = card.j && card.j.url ? String(card.j.url) : "";
+    if (url.indexOf("https://checkout.stripe.com/") === 0) return url;
+    throw new Error((card.j && card.j.error) || "Card till did not open.");
   }
 
   async function paypalCaptured(orderId) {
