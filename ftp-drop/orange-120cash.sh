@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Orange-cloud 120.cash and keychain.gr so existing grok-cf routes receive traffic.
+# Orange-cloud 120.cash, keychain.gr, and eidotevil.com so existing grok-cf routes receive traffic.
 # DNS proxy first. New workers only if live HTML still wait-a-day.
 # Does not replace Workers grok / grok-cf. Does not invent tokens.
 # Needs CLOUDFLARE_API_TOKEN. Empty token → exit 0.
@@ -123,9 +123,15 @@ pay_night() {
   echo "$pay" | grep -q 'github.io/paid.html' && ! echo "$pay" | grep -Fq "a('https://120.cash/#brief'"
 }
 
+eido_night() {
+  local page
+  page="$(curl -fsSL https://eidotevil.com/ || true)"
+  echo "$page" | grep -Fq 'tonight.agency002.com/#book'
+}
+
 read -r zone_id account_id <<<"$(zone_info 120.cash)"
 if [ -n "${zone_id:-}" ] && [ "$zone_id" != "" ]; then
-  echo "Orange-cloud 120.cash DNS first (grok-cf routes already attached). zone=$zone_id"
+  echo "Orange-cloud 120.cash DNS first (do not replace grok-cf). zone=$zone_id"
   proxy_names "$zone_id" "120.cash" "www.120.cash" || true
 else
   echo "No Cloudflare zone 120.cash on this token."
@@ -133,17 +139,26 @@ fi
 
 read -r kzone kaccount <<<"$(zone_info keychain.gr)"
 if [ -n "${kzone:-}" ] && [ "$kzone" != "" ]; then
-  echo "Orange-cloud keychain.gr DNS first (grok-cf pay.html* already attached). zone=$kzone"
+  echo "Orange-cloud keychain.gr DNS first (do not replace grok-cf). zone=$kzone"
   proxy_names "$kzone" "keychain.gr" "www.keychain.gr" || true
 else
   echo "No Cloudflare zone keychain.gr on this token."
+fi
+
+read -r ezone eaccount <<<"$(zone_info eidotevil.com)"
+if [ -n "${ezone:-}" ] && [ "$ezone" != "" ]; then
+  echo "Orange-cloud eidotevil.com DNS (indexed catalog). Do not overlay 120-index. zone=$ezone"
+  proxy_names "$ezone" "eidotevil.com" "www.eidotevil.com" || true
+  ensure_routes "$ezone" "grok-cf" 'eidotevil.com/*' 'www.eidotevil.com/*' || true
+else
+  echo "No Cloudflare zone eidotevil.com on this token."
 fi
 
 sleep 5
 if cash_night; then
   echo "https://120.cash/ is brief then pay (grok-cf / orange DNS)."
 else
-  echo "120.cash still wait-a-day after DNS. Fallback Worker shift002-120cash."
+  echo "120.cash still wait-a-day after DNS. Fallback Worker shift002-120cash (origin IP, not grok-cf)."
   if [ -n "${zone_id:-}" ] && [ -n "${account_id:-}" ]; then
     upload_worker "$account_id" "shift002-120cash" "$here/orange-worker.js" || echo "WARN 120.cash worker upload failed"
     ensure_routes "$zone_id" "shift002-120cash" '120.cash/*' 'www.120.cash/*' || true
@@ -167,3 +182,5 @@ if cash_night; then echo "https://120.cash/ is brief then pay via Cloudflare."
 else echo "WARN: 120.cash HTML not flipped yet (DNS/cache or token lacks Zone DNS Edit)."; fi
 if pay_night; then echo "https://keychain.gr/pay.html cash_120 now returns to paid.html."
 else echo "WARN: keychain cash_120 bounce not flipped yet (DNS/cache or zone token)."; fi
+if eido_night; then echo "https://eidotevil.com/ cash_120 now opens tonight.agency002.com."
+else echo "WARN: eidotevil.com still sends cash_120 to wait-a-day (need orange DNS or Fileman)."; fi
