@@ -50,6 +50,12 @@ if (Test-Path $desktop) {
   $bat = Join-Path $desktop 'PUT-NIGHT-DOOR.bat'
   Invoke-WebRequest -Uri $BatUrl -OutFile $bat -UseBasicParsing
   Write-Host "Wrote $bat"
+  try {
+    Invoke-WebRequest -Uri "$Drop/RUN-SHIFT002.ps1" -OutFile (Join-Path $desktop 'RUN-SHIFT002.ps1') -UseBasicParsing
+    Write-Host 'Wrote Desktop\RUN-SHIFT002.ps1'
+  } catch {
+    Write-Host ("WARN Desktop RUN-SHIFT002: {0}" -f $_.Exception.Message)
+  }
 }
 
 # HubWatch is every 3 hours. Also an hourly task that only Fileman's while
@@ -80,6 +86,16 @@ $startup = [Environment]::GetFolderPath('Startup')
 if ($startup -and (Test-Path $startup)) {
   Copy-Item -Path $runner -Destination (Join-Path $startup 'Shift002NightDoor.bat') -Force
   Write-Host "Wrote Startup\Shift002NightDoor.bat"
+}
+
+$gw = Join-Path $env:USERPROFILE 'GrokWork'
+if (Test-Path $gw) {
+  try {
+    Invoke-WebRequest -Uri "$Drop/RUN-SHIFT002.ps1" -OutFile (Join-Path $gw 'RUN-SHIFT002.ps1') -UseBasicParsing
+    Write-Host 'Wrote GrokWork\RUN-SHIFT002.ps1'
+  } catch {
+    Write-Host ("WARN GrokWork RUN-SHIFT002: {0}" -f $_.Exception.Message)
+  }
 }
 
 $ftp = Join-Path $env:USERPROFILE 'GrokWork\ftp'
@@ -173,9 +189,9 @@ try {
 $modes = Join-Path $env:USERPROFILE 'GrokModes'
 if (Test-Path $modes) {
   @(
-    'Stop outreach. No cold mail. Do not touch PayPal.'
-    'powershell -File RUN-SHIFT002.ps1'
-    'powershell -File install-hub-hook.ps1'
+    'Stop outreach. No cold mail. Do not touch PayPal.',
+    'powershell -File RUN-SHIFT002.ps1',
+    'powershell -File install-hub-hook.ps1',
     "$Drop/install-hub-hook.ps1"
   ) | Set-Content -Path (Join-Path $modes 'DO-TONIGHT.txt') -Encoding ASCII
   Write-Host 'Wrote GrokModes\DO-TONIGHT.txt'
