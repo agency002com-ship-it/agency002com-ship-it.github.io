@@ -11,7 +11,7 @@
     p.kicker { letter-spacing: .2em; text-transform: uppercase; font-size: .75rem; color: #c4a46a; }
     h1 { font-size: clamp(2.4rem, 8vw, 4.2rem); line-height: .95; letter-spacing: -.03em; }
     .lead, label, .hint { font-size: 1.05rem; line-height: 1.6; color: #c9c2b3; }
-    a.btn, button.btn { display: inline-block; margin-top: 1.25rem; padding: .9rem 1.3rem; background: #e2b15a; color: #1b140c; text-decoration: none; border: 0; border-radius: 999px; font-family: sans-serif; font-size: 1rem; cursor: pointer; }
+    a.btn, button.btn { display: inline-block; margin-top: 1.25rem; padding: .9rem 1.3rem; background: #e2b15a; color: #1b140c; text-decoration: none; border: 0; border-radius: 999px; font-family: sans-serif; font-size: 1rem; }
     a.ghost { color: #ece7db; margin-left: 1rem; }
     ol { line-height: 1.8; color: #c9c2b3; padding-left: 1.2rem; }
     form { display: grid; gap: .7rem; margin-top: 1.2rem; }
@@ -31,17 +31,18 @@
     </p>
     <ol>
       <li>Pay €120 (PayPal or card).</li>
-      <li>Send the brief on this page.</li>
+      <li>Send the brief on this page. Paste the payment id if you have it.</li>
       <li>Wake up to a URL on this site.</li>
     </ol>
 
     <h2 id="brief">I already paid — send the brief</h2>
-    <p class="hint">Name, phone, what you do. Built the same night. The live URL is emailed to you.</p>
+    <p class="hint">Name, phone, what you do, and the payment id from keychain. Built the same night.</p>
     <form action="https://formsubmit.co/bbeb51f85d178be226249e6fffd84b88" method="POST">
       <input type="hidden" name="_subject" value="NEW NIGHT DESK BRIEF" />
       <input type="hidden" name="_template" value="box" />
       <input type="hidden" name="_captcha" value="false" />
       <input type="hidden" name="_next" value="https://agency002com-ship-it.github.io/thanks.html" />
+      <input type="hidden" name="_autoresponse" value="The Athens night desk has the brief. If you already paid €120, the page is built tonight. The live URL will follow." />
       <input class="honey" type="text" name="_honey" tabindex="-1" autocomplete="off" />
       <label for="email">Contact email</label>
       <input id="email" name="Contact email" type="email" required autocomplete="email" />
@@ -51,6 +52,8 @@
       <input id="phone" name="Phone / WhatsApp" type="text" required maxlength="40" />
       <label for="city">City</label>
       <input id="city" name="City" type="text" maxlength="80" placeholder="Athens" />
+      <label for="pay">Payment id</label>
+      <input id="pay" name="Payment id" type="text" maxlength="80" placeholder="PayPal or keychain id" />
       <label for="what">What they do</label>
       <textarea id="what" name="What they do" required maxlength="450" placeholder="What you do, and what a caller should expect."></textarea>
       <button class="btn" type="submit">Send brief</button>
