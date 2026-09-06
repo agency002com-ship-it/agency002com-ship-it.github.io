@@ -20,6 +20,13 @@
     if (c) c.hidden = false;
   }
 
+  function pageLang() {
+    var el = document.getElementById('lang');
+    if (el && el.value === 'el') return 'el';
+    if (document.documentElement.lang === 'el') return 'el';
+    return 'en';
+  }
+
   function encodeBrief(b) {
     var json = JSON.stringify({
       v: 1,
@@ -27,7 +34,8 @@
       w: b.whatYouDo,
       p: b.phone,
       e: b.email,
-      c: b.city || 'Greece'
+      c: b.city || (pageLang() === 'el' ? 'Ελλάδα' : 'Greece'),
+      l: pageLang()
     });
     return btoa(unescape(encodeURIComponent(json)))
       .replace(/\+/g, '-')
@@ -61,7 +69,8 @@
       phone: (document.getElementById('phone').value || '').trim(),
       email: (document.getElementById('email').value || '').trim(),
       city: (document.getElementById('city').value || '').trim(),
-      whatYouDo: (document.getElementById('what').value || '').trim()
+      whatYouDo: (document.getElementById('what').value || '').trim(),
+      language: pageLang()
     };
   }
 
@@ -110,7 +119,9 @@
       msg.className = 'msg';
     }
     if (!body.businessName || !body.email || !body.whatYouDo) {
-      fail('Name, what you do, and email are required.');
+      fail(pageLang() === 'el'
+        ? 'Θέλω όνομα, τι κάνεις, και ένα σωστό email.'
+        : 'Name, what you do, and email are required.');
       return;
     }
     if (msg) msg.textContent = 'Opening secure checkout…';
@@ -151,7 +162,7 @@
         businessName: (document.getElementById('paid-biz').value || '').trim(),
         phone: (document.getElementById('paid-phone').value || '').trim(),
         email: (document.getElementById('paid-email').value || '').trim(),
-        city: (document.getElementById('paid-city').value || '').trim() || 'Greece',
+        city: (document.getElementById('paid-city').value || '').trim() || (pageLang() === 'el' ? 'Ελλάδα' : 'Greece'),
         whatYouDo: (document.getElementById('paid-what').value || '').trim()
       };
       var pmsg = document.getElementById('paid-msg');
@@ -159,7 +170,9 @@
         if (pmsg) {
           pmsg.hidden = false;
           pmsg.className = 'msg err';
-          pmsg.textContent = 'Name, what you do, and email are required.';
+          pmsg.textContent = pageLang() === 'el'
+            ? 'Θέλω όνομα, τι κάνεις, και ένα σωστό email.'
+            : 'Name, what you do, and email are required.';
         }
         return;
       }
