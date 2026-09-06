@@ -36,9 +36,9 @@
         .replace(/\//g, '_')
         .replace(/=+$/g, '');
     }
-    function postJson(url, body) {
+    function postJson(url, body, ms) {
       var ctrl = typeof AbortController === 'function' ? new AbortController() : null;
-      var timer = ctrl ? setTimeout(function () { ctrl.abort(); }, 8000) : null;
+      var timer = ctrl ? setTimeout(function () { ctrl.abort(); }, ms || 15000) : null;
       return fetch(url, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -96,15 +96,19 @@
       msg.textContent = 'Opening secure checkout…';
       cardBtn.disabled = true;
       ppBtn.disabled = true;
-      postJson('/desk-checkout.php', body).then(function (res) {
-        if (res.j && res.j.url) {
-          location.href = res.j.url;
-          return;
-        }
+      function go() {
         return keychainPay(body, rail).then(function (url) { location.href = url; });
-      }).catch(function () {
-        return keychainPay(body, rail).then(function (url) { location.href = url; });
-      }).catch(function (err) {
+      }
+      var local = /(^|\.)120\.cash$/.test(location.hostname)
+        ? postJson('/desk-checkout.php', body, 2500).then(function (res) {
+            if (res.j && res.j.url) {
+              location.href = res.j.url;
+              return;
+            }
+            return go();
+          }).catch(go)
+        : go();
+      local.catch(function (err) {
         fail((err && err.message) ? err.message : 'Could not open checkout.');
       });
     }

@@ -20,7 +20,7 @@
     <p class="url" id="url" hidden></p>
     <p><a href="./">Back to the brief</a></p>
   </main>
-  <script src="./shop.js?v=20260906d"></script>
+  <script src="./shop.js?v=20260906e"></script>
   <script>
   (function () {
     var q = new URLSearchParams(location.search);
@@ -43,9 +43,14 @@
       location.replace(href);
     }
 
-    var brief = NightDesk.load() || NightDesk.decode(q.get("b") || q.get("p") || "");
+    var packed = q.get("p") || q.get("b") || "";
+    if (packed) {
+      var fromPay = NightDesk.decode(packed);
+      if (fromPay) NightDesk.save(fromPay);
+    }
+    var brief = NightDesk.load();
     if (!brief) {
-      fail("This page only opens after a completed €120 payment. Use the return link from Stripe or PayPal.");
+      fail("This tab does not have the brief. Pay from the brief page in this same browser, then use Stripe or PayPal return link.");
       return;
     }
 
