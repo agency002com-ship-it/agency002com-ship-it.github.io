@@ -1,26 +1,6 @@
-// Intercept GET /pay.html only. Other keychain plans stay on origin.
+// Intercept GET /pay.html only. Other keychain plans stay on origin IP.
 // Does not replace Workers grok / grok-cf.
-export default {
-  async fetch(request) {
-    const url = new URL(request.url);
-    const pay =
-      request.method === "GET" &&
-      (url.pathname === "/pay.html" || url.pathname === "/pay");
-    if (!pay) return fetch(request);
-
-    const origin = await fetch(request);
-    const html = await origin.text();
-    const patched = patchCash120(html);
-    if (patched === html) return origin;
-
-    const headers = new Headers(origin.headers);
-    headers.set("content-type", "text/html; charset=utf-8");
-    headers.set("cache-control", "no-store");
-    headers.set("x-shift002", "keychain-orange");
-    return new Response(patched, { status: origin.status, headers });
-  },
-};
-
+const ORIGIN_IP = "192.250.229.162";
 const PAID = "https://agency002com-ship-it.github.io/paid.html";
 
 const OLD_LINK = "a('https://120.cash/#brief', '120.cash');";
@@ -62,7 +42,6 @@ const NEW_BOUNCE =
   "    }\n" +
   "\n" +
   "    /* ---------------- return from PayPal / Stripe ---------------- */";
-
 const OLD_DONE =
   "      showProductNextStep(); // product-aware next step as soon as thank-you shows\n" +
   "      var oid = q.get('token') || q.get('order_id') || sessionStorage.getItem('a2_pp_order') || '';";
@@ -99,3 +78,42 @@ function patchCash120(html) {
   }
   return out;
 }
+
+function originFetch(request) {
+  const url = new URL(request.url);
+  url.hostname = "keychain.gr";
+  const init = {
+    method: request.method,
+    headers: request.headers,
+    redirect: "manual",
+    cf: { resolveOverride: ORIGIN_IP },
+  };
+  if (request.method !== "GET" && request.method !== "HEAD") {
+    init.body = request.body;
+  }
+  return fetch(url.toString(), init);
+}
+
+export default {
+  async fetch(request) {
+    const url = new URL(request.url);
+    const pay =
+      request.method === "GET" &&
+      (url.pathname === "/pay.html" || url.pathname === "/pay");
+    if (!pay) return originFetch(request);
+
+    const origin = await originFetch(request);
+    const html = await origin.text();
+    const patched = patchCash120(html);
+    if (patched === html) {
+      const headers = new Headers(origin.headers);
+      return new Response(html, { status: origin.status, headers });
+    }
+
+    const headers = new Headers(origin.headers);
+    headers.set("content-type", "text/html; charset=utf-8");
+    headers.set("cache-control", "no-store");
+    headers.set("x-shift002", "keychain-orange");
+    return new Response(patched, { status: origin.status, headers });
+  },
+};

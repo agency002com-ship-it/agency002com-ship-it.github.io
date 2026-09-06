@@ -19,13 +19,62 @@
   <script type="application/ld+json">
   {
     "@context": "https://schema.org",
-    "@type": "Offer",
-    "name": "Live local page tonight",
-    "price": "120.00",
-    "priceCurrency": "EUR",
-    "availability": "https://schema.org/InStock",
-    "url": "https://tonight.120.cash/",
-    "description": "Name, what you do, tap-to-call. Built the same night after payment."
+    "@graph": [
+      {
+        "@type": "Service",
+        "name": "Live local page tonight",
+        "description": "Name, what you do, tap-to-call. Built the same night after payment.",
+        "url": "https://tonight.120.cash/",
+        "provider": {
+          "@type": "Organization",
+          "name": "120.cash",
+          "url": "https://tonight.120.cash/",
+          "sameAs": [
+            "https://120.cash/",
+            "https://agency002com-ship-it.github.io/",
+            "https://agency002.com/"
+          ]
+        },
+        "areaServed": ["GR", "EU"],
+        "offers": {
+          "@type": "Offer",
+          "name": "Live local page tonight",
+          "price": "120.00",
+          "priceCurrency": "EUR",
+          "availability": "https://schema.org/InStock",
+          "url": "https://tonight.120.cash/"
+        }
+      },
+      {
+        "@type": "FAQPage",
+        "mainEntity": [
+          {
+            "@type": "Question",
+            "name": "Is the page live the same night?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Yes. Pay €120. The live URL opens on the card or PayPal return. Not a working day."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "Do I need a phone number?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "No. Phone and WhatsApp are optional. Email is enough. If you add a number, the live page has a tap-to-call button."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "What do I get for €120?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "One page: your name, what you do, city, and how to reach you. Hosting for this package is included. No monthly fee for the page itself."
+            }
+          }
+        ]
+      }
+    ]
   }
   </script>
   <meta name="theme-color" content="#070b09" />
@@ -138,6 +187,16 @@
         </div>
         <p class="msg" id="paid-msg" role="status" aria-live="polite" hidden></p>
       </form>
+    </section>
+
+    <section class="card" id="faq">
+      <div class="num" data-el="Συχνές ερωτήσεις">Questions</div>
+      <h2 data-el="Ίδια νύχτα. Όχι εργάσιμη μέρα.">Same night. Not a working day.</h2>
+      <ul class="list">
+        <li data-el="Πληρώνεις €120. Η live διεύθυνση ανοίγει στην επιστροφή από κάρτα ή PayPal.">Pay €120. The live URL opens on the card or PayPal return.</li>
+        <li data-el="Το τηλέφωνο είναι προαιρετικό. Φτάνει το email.">Phone is optional. Email is enough.</li>
+        <li data-el="Μία σελίδα, μία τιμή, χωρίς μηνιαίο για την ίδια τη σελίδα.">One page, one price, no monthly fee for the page itself.</li>
+      </ul>
     </section>
 
     <section class="card" id="more">
