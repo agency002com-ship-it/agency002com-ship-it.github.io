@@ -4,60 +4,98 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Night desk — €120 live page</title>
-  <meta name="description" content="Pay €120. Leave a brief. Same night, a live page with your name, what you do, and a number people can tap." />
+  <meta name="description" content="Leave a brief, pay €120. The page with your name, what you do, and a number people can tap is live on the return. No working day." />
+  <!-- Shift 002: brief then pay on keychain cash_120. FormSubmit is banned on this door. -->
   <style>
     body { margin: 0; background: #0c0d0b; color: #ece7db; font-family: Georgia, serif; }
     main { max-width: 40rem; margin: 0 auto; padding: 3rem 1.25rem 5rem; }
     p.kicker { letter-spacing: .2em; text-transform: uppercase; font-size: .75rem; color: #c4a46a; }
     h1 { font-size: clamp(2.4rem, 8vw, 4.2rem); line-height: .95; letter-spacing: -.03em; }
-    .lead, label, .hint { font-size: 1.05rem; line-height: 1.6; color: #c9c2b3; }
-    a.btn, button.btn { display: inline-block; margin-top: 1.25rem; padding: .9rem 1.3rem; background: #e2b15a; color: #1b140c; text-decoration: none; border: 0; border-radius: 999px; font-family: sans-serif; font-size: 1rem; }
+    .lead, label, .hint, ol { font-size: 1.05rem; line-height: 1.6; color: #c9c2b3; }
+    a.btn, button.btn { display: inline-block; margin-top: .4rem; padding: .9rem 1.3rem; background: #e2b15a; color: #1b140c; text-decoration: none; border: 0; border-radius: 999px; font-family: sans-serif; font-size: 1rem; cursor: pointer; }
+    button.ghost { background: transparent; color: #ece7db; border: 1px solid #5a5648; }
     a.ghost { color: #ece7db; margin-left: 1rem; }
-    ol { line-height: 1.8; color: #c9c2b3; padding-left: 1.2rem; }
+    ol { padding-left: 1.2rem; }
     form { display: grid; gap: .7rem; margin-top: 1.2rem; }
     input, textarea { width: 100%; box-sizing: border-box; padding: .75rem .8rem; border-radius: .5rem; border: 1px solid #3a3a32; background: #14150f; color: #ece7db; font-size: 1rem; }
     textarea { min-height: 7rem; }
-    .honey { display: none; }
+    .msg { min-height: 1.4rem; color: #c4a46a; }
+    .msg.err { color: #e8a0a0; }
+    button:disabled { opacity: .6; cursor: wait; }
   </style>
 </head>
 <body>
   <main>
     <p class="kicker">Athens night desk</p>
     <h1>You sleep.<br />The page goes live.</h1>
-    <p class="lead">€120 once. Pay on the rail that already works. Leave the brief here. The page is public before morning.</p>
+    <p class="lead">€120 once. Name, what you do, a number people can tap. Pay, and the URL is live on the way back. Not a quote. Not a working day.</p>
     <p>
-      <a class="btn" href="https://keychain.gr/pay.html?plan=cash_120">Pay €120</a>
       <a class="ghost" href="./riza-kypseli.html">See a sample</a>
     </p>
     <ol>
-      <li>Pay €120 (PayPal or card).</li>
-      <li>Send the brief on this page. Paste the payment id if you have it.</li>
-      <li>Wake up to a URL on this site.</li>
+      <li>Leave the brief on this page.</li>
+      <li>Pay €120 — card or PayPal, same till as 120.cash.</li>
+      <li>The return opens your live page. Send that link.</li>
     </ol>
 
-    <h2 id="brief">I already paid — send the brief</h2>
-    <p class="hint">Name, phone, what you do, and the payment id from keychain. Built the same night.</p>
-    <form action="https://formsubmit.co/bbeb51f85d178be226249e6fffd84b88" method="POST">
-      <input type="hidden" name="_subject" value="NEW NIGHT DESK BRIEF" />
-      <input type="hidden" name="_template" value="box" />
-      <input type="hidden" name="_captcha" value="false" />
-      <input type="hidden" name="_next" value="https://agency002com-ship-it.github.io/thanks.html" />
-      <input type="hidden" name="_autoresponse" value="The Athens night desk has the brief. If you already paid €120, the page is built tonight. The live URL will follow." />
-      <input class="honey" type="text" name="_honey" tabindex="-1" autocomplete="off" />
-      <label for="email">Contact email</label>
-      <input id="email" name="Contact email" type="email" required autocomplete="email" />
+    <h2 id="book">Leave the brief, then pay</h2>
+    <p class="hint">The page is built from this after money, not after a meeting.</p>
+    <p class="msg err" id="cancel-msg" hidden>Cancelled — nothing was charged.</p>
+    <form id="brief-form">
       <label for="biz">Name / business</label>
-      <input id="biz" name="Name / business" type="text" required maxlength="80" />
+      <input id="biz" name="biz" type="text" required maxlength="80" autocomplete="off" placeholder="e.g. Maria's Bakery" />
       <label for="phone">Phone / WhatsApp</label>
-      <input id="phone" name="Phone / WhatsApp" type="text" required maxlength="40" />
+      <input id="phone" name="phone" type="tel" required maxlength="40" autocomplete="off" placeholder="+30 …" />
+      <label for="email">Your email</label>
+      <input id="email" name="email" type="email" required maxlength="120" autocomplete="email" placeholder="you@shop.gr" />
       <label for="city">City</label>
-      <input id="city" name="City" type="text" maxlength="80" placeholder="Athens" />
-      <label for="pay">Payment id</label>
-      <input id="pay" name="Payment id" type="text" maxlength="80" placeholder="PayPal or keychain id" />
-      <label for="what">What they do</label>
-      <textarea id="what" name="What they do" required maxlength="450" placeholder="What you do, and what a caller should expect."></textarea>
-      <button class="btn" type="submit">Send brief</button>
+      <input id="city" name="city" type="text" maxlength="80" placeholder="Kypseli, Athens" />
+      <label for="what">What you do, in one breath</label>
+      <textarea id="what" name="what" required maxlength="450" placeholder="Hems, zips, school trousers that grew overnight. Drop it after work. Ready in the morning."></textarea>
+      <button class="btn" type="submit" id="pay-card">Pay by card · €120</button>
+      <button class="btn ghost" type="button" id="pay-pp">PayPal · €120</button>
+      <p class="msg" id="brief-msg" role="status" aria-live="polite"></p>
     </form>
   </main>
+  <script src="./shop.js"></script>
+  <script>
+  (function () {
+    if (/checkout=cancelled/.test(location.search)) {
+      var c = document.getElementById("cancel-msg");
+      if (c) c.hidden = false;
+    }
+    var form = document.getElementById("brief-form");
+    var msg = document.getElementById("brief-msg");
+    var cardBtn = document.getElementById("pay-card");
+    var ppBtn = document.getElementById("pay-pp");
+    function pay(rail) {
+      var brief = NightDesk.briefFromForm({
+        biz: "biz", phone: "phone", email: "email", city: "city", what: "what"
+      });
+      if (!NightDesk.valid(brief)) {
+        msg.className = "msg err";
+        msg.textContent = "Name, what you do, phone, and a valid email are required.";
+        return;
+      }
+      msg.className = "msg";
+      msg.textContent = "Opening secure checkout…";
+      cardBtn.disabled = true;
+      ppBtn.disabled = true;
+      NightDesk.openCheckout(brief, rail).then(function (url) {
+        location.href = url;
+      }).catch(function (err) {
+        cardBtn.disabled = false;
+        ppBtn.disabled = false;
+        msg.className = "msg err";
+        msg.textContent = (err && err.message) ? err.message : "Could not open checkout.";
+      });
+    }
+    form.addEventListener("submit", function (e) {
+      e.preventDefault();
+      pay("stripe");
+    });
+    ppBtn.addEventListener("click", function () { pay("paypal"); });
+  })();
+  </script>
 </body>
 </html>
