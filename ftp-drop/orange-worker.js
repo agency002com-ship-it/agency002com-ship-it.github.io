@@ -21,11 +21,24 @@ function isNightHost(host) {
     host === "pay.120.cash" ||
     host === "go.120.cash" ||
     host === "get.120.cash" ||
+    host === "shop.120.cash" ||
+    host === "buy.120.cash" ||
+    host === "apopse.120.cash" ||
+    host === "night.120.cash" ||
+    host === "desk.120.cash" ||
     host === "now.agency002.com" ||
     host === "page.agency002.com" ||
     host === "120.agency002.com" ||
+    host === "cash.agency002.com" ||
+    host === "book.agency002.com" ||
+    host === "tonight.agency002.com" ||
+    host === "desk.agency002.com" ||
+    host === "live.agency002.com" ||
     host === "cash.keychain.gr" ||
+    host === "now.keychain.gr" ||
+    host === "book.keychain.gr" ||
     host === "now.sebarv.com" ||
+    host === "book.sebarv.com" ||
     host.endsWith(".workers.dev")
   );
 }
@@ -56,7 +69,7 @@ function rewritePageUrls(html, host) {
       '<meta property="og:url" content="' + page + '" />'
     )
     .replace(
-      /"url": "https:\/\/(?:tonight\.|now\.|book\.|live\.|pay\.|go\.|get\.|www\.)?120\.cash\/"/g,
+      /"url": "https:\/\/(?:tonight\.|now\.|book\.|live\.|pay\.|go\.|get\.|shop\.|desk\.|buy\.|apopse\.|night\.|www\.)?120\.cash\/"/g,
       '"url": "' + page + '"'
     );
 }
