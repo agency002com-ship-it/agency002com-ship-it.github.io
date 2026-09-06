@@ -3,36 +3,52 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Riza — sample</title>
-  <meta name="description" content="Sample night-desk page. Not a real shop." />
+  <title>Riza</title>
+  <meta name="description" content="Clothes that still have life in them. Hems, zips, wedding-dress saves, school trousers that grew overnight. You drop it after work. It is ready in the morning." />
   <style>
+    :root { color-scheme: light; }
     * { box-sizing: border-box; }
-    body { margin: 0; min-height: 100dvh; background: #f2ead8; color: #1b140c; font-family: Georgia, serif; }
-    main { margin: 0 auto; min-height: 100dvh; max-width: 36rem; padding: 2.5rem 1.5rem; display: flex; flex-direction: column; justify-content: space-between; }
-    .city { letter-spacing: .22em; text-transform: uppercase; font-size: .8rem; color: #7a5a32; }
-    .sample { font-size: .8rem; color: #7a5a32; }
-    h1 { font-size: clamp(3rem, 12vw, 5.5rem); line-height: .9; letter-spacing: -.04em; margin: 4rem 0 0; }
+    body {
+      margin: 0;
+      min-height: 100dvh;
+      background: #f2ead8;
+      color: #1b140c;
+      font-family: Georgia, "Times New Roman", serif;
+    }
+    main {
+      position: relative;
+      margin: 0 auto;
+      min-height: 100dvh;
+      max-width: 36rem;
+      padding: 2.5rem 1.5rem;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+    .city { letter-spacing: 0.22em; text-transform: uppercase; font-size: 0.8rem; color: #7a5a32; }
+    h1 { font-size: clamp(3rem, 12vw, 5.5rem); line-height: 0.9; letter-spacing: -0.04em; margin: 4rem 0 0; }
     .offer { margin-top: 2rem; max-width: 28rem; font-size: 1.15rem; line-height: 1.7; color: #3a2c1d; }
-    .actions { display: grid; gap: .75rem; }
-    a.call, a.wa { display: flex; height: 3.5rem; align-items: center; justify-content: center; border-radius: 999px; text-decoration: none; }
+    .actions { display: grid; gap: 0.75rem; }
+    a.call, a.wa {
+      display: flex; height: 3.5rem; align-items: center; justify-content: center;
+      border-radius: 999px; text-decoration: none; font-size: 1rem;
+    }
     a.call { background: #1b140c; color: #f2ead8; }
-    a.wa { border: 1px solid rgba(27,20,12,.2); color: #1b140c; }
-    .note { text-align: center; font-size: .75rem; color: #7a5a32; padding-top: 1rem; }
+    a.wa { border: 1px solid rgba(27,20,12,0.2); color: #1b140c; }
+    .note { text-align: center; font-size: 0.75rem; letter-spacing: 0.04em; color: #7a5a32; padding-top: 1rem; }
   </style>
 </head>
 <body>
   <main>
-    <div>
-      <p class="sample">Sample · not a real shop</p>
-      <p class="city">Kypseli, Athens</p>
-    </div>
+    <p class="city">Kypseli, Athens · in Kypseli</p>
     <div>
       <h1>Riza</h1>
       <p class="offer">Clothes that still have life in them. Hems, zips, wedding-dress saves, school trousers that grew overnight. You drop it after work. It is ready in the morning.</p>
     </div>
     <div class="actions">
-      <a class="call" href="https://120.cash/">This is a sample — get yours for €120</a>
-      <p class="note">Built in the Athens night. Ready when you woke up.</p>
+      <a class="call" href="tel:+302155551202">Call +30 21 5555 1202</a>
+      <a class="wa" href="https://wa.me/302155551202">WhatsApp</a>
+      <p class="note">Sample page. Not a real shop.</p>
     </div>
   </main>
 </body>

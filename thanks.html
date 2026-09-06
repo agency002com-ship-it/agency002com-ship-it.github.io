@@ -3,72 +3,18 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Confirming payment</title>
+  <title>Brief received</title>
   <style>
     body { margin: 0; background: #0c0d0b; color: #ece7db; font-family: Georgia, serif; }
     main { max-width: 36rem; margin: 0 auto; padding: 4rem 1.25rem; }
-    a.btn { display: inline-block; margin-top: 1.25rem; padding: .9rem 1.3rem; background: #e2b15a; color: #1b140c; text-decoration: none; border-radius: 999px; font-family: sans-serif; }
     a { color: #e2b15a; }
-    .url { word-break: break-all; color: #c9c2b3; }
-    .err { color: #e8a0a0; }
   </style>
 </head>
 <body>
   <main>
-    <h1 id="title">Checking payment…</h1>
-    <p id="msg">If you just paid €120, this tab opens the live page.</p>
-    <p class="url" id="url" hidden></p>
-    <p><a href="./">Back to the brief</a></p>
+    <h1>The night desk has it.</h1>
+    <p>If you paid €120 and included the payment id, the page is built tonight. Watch your email for the live URL.</p>
+    <p><a href="./">Back</a></p>
   </main>
-  <script src="./shop.js"></script>
-  <script>
-  (function () {
-    var q = new URLSearchParams(location.search);
-    var title = document.getElementById("title");
-    var msg = document.getElementById("msg");
-    var urlEl = document.getElementById("url");
-
-    function fail(text) {
-      title.textContent = "Payment not confirmed.";
-      msg.className = "err";
-      msg.textContent = text;
-    }
-
-    function live(brief) {
-      var href = NightDesk.liveUrl(brief);
-      title.textContent = "It is live.";
-      msg.textContent = brief.businessName + " has a page. Send this link. People tap the number.";
-      urlEl.hidden = false;
-      urlEl.innerHTML = '<a class="btn" href="' + href + '">Open the page</a><p class="url">' + href + "</p>";
-      location.replace(href);
-    }
-
-    var brief = NightDesk.load();
-    if (!brief) {
-      fail("This tab does not have the brief. Pay from the brief page in this same browser, then use Stripe or PayPal return link.");
-      return;
-    }
-
-    if (q.get("rail") === "paypal") {
-      var order = q.get("order_id") || q.get("token") || "";
-      try { order = order || sessionStorage.getItem("shift002-paypal") || ""; } catch (e) {}
-      NightDesk.paypalCaptured(order).then(function (ok) {
-        if (!ok) {
-          fail("PayPal has not captured this yet. Nothing was published. Finish PayPal approval, then use the return link again.");
-          return;
-        }
-        live(brief);
-      });
-      return;
-    }
-
-    var sid = q.get("session_id") || "";
-    if (!/^cs_(live|test)_/.test(sid)) {
-      fail("This page only opens after a completed €120 card payment. Use the return link from Stripe.");
-      return;
-    }
-    live(brief);
-  })();
-  </script>
 </body>
 </html>
