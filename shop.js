@@ -223,6 +223,31 @@
     }
   }
 
+  // After a confirmed €120, tell 120.cash so Gmail gets NEW 120.cash BRIEF.
+  // text/plain JSON is a simple request (no CORS preflight). PHP still parses php://input.
+  function notifyDesk(brief, paymentId) {
+    if (!valid(brief)) return;
+    if (/@(example\.com|example\.gr|agency002\.invalid)$/i.test(brief.email || "")) return;
+    if (/\b(probe|not a customer)\b/i.test(brief.businessName + " " + brief.whatYouDo)) return;
+    var pay = trim(paymentId, 80);
+    var message = trim(brief.whatYouDo, 3500);
+    if (brief.city) message += "\nCity: " + trim(brief.city, 80);
+    if (pay) message += "\nPayment id: " + pay;
+    var body = JSON.stringify({
+      email: brief.email,
+      biz: brief.businessName,
+      phone: brief.phone,
+      message: message,
+    });
+    try {
+      fetch("https://120.cash/brief-submit.php", {
+        method: "POST",
+        headers: { "Content-Type": "text/plain" },
+        body: body,
+      }).catch(function () {});
+    } catch (e) {}
+  }
+
   root.NightDesk = {
     briefFromForm: briefFromForm,
     valid: valid,
@@ -235,6 +260,7 @@
     openCheckout: openCheckout,
     paypalCaptured: paypalCaptured,
     stripePaid: stripePaid,
+    notifyDesk: notifyDesk,
     digits: digits,
   };
 })(window);

@@ -20,7 +20,7 @@
     <p class="url" id="url" hidden></p>
     <p><a href="./">Back to the brief</a></p>
   </main>
-  <script src="./shop.js?v=20260906h"></script>
+  <script src="./shop.js?v=20260906i"></script>
   <script>
   (function () {
     var q = new URLSearchParams(location.search);
@@ -34,7 +34,8 @@
       msg.textContent = text;
     }
 
-    function live(brief) {
+    function live(brief, paymentId) {
+      if (paymentId) NightDesk.notifyDesk(brief, paymentId);
       var href = NightDesk.liveUrl(brief);
       title.textContent = "It is live.";
       msg.textContent = brief.businessName + " has a page. Send this link. People tap the number.";
@@ -62,7 +63,7 @@
           fail("PayPal has not captured this yet. Nothing was published. Finish PayPal approval, then use the return link again.");
           return;
         }
-        live(brief);
+        live(brief, order);
       });
       return;
     }
@@ -74,7 +75,7 @@
     }
     NightDesk.stripePaid(sid).then(function (res) {
       if (res.paid || !res.checked) {
-        live(brief);
+        live(brief, sid);
         return;
       }
       fail("Stripe has not marked this €120 as paid. Nothing was published. Finish card checkout, then use the return link.");

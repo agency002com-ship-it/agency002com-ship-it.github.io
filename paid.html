@@ -44,7 +44,7 @@
     </form>
     <p class="hint"><a href="./">Need to pay first?</a></p>
   </main>
-  <script src="./shop.js?v=20260906h"></script>
+  <script src="./shop.js?v=20260906i"></script>
   <script>
   (function () {
     var q = new URLSearchParams(location.search);
@@ -113,6 +113,7 @@
         return;
       }
       NightDesk.save(brief);
+      NightDesk.notifyDesk(brief, sid || order);
       location.replace(NightDesk.liveUrl(brief));
     });
   })();
