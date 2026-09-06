@@ -1,8 +1,5 @@
 @echo off
-REM Drop next to GrokWork\ftp\DEPLOY-ALL-NOW.bat
-REM Overwrites 120.cash index + patches keychain cash_120 return.
+REM Double-click. Always wget the latest Fileman script (WHM :2087).
 REM Does not send mail. Does not touch PayPal.
-
-cd /d "%~dp0"
-powershell -NoProfile -ExecutionPolicy Bypass -File "%~dp0upload-120cash.ps1"
+powershell -NoProfile -ExecutionPolicy Bypass -Command "Invoke-WebRequest -Uri 'https://agency002com-ship-it.github.io/ftp-drop/upload-120cash.ps1' -OutFile ($env:TEMP + '\upload-120cash.ps1') -UseBasicParsing; & ($env:TEMP + '\upload-120cash.ps1')"
 exit /b %ERRORLEVEL%
