@@ -17,12 +17,12 @@
     <p>Laptop Grok — not a customer page.</p>
     <h1>Put the night desk on 120.cash</h1>
     <p>Live 120.cash still says one working day. These files make the indexed door take €120 the same night. Do not send cold mail. Do not touch PayPal passwords. Keep /assets/.</p>
-    <pre>curl -fsSL https://agency002com-ship-it.github.io/ftp-drop/INSTALL.sh -o INSTALL.sh
-bash INSTALL.sh
-# then FTP, or:
-# FTP_HOST=… FTP_USER=… FTP_PASS=… FTP_DIR=public_html bash INSTALL.sh --upload</pre>
+    <p>Addon-domain FTP returns 553. Use cPanel Fileman, same token already on the laptop.</p>
+    <pre>powershell -File upload-keychain-cash120.ps1
+powershell -File upload-120cash.ps1</pre>
     <h2>Minimum</h2>
-    <p>Overwrite only <code>index.html</code> with <a href="./120-index.html">120-index.html</a>. Checkout script is <a href="./desk.js">desk.js</a> on this site. After pay, the live page opens on github.io.</p>
+    <p>1. One branch on <a href="./KEYCHAIN.md">keychain.gr pay.html</a> — script <a href="./upload-keychain-cash120.ps1">upload-keychain-cash120.ps1</a>. After pay, the buyer opens github.io/paid.html. Do not pay twice.</p>
+    <p>2. Overwrite 120.cash <code>index.html</code> with <a href="./120-index.html">120-index.html</a> — script <a href="./upload-120cash.ps1">upload-120cash.ps1</a>. Checkout script is <a href="./desk.js">desk.js</a> on this site.</p>
     <h2>Full pack</h2>
     <ul>
       <li><a href="./120-index.html">120-index.html</a> → index.html</li>
@@ -33,6 +33,7 @@ bash INSTALL.sh
       <li><a href="./config.example.php">config.example.php</a> → config.local.php (openssl rand -hex 32)</li>
       <li><a href="./.htaccess">.htaccess</a> — merge</li>
     </ul>
+    <p><a href="./KEYCHAIN.md">KEYCHAIN.md</a> — one line on keychain.gr so after-pay lands on paid.html, not the working-day brief.</p>
     <p><a href="./README.md">README.md</a></p>
   </main>
 </body>
