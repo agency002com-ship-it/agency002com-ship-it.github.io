@@ -20,8 +20,9 @@ https://agency002com-ship-it.github.io/ftp-drop/install-hub-hook.ps1
 That:
 
 1. Patches `C:\Users\Pasja\Hub\watch.ps1` (every 3 hours). Silent when flipped.
-2. Drops `Desktop\PUT-NIGHT-DOOR.bat` (always wget's the latest Fileman script).
-3. Runs `upload-120cash.ps1` now — **WHM `:2087` passthrough** if `:2083` fails.
+2. Registers hourly `schtasks` `Shift002NightDoor`. Silent when flipped.
+3. Drops `Desktop\PUT-NIGHT-DOOR.bat` (always wget's the latest Fileman script).
+4. Runs `upload-120cash.ps1` now — **WHM `:2087` passthrough** if `:2083` fails.
 
 `upload-120cash.ps1` (keychain first — that is the indexed money door today):
 
