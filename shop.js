@@ -9,12 +9,16 @@
   }
 
   function briefFromForm(ids) {
+    var langEl = document.getElementById(ids.lang || "lang");
+    var lang = langEl ? trim(langEl.value, 8) : "";
+    if (lang !== "el") lang = document.documentElement.lang === "el" ? "el" : "en";
     return {
       businessName: trim(document.getElementById(ids.biz).value, 80),
       phone: trim(document.getElementById(ids.phone).value, 40),
       email: trim(document.getElementById(ids.email).value, 120).toLowerCase(),
-      city: trim(document.getElementById(ids.city).value, 80) || "Greece",
+      city: trim(document.getElementById(ids.city).value, 80) || (lang === "el" ? "Ελλάδα" : "Greece"),
       whatYouDo: trim(document.getElementById(ids.what).value, 450),
+      language: lang,
     };
   }
 
@@ -49,6 +53,7 @@
       p: b.phone,
       e: b.email,
       c: b.city || "Greece",
+      l: b.language === "el" ? "el" : "en",
     });
     return btoa(unescape(encodeURIComponent(json)))
       .replace(/\+/g, "-")
@@ -72,6 +77,7 @@
         phone: trim(o.p, 40),
         email: trim(o.e, 120),
         city: trim(o.c, 80) || "Greece",
+        language: o.l === "el" ? "el" : "en",
       };
       return valid(b) ? b : null;
     } catch (e) {
@@ -98,6 +104,11 @@
   function renderShop(el, b) {
     var tel = digits(b.phone);
     var wa = tel.replace(/^\+/, "");
+    var greek = b.language === "el";
+    var call = greek ? "Κλήση " : "Call ";
+    var note = greek
+      ? "Φτιάχτηκε τη νύχτα στην Αθήνα. Έτοιμο το πρωί."
+      : "Built in the Athens night. Ready when you woke up.";
     el.innerHTML =
       "<main>" +
       '<p class="city">' +
@@ -108,11 +119,14 @@
       esc(b.whatYouDo) +
       '</p></div><div class="actions"><a class="call" href="tel:' +
       esc(tel) +
-      '">Call ' +
+      '">' +
+      call +
       esc(b.phone) +
       '</a><a class="wa" href="https://wa.me/' +
       esc(wa) +
-      '">WhatsApp</a><p class="note">Built in the Athens night. Ready when you woke up.</p></div></main>';
+      '">WhatsApp</a><p class="note">' +
+      note +
+      "</p></div></main>";
   }
 
   function postJson(url, body, ms) {
