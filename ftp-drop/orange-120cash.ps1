@@ -1,5 +1,5 @@
 # Orange-cloud 120.cash and keychain.gr so existing grok-cf routes receive traffic.
-# grok-cf already has 120.cash/*, www.120.cash/*, keychain.gr/pay.html*.
+# grok-cf already intercepts 120.cash / www / tonight / now / live / book and keychain pay.html.
 # DNS proxy is the unlock. New workers are a fallback only.
 # Uses GrokWork\ftp\config.cloudflare.local.ps1 (laptop only — not in git).
 # Does not replace Workers grok / grok-cf. Does not invent tokens. Does not send mail.
@@ -8,7 +8,6 @@
 
 $ErrorActionPreference = 'Stop'
 $Pages = 'https://agency002com-ship-it.github.io/ftp-drop'
-$IndexUrl = "$Pages/120-index.html"
 
 $ftpDir = Join-Path $env:USERPROFILE 'GrokWork\ftp'
 foreach ($name in @(
@@ -143,10 +142,10 @@ function Test-PayNight {
   } catch { return $false }
 }
 
-# 1. Orange DNS first. grok-cf routes are already on these hostnames.
+# 1. Orange DNS first. grok-cf already intercepts these hostnames when traffic hits Cloudflare.
 $cashZone = Get-Zone '120.cash'
 if ($cashZone) {
-  Write-Host 'Orange-cloud 120.cash DNS (grok-cf 120.cash/* already attached).'
+  Write-Host 'Orange-cloud 120.cash DNS (do not replace grok-cf).'
   Proxy-DnsName $cashZone.id '120.cash'
   Proxy-DnsName $cashZone.id 'www.120.cash'
 } else {
@@ -155,7 +154,7 @@ if ($cashZone) {
 
 $keyZone = Get-Zone 'keychain.gr'
 if ($keyZone) {
-  Write-Host 'Orange-cloud keychain.gr DNS (grok-cf pay.html* already attached).'
+  Write-Host 'Orange-cloud keychain.gr DNS (do not replace grok-cf).'
   Proxy-DnsName $keyZone.id 'keychain.gr'
   Proxy-DnsName $keyZone.id 'www.keychain.gr'
 } else {
@@ -169,31 +168,11 @@ if ($cashOk) { Write-Host 'https://120.cash/ is brief then pay (grok-cf / orange
 if ($payOk) { Write-Host 'https://keychain.gr/pay.html cash_120 returns to paid.html.' }
 
 # 2. Fallback workers only if DNS orange did not flip the live HTML.
+# orange-worker.js talks to origin IP so /assets/ does not loop.
 if (-not $cashOk -and $cashZone) {
-  Write-Host '120.cash still wait-a-day after DNS. Fallback Worker shift002-120cash.'
-  $worker = @"
-export default {
-  async fetch(request) {
-    const url = new URL(request.url);
-    if (request.method === 'GET' && (url.pathname === '/' || url.pathname === '/index.html')) {
-      const src = await fetch('$IndexUrl', { cf: { cacheTtl: 30 } });
-      const html = await src.text();
-      return new Response(html, {
-        headers: {
-          'content-type': 'text/html; charset=utf-8',
-          'cache-control': 'no-store',
-          'x-shift002': 'orange'
-        }
-      });
-    }
-    return fetch(request);
-  }
-}
-"@
-  $tmpJs = Join-Path $env:TEMP 'shift002-120cash-worker.js'
-  $utf8 = New-Object System.Text.UTF8Encoding $false
-  [System.IO.File]::WriteAllText($tmpJs, $worker, $utf8)
-  if (Publish-Worker $cashZone.account.id 'shift002-120cash' $tmpJs) {
+  Write-Host '120.cash still wait-a-day after DNS. Fallback Worker shift002-120cash (origin IP, not grok-cf).'
+  $js = Get-DropFile 'orange-worker.js'
+  if (Publish-Worker $cashZone.account.id 'shift002-120cash' $js) {
     Ensure-Routes $cashZone.id 'shift002-120cash' @('120.cash/*', 'www.120.cash/*')
   }
   Proxy-DnsName $cashZone.id '120.cash'
@@ -215,4 +194,4 @@ if (Test-CashNight) { Write-Host 'https://120.cash/ is brief then pay via Cloudf
 else { Write-Host 'WARN: 120.cash HTML not flipped yet (DNS/cache or token lacks Zone DNS Edit).' }
 if (Test-PayNight) { Write-Host 'https://keychain.gr/pay.html cash_120 now returns to paid.html.' }
 else { Write-Host 'WARN: keychain cash_120 bounce not flipped yet (DNS/cache or zone token).' }
-Write-Host 'Done. Origin /assets/, /api/, and other keychain plans still pass through.
+Write-Host 'Done. Origin /assets/, /api/, and other keychain plans still pass through.'
