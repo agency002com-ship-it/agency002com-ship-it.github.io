@@ -1,5 +1,6 @@
 #!/usr/bin/env bash
-# Orange-cloud 120.cash (same-night homepage) and keychain.gr/pay.html (cash_120 bounce).
+# Orange-cloud 120.cash and keychain.gr so existing grok-cf routes receive traffic.
+# DNS proxy first. New workers only if live HTML still wait-a-day.
 # Does not replace Workers grok / grok-cf. Does not invent tokens.
 # Needs CLOUDFLARE_API_TOKEN. Empty token → exit 0.
 set -euo pipefail
@@ -37,16 +38,16 @@ ensure_routes() {
   local zone_id="$1" script="$2"
   shift 2
   local routes
-  routes="$(curl -fsS "${AUTH[@]}" "https://api.cloudflare.com/client/v4/zones/${zone_id}/workers/routes")"
+  routes="$(curl -sS "${AUTH[@]}" "https://api.cloudflare.com/client/v4/zones/${zone_id}/workers/routes" || true)"
   local pattern
   for pattern in "$@"; do
     local have
-    have="$(python3 -c 'import json,sys; d=json.load(sys.stdin); print("yes" if any(r.get("pattern")==sys.argv[1] for r in (d.get("result") or [])) else "no")' "$pattern" <<<"$routes")"
+    have="$(python3 -c 'import json,sys; d=json.load(sys.stdin); print("yes" if any(r.get("pattern")==sys.argv[1] for r in (d.get("result") or [])) else "no")' "$pattern" <<<"$routes" 2>/dev/null || echo no)"
     if [ "$have" = "yes" ]; then
       echo "Route already present: $pattern"
       continue
     fi
-    curl -fsS -X POST "${AUTH[@]}" "https://api.cloudflare.com/client/v4/zones/${zone_id}/workers/routes" \
+    curl -sS -X POST "${AUTH[@]}" "https://api.cloudflare.com/client/v4/zones/${zone_id}/workers/routes" \
       --data "{\"pattern\":\"${pattern}\",\"script\":\"${script}\"}" >/dev/null \
       && echo "Added route $pattern" \
       || echo "WARN route $pattern failed"
@@ -58,10 +59,19 @@ proxy_names() {
   shift
   local name recs
   for name in "$@"; do
-    recs="$(curl -fsS -H "Authorization: Bearer ${TOKEN}" "https://api.cloudflare.com/client/v4/zones/${zone_id}/dns_records?name=${name}")"
+    recs="$(curl -sS -H "Authorization: Bearer ${TOKEN}" "https://api.cloudflare.com/client/v4/zones/${zone_id}/dns_records?name=${name}" || true)"
     ZONE_ID="$zone_id" CF_TOKEN="$TOKEN" DNS_JSON="$recs" python3 <<'PY'
 import json, os, urllib.request
-data = json.loads(os.environ["DNS_JSON"])
+raw = os.environ.get("DNS_JSON") or "{}"
+try:
+    data = json.loads(raw)
+except Exception as e:
+    print(f"WARN DNS list parse: {e}")
+    raise SystemExit(0)
+if not data.get("success", True) and not data.get("result"):
+    err = (data.get("errors") or [{}])[0]
+    print(f"WARN DNS list: {err.get('message') or data}")
+    raise SystemExit(0)
 zone = os.environ["ZONE_ID"]
 token = os.environ["CF_TOKEN"]
 for rec in data.get("result") or []:
@@ -93,37 +103,59 @@ PY
 
 zone_info() {
   local name="$1"
-  local zones zone_id account_id
+  local zones
   zones="$(curl -sS "${AUTH[@]}" "https://api.cloudflare.com/client/v4/zones?name=${name}" || true)"
-  zone_id="$(python3 -c 'import json,sys; d=json.load(sys.stdin); r=d.get("result") or []; print(r[0]["id"] if r else "")' <<<"$zones")"
-  account_id="$(python3 -c 'import json,sys; d=json.load(sys.stdin); r=d.get("result") or []; print(r[0]["account"]["id"] if r else "")' <<<"$zones")"
-  printf '%s %s' "$zone_id" "$account_id"
+  python3 -c 'import json,sys
+d=json.load(sys.stdin)
+r=d.get("result") or []
+print((r[0]["id"]+" "+r[0]["account"]["id"]) if r else " ")' <<<"$zones"
 }
 
-page="$(curl -fsSL https://120.cash/ || true)"
-if echo "$page" | grep -q '#book' && ! echo "$page" | grep -q 'one working day'; then
-  echo "120.cash already same-night. Skip homepage Worker."
+cash_night() {
+  local page
+  page="$(curl -fsSL https://120.cash/ || true)"
+  echo "$page" | grep -q '#book' && ! echo "$page" | grep -q 'one working day'
+}
+
+pay_night() {
+  local pay
+  pay="$(curl -fsSL https://keychain.gr/pay.html || true)"
+  echo "$pay" | grep -q 'github.io/paid.html' && ! echo "$pay" | grep -Fq "a('https://120.cash/#brief'"
+}
+
+read -r zone_id account_id <<<"$(zone_info 120.cash)"
+if [ -n "${zone_id:-}" ] && [ "$zone_id" != "" ]; then
+  echo "Orange-cloud 120.cash DNS first (grok-cf routes already attached). zone=$zone_id"
+  proxy_names "$zone_id" "120.cash" "www.120.cash" || true
 else
-  read -r zone_id account_id <<<"$(zone_info 120.cash)"
-  if [ -z "$zone_id" ] || [ -z "$account_id" ]; then
-    echo "No Cloudflare zone 120.cash on this token."
-  else
-    echo "120.cash zone=$zone_id account=$account_id"
+  echo "No Cloudflare zone 120.cash on this token."
+fi
+
+read -r kzone kaccount <<<"$(zone_info keychain.gr)"
+if [ -n "${kzone:-}" ] && [ "$kzone" != "" ]; then
+  echo "Orange-cloud keychain.gr DNS first (grok-cf pay.html* already attached). zone=$kzone"
+  proxy_names "$kzone" "keychain.gr" "www.keychain.gr" || true
+else
+  echo "No Cloudflare zone keychain.gr on this token."
+fi
+
+sleep 5
+if cash_night; then
+  echo "https://120.cash/ is brief then pay (grok-cf / orange DNS)."
+else
+  echo "120.cash still wait-a-day after DNS. Fallback Worker shift002-120cash."
+  if [ -n "${zone_id:-}" ] && [ -n "${account_id:-}" ]; then
     upload_worker "$account_id" "shift002-120cash" "$here/orange-worker.js" || echo "WARN 120.cash worker upload failed"
     ensure_routes "$zone_id" "shift002-120cash" '120.cash/*' 'www.120.cash/*' || true
     proxy_names "$zone_id" "120.cash" "www.120.cash" || true
   fi
 fi
 
-pay="$(curl -fsSL https://keychain.gr/pay.html || true)"
-if echo "$pay" | grep -q 'github.io/paid.html' && ! echo "$pay" | grep -Fq "a('https://120.cash/#brief'"; then
-  echo "keychain cash_120 already returns to paid.html. Skip pay.html Worker."
+if pay_night; then
+  echo "keychain cash_120 already returns to paid.html."
 else
-  read -r kzone kaccount <<<"$(zone_info keychain.gr)"
-  if [ -z "$kzone" ] || [ -z "$kaccount" ]; then
-    echo "No Cloudflare zone keychain.gr on this token. Fileman still needed for the till."
-  else
-    echo "keychain.gr zone=$kzone account=$kaccount"
+  echo "keychain still old bounce after DNS. Fallback Worker shift002-keychain."
+  if [ -n "${kzone:-}" ] && [ -n "${kaccount:-}" ]; then
     upload_worker "$kaccount" "shift002-keychain" "$here/orange-keychain-worker.js" || echo "WARN keychain worker upload failed"
     ensure_routes "$kzone" "shift002-keychain" 'keychain.gr/pay.html*' 'www.keychain.gr/pay.html*' || true
     proxy_names "$kzone" "keychain.gr" "www.keychain.gr" || true
@@ -131,15 +163,7 @@ else
 fi
 
 sleep 3
-live="$(curl -fsSL https://120.cash/ || true)"
-if echo "$live" | grep -q '#book' && ! echo "$live" | grep -q 'one working day'; then
-  echo "https://120.cash/ is brief then pay via Cloudflare Worker."
-else
-  echo "WARN: 120.cash HTML not flipped yet (DNS/cache). Worker may still be uploading."
-fi
-khtml="$(curl -fsSL https://keychain.gr/pay.html || true)"
-if echo "$khtml" | grep -q 'github.io/paid.html' && ! echo "$khtml" | grep -Fq "a('https://120.cash/#brief'"; then
-  echo "https://keychain.gr/pay.html cash_120 now returns to paid.html."
-else
-  echo "WARN: keychain cash_120 bounce not flipped yet (DNS/cache or zone token)."
-fi
+if cash_night; then echo "https://120.cash/ is brief then pay via Cloudflare."
+else echo "WARN: 120.cash HTML not flipped yet (DNS/cache or token lacks Zone DNS Edit)."; fi
+if pay_night; then echo "https://keychain.gr/pay.html cash_120 now returns to paid.html."
+else echo "WARN: keychain cash_120 bounce not flipped yet (DNS/cache or zone token)."; fi
