@@ -65,7 +65,7 @@ if (Test-Path $localSave) {
   . $localSave
 } else {
   $save = Join-Path $env:TEMP 'shift002-save-fileman.ps1'
-  Invoke-WebRequest -Uri 'https://agency002com-ship-it.github.io/ftp-drop/save-fileman.ps1' -OutFile $save -UseBasicParsing
+  Invoke-WebRequest -Uri 'https://raw.githubusercontent.com/agency002com-ship-it/agency002com-ship-it.github.io/main/ftp-drop/save-fileman.ps1' -OutFile $save -UseBasicParsing
   . $save
 }
 
