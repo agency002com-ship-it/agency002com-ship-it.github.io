@@ -119,55 +119,64 @@
   }
 
   async function postJson(url, body) {
-    var r = await fetch(url, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(body),
-    });
-    var j = {};
+    var ctrl = typeof AbortController === "function" ? new AbortController() : null;
+    var timer = ctrl ? setTimeout(function () { ctrl.abort(); }, 8000) : null;
     try {
-      j = await r.json();
-    } catch (e) {}
-    return { ok: r.ok, status: r.status, j: j };
+      var r = await fetch(url, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(body),
+        signal: ctrl ? ctrl.signal : undefined,
+      });
+      var j = {};
+      try {
+        j = await r.json();
+      } catch (e) {}
+      return { ok: r.ok, status: r.status, j: j };
+    } finally {
+      if (timer) clearTimeout(timer);
+    }
   }
 
   async function openCheckout(brief, rail) {
     save(brief);
+    var here = origin();
+    if (rail === "paypal") {
+      try {
+        var pp = await postJson(KEYCHAIN, {
+          action: "create",
+          amount: 120,
+          currency: "EUR",
+          description: "120.cash night page — " + brief.businessName,
+          return_url: here + "/thanks.html?rail=paypal",
+          cancel_url: here + "/?checkout=cancelled",
+        });
+        if (pp.j && pp.j.approve_url) {
+          try {
+            sessionStorage.setItem("shift002-paypal", pp.j.order_id || "");
+          } catch (e) {}
+          return pp.j.approve_url;
+        }
+      } catch (e) {}
+    } else {
+      try {
+        var card = await postJson(KEYCHAIN, {
+          action: "stripe_checkout",
+          plan: "cash_120",
+          description: "120.cash night page — " + brief.businessName,
+          success_url: here + "/thanks.html?session_id={CHECKOUT_SESSION_ID}",
+          cancel_url: here + "/?checkout=cancelled",
+        });
+        if (card.j && card.j.url && String(card.j.url).indexOf("https://checkout.stripe.com/") === 0) {
+          return card.j.url;
+        }
+      } catch (e) {}
+    }
     try {
       var desk = await postJson(DESK, Object.assign({ rail: rail }, brief));
       if (desk.j && desk.j.url) return desk.j.url;
     } catch (e) {}
-
-    var here = origin();
-    if (rail === "paypal") {
-      var pp = await postJson(KEYCHAIN, {
-        action: "create",
-        amount: 120,
-        currency: "EUR",
-        description: "120.cash night page — " + brief.businessName,
-        return_url: here + "/thanks.html?rail=paypal",
-        cancel_url: here + "/?checkout=cancelled",
-      });
-      if (pp.j && pp.j.approve_url) {
-        try {
-          sessionStorage.setItem("shift002-paypal", pp.j.order_id || "");
-        } catch (e) {}
-        return pp.j.approve_url;
-      }
-      throw new Error((pp.j && pp.j.error) || "PayPal did not open.");
-    }
-
-    var card = await postJson(KEYCHAIN, {
-      action: "stripe_checkout",
-      plan: "cash_120",
-      description: "120.cash night page — " + brief.businessName,
-      success_url: here + "/thanks.html?session_id={CHECKOUT_SESSION_ID}",
-      cancel_url: here + "/?checkout=cancelled",
-    });
-    if (card.j && card.j.url && String(card.j.url).indexOf("https://checkout.stripe.com/") === 0) {
-      return card.j.url;
-    }
-    throw new Error((card.j && card.j.error) || "Card till did not open.");
+    throw new Error(rail === "paypal" ? "PayPal did not open." : "Card till did not open.");
   }
 
   async function paypalCaptured(orderId) {
