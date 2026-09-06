@@ -1,0 +1,37 @@
+# Put 120.cash homepage via cPanel Fileman (FTP 553 on addon domains).
+# Secrets (optional): CPANEL_HOST, CPANEL_USER, CPANEL_TOKEN, CPANEL_DIR
+# If secrets are empty this job exits 0. Laptop Grok should run upload-120cash.ps1 instead.
+name: put-120cash
+on:
+  workflow_dispatch:
+jobs:
+  put:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Fileman save index.html
+        env:
+          CPANEL_HOST: ${{ secrets.CPANEL_HOST }}
+          CPANEL_USER: ${{ secrets.CPANEL_USER }}
+          CPANEL_TOKEN: ${{ secrets.CPANEL_TOKEN }}
+          CPANEL_DIR: ${{ secrets.CPANEL_DIR }}
+        run: |
+          set -euo pipefail
+          if [ -z "${CPANEL_TOKEN:-}" ] || [ -z "${CPANEL_HOST:-}" ]; then
+            echo "No CPANEL_TOKEN/HOST secret. Skip. Laptop: powershell -File ftp-drop/upload-120cash.ps1"
+            exit 0
+          fi
+          USER="${CPANEL_USER:-agency00}"
+          DIR="${CPANEL_DIR:-/home/${USER}/120.cash}"
+          HTML="$(cat ftp-drop/120-index.html)"
+          AUTH="$(printf '%s:%s' "$USER" "$CPANEL_TOKEN" | base64 | tr -d '\n')"
+          curl -fsS -k -X POST "https://${CPANEL_HOST}:2083/execute/Fileman/save_file_content" \
+            -H "Authorization: Basic ${AUTH}" \
+            --data-urlencode "dir=${DIR}" \
+            --data-urlencode "file=index.html" \
+            --data-urlencode "content=${HTML}" \
+            --data-urlencode "charset=utf-8"
+          page="$(curl -fsSL https://120.cash/)"
+          echo "$page" | grep -q 'one working day' && { echo "still wait-a-day"; exit 1; }
+          echo "$page" | grep -q '#book' || { echo "no #book"; exit 1; }
+          echo "120.cash is brief then pay"

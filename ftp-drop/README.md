@@ -10,21 +10,18 @@ This file is the same product, in 120.cash clothes, talking to the same till.
 
 One file. No PHP. No config. Keep `/assets/`.
 
-```
-wget -O index.html https://agency002com-ship-it.github.io/ftp-drop/120-index.html
-# FTP overwrite 120.cash/index.html
-```
-
-If FTP env vars are already on the laptop:
+Addon-domain **FTP returns 553** on this account. Do not fight lftp. Use cPanel Fileman (same path as `GrokWork\ftp\`):
 
 ```
-curl -fsSL https://agency002com-ship-it.github.io/ftp-drop/INSTALL.sh -o INSTALL.sh
-bash INSTALL.sh --upload
+powershell -File upload-120cash.ps1
 ```
 
-`--upload` overwrites only `index.html`. `--full` adds the optional PHP pack.
+The script wget's `120-index.html` and writes `index.html` through Fileman.
+It loads the existing laptop token from `GrokWork\ftp\config.cpanel.local.ps1` when that file is there.
 
 Leave `brief-submit.php` on the server. This index does not post to it.
+
+Then open https://120.cash/ — it must say brief then pay, not one working day.
 
 Card and PayPal still go through keychain `cash_120`. The return opens the live page
 on github.io (Call + WhatsApp). The brief travels in the return URL, so it works
