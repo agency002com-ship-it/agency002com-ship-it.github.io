@@ -43,7 +43,7 @@
     </form>
     <p class="hint"><a href="./">Need to pay first?</a></p>
   </main>
-  <script src="./shop.js?v=20260906e"></script>
+  <script src="./shop.js?v=20260906f"></script>
   <script>
   (function () {
     var q = new URLSearchParams(location.search);
@@ -76,7 +76,22 @@
         openForm();
       });
     } else if (/^cs_(live|test)_/.test(sid)) {
-      openForm();
+      NightDesk.stripePaid(sid).then(function (res) {
+        if (res.paid) {
+          openForm();
+          return;
+        }
+        if (res.checked) {
+          deny("Stripe has not marked this €120 as paid. Finish card checkout, then use the return link. Do not pay twice.");
+          return;
+        }
+        if (sid.indexOf("cs_live_") === 0 && sid.length >= 40) {
+          openForm();
+          return;
+        }
+        deny("This page is only after a €120 payment. Open it from the keychain return after you pay. Do not type a fake session id.");
+        lead.textContent = "No second charge. If you already paid on 120.cash, wait for the thank-you page and tap the night-desk link.";
+      });
     } else {
       deny("This page is only after a €120 payment. Pay from 120.cash or the night desk, then use the return link. Do not pay twice.");
       lead.textContent = "No second charge. If you already paid, open this from the checkout return.";

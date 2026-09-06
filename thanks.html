@@ -20,7 +20,7 @@
     <p class="url" id="url" hidden></p>
     <p><a href="./">Back to the brief</a></p>
   </main>
-  <script src="./shop.js?v=20260906e"></script>
+  <script src="./shop.js?v=20260906f"></script>
   <script>
   (function () {
     var q = new URLSearchParams(location.search);
@@ -72,7 +72,13 @@
       fail("This page only opens after a completed €120 card payment. Use the return link from Stripe.");
       return;
     }
-    live(brief);
+    NightDesk.stripePaid(sid).then(function (res) {
+      if (res.paid || !res.checked) {
+        live(brief);
+        return;
+      }
+      fail("Stripe has not marked this €120 as paid. Nothing was published. Finish card checkout, then use the return link.");
+    });
   })();
   </script>
 </body>
