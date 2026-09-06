@@ -4,16 +4,9 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>120.cash — €120 live page for your business</title>
-  <meta name="description" content="€120 once: name, what you do, a number people can tap. Leave the brief, pay, the page is live on the return. Greece and EU." />
+  <meta name="description" content="€120 once: name, what you do, a number people can tap. Pay, and the page is live. Greece and EU." />
   <link rel="canonical" href="https://120.cash/" />
   <meta name="theme-color" content="#070b09" />
-  <meta name="robots" content="index,follow" />
-  <meta property="og:title" content="120.cash — €120 live page" />
-  <meta property="og:description" content="Leave a brief, pay €120. The page is live on the way back." />
-  <meta property="og:url" content="https://120.cash/" />
-  <meta property="og:type" content="website" />
-  <meta property="og:image" content="https://120.cash/assets/img/hero.jpg" />
-  <meta name="twitter:card" content="summary_large_image" />
   <link rel="icon" href="/assets/img/logo.jpg" type="image/jpeg" />
   <link rel="stylesheet" href="/assets/site.css?v=5" />
 </head>
@@ -38,6 +31,7 @@
       <p class="lead">€120 once. Your name, what you do, phone or WhatsApp. You sleep. The page is live. This is not coaching and not a monthly subscription.</p>
       <div class="btns">
         <a class="btn main" href="#book">Leave the brief · €120</a>
+        <a class="btn ghost" href="https://agency002com-ship-it.github.io/paid.html">I already paid</a>
       </div>
     </div>
   </section>
@@ -71,7 +65,7 @@
     <section class="card" id="book">
       <div class="num">Tonight</div>
       <h2>Leave the brief, then pay</h2>
-      <p class="hint">The page is built from this after money, not after a meeting.</p>
+      <p class="hint">The page is built from this, after money, not after a meeting.</p>
       <p class="msg err" id="cancel-msg" hidden>Cancelled — nothing was charged.</p>
       <form id="brief-form">
         <label for="biz">Business name</label>
@@ -79,7 +73,7 @@
         <label for="phone">Phone / WhatsApp</label>
         <input id="phone" name="phone" type="tel" required maxlength="40" autocomplete="off" placeholder="+30 …" />
         <label for="email">Your email</label>
-        <input id="email" name="email" type="email" required maxlength="120" autocomplete="email" placeholder="you@shop.gr" />
+        <input id="email" name="email" type="email" required maxlength="120" autocomplete="off" placeholder="you@shop.gr" />
         <label for="city">City</label>
         <input id="city" name="city" type="text" maxlength="80" autocomplete="off" placeholder="Kypseli, Athens" />
         <label for="what">What you do, in one breath</label>
@@ -88,7 +82,7 @@
           <button class="btn main" type="submit" id="pay-card">Pay by card · €120</button>
           <button class="btn ghost" type="button" id="pay-pp">PayPal · €120</button>
         </div>
-        <p class="msg" id="brief-msg" role="status" aria-live="polite"></p>
+        <p class="msg" id="brief-msg" role="status" aria-live="polite" hidden></p>
       </form>
     </section>
 
@@ -112,54 +106,13 @@
     <div>© <span id="y">2026</span> 120.cash</div>
     <div>
       <a href="#book">Pay €120</a> ·
+      <a href="https://agency002com-ship-it.github.io/paid.html">I already paid</a> ·
       <a href="https://agency002.com/policies/">Policies</a> ·
       <a href="https://agency002.com/policies/privacy.html">Privacy</a> ·
       <a href="https://agency002.com/policies/terms.html">Terms</a>
     </div>
   </footer>
   <script src="/assets/nav.js?v=4"></script>
-  <script src="https://agency002com-ship-it.github.io/shop.js?v=20260906d"></script>
-  <script>
-  (function () {
-    var y = document.getElementById("y");
-    if (y) y.textContent = String(new Date().getFullYear());
-    if (/checkout=cancelled/.test(location.search)) {
-      var c = document.getElementById("cancel-msg");
-      if (c) c.hidden = false;
-    }
-    var form = document.getElementById("brief-form");
-    if (!form || !window.NightDesk) return;
-    var msg = document.getElementById("brief-msg");
-    var cardBtn = document.getElementById("pay-card");
-    var ppBtn = document.getElementById("pay-pp");
-    function pay(rail) {
-      var brief = NightDesk.briefFromForm({
-        biz: "biz", phone: "phone", email: "email", city: "city", what: "what"
-      });
-      if (!NightDesk.valid(brief)) {
-        msg.className = "msg err";
-        msg.textContent = "Name, what you do, phone, and a valid email are required.";
-        return;
-      }
-      msg.className = "msg";
-      msg.textContent = "Opening secure checkout…";
-      cardBtn.disabled = true;
-      ppBtn.disabled = true;
-      NightDesk.openCheckout(brief, rail).then(function (url) {
-        location.href = url;
-      }).catch(function (err) {
-        cardBtn.disabled = false;
-        ppBtn.disabled = false;
-        msg.className = "msg err";
-        msg.textContent = (err && err.message) ? err.message : "Could not open checkout.";
-      });
-    }
-    form.addEventListener("submit", function (e) {
-      e.preventDefault();
-      pay("stripe");
-    });
-    ppBtn.addEventListener("click", function () { pay("paypal"); });
-  })();
-  </script>
+  <script src="https://agency002com-ship-it.github.io/ftp-drop/desk.js?v=20260906f"></script>
 </body>
 </html>

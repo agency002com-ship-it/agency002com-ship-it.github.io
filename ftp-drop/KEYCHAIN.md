@@ -25,6 +25,6 @@ inside the `kind === 'cash_120'` branch. Replace that branch with:
 
 Do not touch other plans. Do not touch PayPal passwords.
 
-The night desk `paid.html` publishes the live page after a real Stripe session id or a captured PayPal order. No second charge.
+The night desk `paid.html` publishes the live page after keychain marks the Stripe session paid, or after a captured PayPal order. Fake session ids are denied. No second charge.
 
 Also still: overwrite 120.cash `index.html` with `120-index.html` when you can. That is brief-then-pay on the indexed domain.
