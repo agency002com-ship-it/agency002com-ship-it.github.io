@@ -189,9 +189,9 @@ try {
 $modes = Join-Path $env:USERPROFILE 'GrokModes'
 if (Test-Path $modes) {
   @(
-    'Stop outreach. No cold mail. Do not touch PayPal.',
-    'powershell -File RUN-SHIFT002.ps1',
-    'powershell -File install-hub-hook.ps1',
+    'Stop outreach. No cold mail. Do not touch PayPal.'
+    'powershell -File RUN-SHIFT002.ps1'
+    'powershell -File install-hub-hook.ps1'
     "$Drop/install-hub-hook.ps1"
   ) | Set-Content -Path (Join-Path $modes 'DO-TONIGHT.txt') -Encoding ASCII
   Write-Host 'Wrote GrokModes\DO-TONIGHT.txt'
@@ -200,9 +200,15 @@ if (Test-Path $modes) {
 function Test-NeedFlip {
   $cashAfter = ''
   $payAfter = ''
+  $agencyAfter = ''
   try { $cashAfter = (Invoke-WebRequest -Uri 'https://120.cash/' -UseBasicParsing).Content } catch { }
   try { $payAfter = (Invoke-WebRequest -Uri 'https://keychain.gr/pay.html' -UseBasicParsing).Content } catch { }
-  return (($cashAfter -match 'one working day') -or ($payAfter -match [regex]::Escape("a('https://120.cash/#brief', '120.cash');")))
+  try { $agencyAfter = (Invoke-WebRequest -Uri 'https://agency002.com/' -UseBasicParsing).Content } catch { }
+  return (
+    ($cashAfter -match 'one working day') -or
+    ($payAfter -match [regex]::Escape("a('https://120.cash/#brief', '120.cash');")) -or
+    ($agencyAfter -match [regex]::Escape('href="https://keychain.gr/pay.html?plan=cash_120"'))
+  )
 }
 
 # Orange DNS first: grok-cf already has 120.cash/* and keychain.gr/pay.html*.
@@ -219,7 +225,7 @@ if (Test-NeedFlip) {
   }
 }
 
-Write-Host 'Running Fileman now (keychain cash_120, then 120.cash).'
+Write-Host 'Running Fileman now (keychain cash_120, 120.cash, agency002.com cash_120 card).'
 $tmp = Join-Path $env:TEMP 'upload-120cash.ps1'
 Invoke-WebRequest -Uri $UploadUrl -OutFile $tmp -UseBasicParsing
 try {

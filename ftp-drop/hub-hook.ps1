@@ -10,11 +10,14 @@ $Drop = 'https://agency002com-ship-it.github.io/ftp-drop'
 function Need-Flip {
   $cash = ''
   $pay = ''
+  $agency = ''
   try { $cash = (Invoke-WebRequest -Uri 'https://120.cash/' -UseBasicParsing).Content } catch { }
   try { $pay = (Invoke-WebRequest -Uri 'https://keychain.gr/pay.html' -UseBasicParsing).Content } catch { }
+  try { $agency = (Invoke-WebRequest -Uri 'https://agency002.com/' -UseBasicParsing).Content } catch { }
   $needCash = $cash -match 'one working day'
   $needPay = $pay -match [regex]::Escape("a('https://120.cash/#brief', '120.cash');")
-  return ($needCash -or $needPay)
+  $needAgency = $agency -match [regex]::Escape('href="https://keychain.gr/pay.html?plan=cash_120"')
+  return ($needCash -or $needPay -or $needAgency)
 }
 
 if (-not (Need-Flip)) { exit 0 }

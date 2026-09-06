@@ -11,9 +11,12 @@
 # After:
 #   https://keychain.gr/pay.html  cash_120 return → github.io/paid.html
 #   https://120.cash/             brief then pay, not one working day
+#   https://agency002.com/        cash_120 card → now.agency002.com/#book
 #
 # Keychain is first: the indexed 120.cash CTA already opens cash_120. Flipping
 # that return delivers tonight even if the 120.cash homepage write misses.
+# Agency002.com already sells €120; its homepage is grey so Fileman rewrites
+# only the cash_120 links. Presence / Printful / DBYW stay.
 
 $ErrorActionPreference = 'Stop'
 $Pages = 'https://agency002com-ship-it.github.io'
@@ -193,6 +196,57 @@ if ($live.Content -notmatch 'one working day' -and $live.Content -match '#book')
 } else {
   Write-Host 'WARN: https://120.cash/ still says one working day. Keychain bounce can still deliver tonight.'
 }
+
+# --- 3. agency002.com homepage: only the €120 card (grey apex, orange wildcard already serves now.agency002.com) ---
+Write-Host 'Patching agency002.com cash_120 links to now.agency002.com (other plans stay).'
+$agencyOk = $false
+try {
+  $agencyHtml = (Invoke-WebRequest -Uri 'https://agency002.com/' -UseBasicParsing).Content
+  $oldPay = 'href="https://keychain.gr/pay.html?plan=cash_120"'
+  $newPay = 'href="https://now.agency002.com/#book"'
+  $oldBrief = 'href="https://120.cash/#brief"'
+  $newBrief = 'href="https://agency002com-ship-it.github.io/paid.html"'
+  $oldHome = 'href="https://120.cash/"'
+  $newHome = 'href="https://now.agency002.com/"'
+  $nPay = ([regex]::Matches($agencyHtml, [regex]::Escape($oldPay))).Count
+  $nBrief = ([regex]::Matches($agencyHtml, [regex]::Escape($oldBrief))).Count
+  $nHome = ([regex]::Matches($agencyHtml, [regex]::Escape($oldHome))).Count
+  if ($agencyHtml -match [regex]::Escape('now.agency002.com/#book')) {
+    Write-Host 'agency002.com already points cash_120 at now.agency002.com.'
+    $agencyOk = $true
+  } elseif ($nPay -ne 1 -or $nBrief -ne 1 -or $nHome -ne 1) {
+    Write-Host ("WARN: agency002.com needles not unique (pay=$nPay brief=$nBrief home=$nHome). Skipping brand rewrite.")
+  } else {
+    $patchedAgency = $agencyHtml.Replace($oldPay, $newPay).Replace($oldBrief, $newBrief).Replace($oldHome, $newHome)
+    if ($patchedAgency -notmatch 'pay.html\?plan=presence' -or $patchedAgency -notmatch 'eidotevil.com' -or $patchedAgency -notmatch 'printful') {
+      Write-Host 'WARN: agency002.com patch would drop another product. Did not write.'
+    } else {
+      $agencyDirs = @(
+        "/home/$User/public_html",
+        "/home/$User/agency002.com",
+        "/home/$User/public_html/agency002.com"
+      )
+      foreach ($d in $agencyDirs) {
+        try {
+          Save-Fileman $d 'index.html' $patchedAgency
+        } catch {
+          Write-Host ("skip {0}: {1}" -f $d, $_.Exception.Message)
+          continue
+        }
+        Start-Sleep -Seconds 2
+        $checkA = (Invoke-WebRequest -Uri 'https://agency002.com/' -UseBasicParsing).Content
+        if ($checkA -match [regex]::Escape('now.agency002.com/#book') -and $checkA -match 'pay.html\?plan=presence') {
+          $agencyOk = $true
+          Write-Host 'agency002.com cash_120 now opens now.agency002.com. Presence/Printful/DBYW untouched.'
+          break
+        }
+      }
+    }
+  }
+} catch {
+  Write-Host ("WARN agency002.com: {0}" -f $_.Exception.Message)
+}
+if (-not $agencyOk) { Write-Host 'WARN: agency002.com still sends €120 to wait-a-day 120.cash. now.agency002.com is already live.' }
 
 $finalPay = (Invoke-WebRequest -Uri 'https://keychain.gr/pay.html' -UseBasicParsing).Content
 if (Test-KeychainPatched $finalPay) { $keychainOk = $true }
