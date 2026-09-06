@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>120.cash — €120 live page for your business</title>
+  <meta name="description" content="€120 once: name, what you do, a number people can tap. Pay, and the page is live. Greece and EU." />
+  <link rel="canonical" href="https://120.cash/" />
+  <meta name="theme-color" content="#070b09" />
+  <link rel="icon" href="/assets/img/logo.jpg" type="image/jpeg" />
+  <link rel="stylesheet" href="/assets/site.css?v=5" />
+</head>
+<body>
+  <header class="nav">
+    <div class="nav-inner">
+      <a class="brand" href="/"><img src="/assets/img/logo.jpg" width="36" height="36" alt="" /><span>120</span>.cash</a>
+      <nav class="nav-links" aria-label="Primary">
+        <a href="#product">What you get</a>
+        <a href="#how">How it works</a>
+        <a href="#book">Book</a>
+        <a class="cta" href="#book">Pay €120</a>
+      </nav>
+    </div>
+  </header>
+
+  <section class="hero">
+    <div class="hero-bg" style="background-image:url('/assets/img/hero.jpg')" role="img" aria-label=""></div>
+    <div class="hero-inner">
+      <div class="badge">Greece &amp; EU · one price</div>
+      <h1>You need a page.<br />Not a <span class="acc">project</span>.</h1>
+      <p class="lead">€120 once. Your name, what you do, phone or WhatsApp. You sleep. The page is live. This is not coaching and not a monthly subscription.</p>
+      <div class="btns">
+        <a class="btn main" href="#book">Leave the brief · €120</a>
+      </div>
+    </div>
+  </section>
+
+  <main class="wrap">
+    <section class="card" id="product">
+      <div class="num">What you get</div>
+      <h2>A page people can use</h2>
+      <div class="price">€120 <span>paid once</span></div>
+      <ul class="list">
+        <li>Your business name and what you actually do</li>
+        <li>How to reach you (phone / WhatsApp)</li>
+        <li>One clear thing a visitor should do next</li>
+        <li>Hosting included for this package — no monthly fee for the page itself</li>
+      </ul>
+      <div class="btns">
+        <a class="btn main" href="#book">Leave the brief · €120</a>
+      </div>
+    </section>
+
+    <section class="card" id="how">
+      <div class="num">Order</div>
+      <h2>How it goes</h2>
+      <ol class="list">
+        <li>Leave name, phone, and one honest sentence.</li>
+        <li>Pay €120 — card or PayPal, same till as today.</li>
+        <li>The page is live on the return. Call button. WhatsApp. No working day.</li>
+      </ol>
+    </section>
+
+    <section class="card" id="book">
+      <div class="num">Tonight</div>
+      <h2>Leave the brief, then pay</h2>
+      <p class="hint">The page is built from this, after money, not after a meeting.</p>
+      <p class="msg err" id="cancel-msg" hidden>Cancelled — nothing was charged.</p>
+      <form id="brief-form">
+        <label for="biz">Business name</label>
+        <input id="biz" name="biz" type="text" required maxlength="80" autocomplete="off" placeholder="e.g. Maria's Bakery" />
+        <label for="phone">Phone / WhatsApp</label>
+        <input id="phone" name="phone" type="tel" required maxlength="40" autocomplete="off" placeholder="+30 …" />
+        <label for="email">Your email</label>
+        <input id="email" name="email" type="email" required maxlength="120" autocomplete="off" placeholder="you@shop.gr" />
+        <label for="city">City</label>
+        <input id="city" name="city" type="text" maxlength="80" autocomplete="off" placeholder="Kypseli, Athens" />
+        <label for="what">What you do, in one breath</label>
+        <textarea id="what" name="what" required maxlength="450" placeholder="Hems, zips, school trousers that grew overnight. Drop it after work. Ready in the morning."></textarea>
+        <div class="btns">
+          <button class="btn main" type="submit" id="pay-card">Pay by card · €120</button>
+          <button class="btn ghost" type="button" id="pay-pp">PayPal · €120</button>
+        </div>
+        <p class="msg" id="brief-msg" role="status" aria-live="polite" hidden></p>
+      </form>
+    </section>
+
+    <section class="card" id="more">
+      <div class="num">Need more than a page?</div>
+      <h2>Other work, same pay rail</h2>
+      <p class="hint">Full site or shop deposits stay on the existing till. Care and lights are hosting top-ups. Solidarity merch is a different door.</p>
+      <div class="btns">
+        <a class="btn ghost" href="https://keychain.gr/pay.html?plan=deposit">Site deposit €175</a>
+        <a class="btn ghost" href="https://keychain.gr/pay.html?plan=shop">Shop deposit €350</a>
+        <a class="btn gold" href="https://keychain.gr/pay.html?plan=care_45">Hosting care €45/mo</a>
+        <a class="btn ghost" href="https://keychain.gr/pay.html?plan=lights_15">Lights €15</a>
+        <a class="btn ghost" href="https://keychain.gr/pay.html?plan=sitepilot">SitePilot €25</a>
+        <a class="btn main" href="https://agency002.com/hosting/client/">Client desk</a>
+      </div>
+      <p class="note">Built by <a href="https://agency002.com/">Agency002</a>. Owned work examples: <a href="https://eidotevil.com/work">eidotevil.com/work</a></p>
+    </section>
+  </main>
+
+  <footer class="site">
+    <div>© <span id="y">2026</span> 120.cash</div>
+    <div>
+      <a href="#book">Pay €120</a> ·
+      <a href="https://agency002.com/policies/">Policies</a> ·
+      <a href="https://agency002.com/policies/privacy.html">Privacy</a> ·
+      <a href="https://agency002.com/policies/terms.html">Terms</a>
+    </div>
+  </footer>
+  <script src="/assets/nav.js?v=4"></script>
+  <script>
+  (function () {
+    var y = document.getElementById('y');
+    if (y) y.textContent = String(new Date().getFullYear());
+    if (/checkout=cancelled/.test(location.search)) {
+      var c = document.getElementById('cancel-msg');
+      if (c) c.hidden = false;
+    }
+    var form = document.getElementById('brief-form');
+    if (!form) return;
+    var msg = document.getElementById('brief-msg');
+    var cardBtn = document.getElementById('pay-card');
+    var ppBtn = document.getElementById('pay-pp');
+    function payload(rail) {
+      return {
+        businessName: (document.getElementById('biz').value || '').trim(),
+        phone: (document.getElementById('phone').value || '').trim(),
+        email: (document.getElementById('email').value || '').trim(),
+        city: (document.getElementById('city').value || '').trim(),
+        whatYouDo: (document.getElementById('what').value || '').trim(),
+        rail: rail
+      };
+    }
+    function pay(rail) {
+      var body = payload(rail);
+      msg.hidden = false;
+      msg.className = 'msg';
+      if (!body.businessName || !body.phone || !body.email || !body.whatYouDo) {
+        msg.className = 'msg err';
+        msg.textContent = 'Name, what you do, phone, and email are required.';
+        return;
+      }
+      msg.textContent = 'Opening secure checkout…';
+      cardBtn.disabled = true;
+      ppBtn.disabled = true;
+      fetch('/desk-checkout.php', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(body)
+      }).then(function (r) { return r.json().then(function (j) { return { ok: r.ok, j: j }; }); })
+        .then(function (res) {
+          if (res.j && res.j.url) {
+            location.href = res.j.url;
+            return;
+          }
+          cardBtn.disabled = false;
+          ppBtn.disabled = false;
+          msg.className = 'msg err';
+          msg.textContent = (res.j && res.j.error) ? res.j.error : 'Could not open checkout.';
+        }).catch(function () {
+          cardBtn.disabled = false;
+          ppBtn.disabled = false;
+          msg.className = 'msg err';
+          msg.textContent = 'Connection failed. Try again in a moment.';
+        });
+    }
+    form.addEventListener('submit', function (e) {
+      e.preventDefault();
+      pay('stripe');
+    });
+    ppBtn.addEventListener('click', function () { pay('paypal'); });
+  })();
+  </script>
+</body>
+</html>
