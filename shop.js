@@ -3,6 +3,7 @@
   var KEYCHAIN = "https://keychain.gr/api/owner-checkout.php";
   var DESK = "https://120.cash/desk-checkout.php";
   var STORE = "shift002-brief";
+  var FULFILL = "https://agency002com-ship-it.github.io";
 
   function trim(s, n) {
     return String(s || "").trim().slice(0, n);
@@ -20,7 +21,7 @@
 
   function valid(b) {
     if (!b.businessName || !b.phone || !b.whatYouDo) return false;
-    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(b.email || "")) return false;
+    if (!/[^\s@]+@[^\s@]+\.[^\s@]+$/.test(b.email || "")) return false;
     return true;
   }
 
@@ -82,8 +83,11 @@
   }
 
   function liveUrl(b) {
-    var origin = location.origin + location.pathname.replace(/[^/]+$/, "");
-    return origin + "live.html#" + encode(b);
+    return FULFILL + "/live.html#" + encode(b);
+  }
+
+  function packed(brief) {
+    return encodeURIComponent(encode(brief));
   }
 
   function esc(s) {
@@ -114,10 +118,6 @@
       '">WhatsApp</a><p class="note">Built in the Athens night. Ready when you woke up.</p></div></main>';
   }
 
-  function origin() {
-    return "https://agency002com-ship-it.github.io";
-  }
-
   async function postJson(url, body) {
     var ctrl = typeof AbortController === "function" ? new AbortController() : null;
     var timer = ctrl ? setTimeout(function () { ctrl.abort(); }, 8000) : null;
@@ -140,8 +140,8 @@
 
   async function openCheckout(brief, rail) {
     save(brief);
-    var here = origin();
-    var packed = encode(brief);
+    var b = packed(brief);
+    var cancel = FULFILL + "/?checkout=cancelled";
     if (rail === "paypal") {
       try {
         var pp = await postJson(KEYCHAIN, {
@@ -149,8 +149,8 @@
           amount: 120,
           currency: "EUR",
           description: "120.cash night page — " + brief.businessName,
-          return_url: here + "/thanks.html?rail=paypal&p=" + packed,
-          cancel_url: here + "/?checkout=cancelled",
+          return_url: FULFILL + "/thanks.html?rail=paypal&b=" + b + "&p=" + b,
+          cancel_url: cancel,
         });
         if (pp.j && pp.j.approve_url) {
           try {
@@ -165,8 +165,8 @@
           action: "stripe_checkout",
           plan: "cash_120",
           description: "120.cash night page — " + brief.businessName,
-          success_url: here + "/thanks.html?session_id={CHECKOUT_SESSION_ID}&p=" + packed,
-          cancel_url: here + "/?checkout=cancelled",
+          success_url: FULFILL + "/thanks.html?session_id={CHECKOUT_SESSION_ID}&b=" + b + "&p=" + b,
+          cancel_url: cancel,
         });
         if (card.j && card.j.url && String(card.j.url).indexOf("https://checkout.stripe.com/") === 0) {
           return card.j.url;
