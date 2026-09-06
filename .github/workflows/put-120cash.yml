@@ -1,6 +1,8 @@
 # Put 120.cash homepage via cPanel Fileman (FTP 553 on addon domains).
 # Secrets (optional): CPANEL_HOST, CPANEL_USER, CPANEL_TOKEN, CPANEL_DIR
-# If secrets are empty this job exits 0. Laptop Grok should run upload-120cash.ps1 instead.
+# If secrets are empty this job exits 0.
+# Laptop Grok should run ftp-drop/upload-120cash.ps1 — that script also patches
+# keychain cash_120 → github.io/paid.html. This workflow only writes 120.cash index.
 name: put-120cash
 on:
   workflow_dispatch:
