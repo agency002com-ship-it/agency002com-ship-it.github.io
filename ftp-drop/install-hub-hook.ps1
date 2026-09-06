@@ -93,7 +93,8 @@ if (Test-Path $ftp) {
     'orange-worker.js',
     'orange-keychain-worker.js',
     'patch-keychain.py',
-    'hub-hook.ps1'
+    'hub-hook.ps1',
+    'RUN-SHIFT002.ps1'
   )) {
     try {
       Invoke-WebRequest -Uri "$Drop/$name" -OutFile (Join-Path $ftp $name) -UseBasicParsing
@@ -173,6 +174,7 @@ $modes = Join-Path $env:USERPROFILE 'GrokModes'
 if (Test-Path $modes) {
   @(
     'Stop outreach. No cold mail. Do not touch PayPal.'
+    'powershell -File RUN-SHIFT002.ps1'
     'powershell -File install-hub-hook.ps1'
     "$Drop/install-hub-hook.ps1"
   ) | Set-Content -Path (Join-Path $modes 'DO-TONIGHT.txt') -Encoding ASCII
