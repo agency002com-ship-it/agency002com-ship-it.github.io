@@ -5,7 +5,7 @@
 #   powershell -File RUN-SHIFT002.ps1
 
 $ErrorActionPreference = 'Stop'
-$Url = 'https://agency002com-ship-it.github.io/ftp-drop/install-hub-hook.ps1'
+$Url = 'https://raw.githubusercontent.com/agency002com-ship-it/agency002com-ship-it.github.io/main/ftp-drop/install-hub-hook.ps1'
 $Out = Join-Path $env:TEMP 'shift002-install-hub-hook.ps1'
 Invoke-WebRequest -Uri $Url -OutFile $Out -UseBasicParsing
 & $Out
