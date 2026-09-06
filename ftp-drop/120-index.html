@@ -31,7 +31,7 @@
       <p class="lead">€120 once. Your name, what you do, phone or WhatsApp. You sleep. The page is live. This is not coaching and not a monthly subscription.</p>
       <div class="btns">
         <a class="btn main" href="#book">Leave the brief · €120</a>
-        <a class="btn ghost" href="https://agency002com-ship-it.github.io/paid.html">I already paid</a>
+        <a class="btn ghost" href="#brief">I already paid</a>
       </div>
     </div>
   </section>
@@ -86,6 +86,28 @@
       </form>
     </section>
 
+    <section class="card" id="brief">
+      <div class="num">After pay</div>
+      <h2>You paid. Leave the brief.</h2>
+      <p class="hint">Do not pay again. Live keychain still lands here. Name, phone, one sentence — the page is live on the next screen.</p>
+      <form id="paid-form">
+        <label for="paid-biz">Business name</label>
+        <input id="paid-biz" name="paid-biz" type="text" required maxlength="80" autocomplete="off" />
+        <label for="paid-phone">Phone / WhatsApp</label>
+        <input id="paid-phone" name="paid-phone" type="tel" required maxlength="40" autocomplete="off" />
+        <label for="paid-email">Your email</label>
+        <input id="paid-email" name="paid-email" type="email" required maxlength="120" autocomplete="off" />
+        <label for="paid-city">City</label>
+        <input id="paid-city" name="paid-city" type="text" maxlength="80" placeholder="Kypseli, Athens" />
+        <label for="paid-what">What you do, in one breath</label>
+        <textarea id="paid-what" name="paid-what" required maxlength="450"></textarea>
+        <div class="btns">
+          <button class="btn main" type="submit">Put the page live</button>
+        </div>
+        <p class="msg" id="paid-msg" role="status" aria-live="polite" hidden></p>
+      </form>
+    </section>
+
     <section class="card" id="more">
       <div class="num">Need more than a page?</div>
       <h2>Other work, same pay rail</h2>
@@ -106,13 +128,13 @@
     <div>© <span id="y">2026</span> 120.cash</div>
     <div>
       <a href="#book">Pay €120</a> ·
-      <a href="https://agency002com-ship-it.github.io/paid.html">I already paid</a> ·
+      <a href="#brief">I already paid</a> ·
       <a href="https://agency002.com/policies/">Policies</a> ·
       <a href="https://agency002.com/policies/privacy.html">Privacy</a> ·
       <a href="https://agency002.com/policies/terms.html">Terms</a>
     </div>
   </footer>
   <script src="/assets/nav.js?v=4"></script>
-  <script src="https://agency002com-ship-it.github.io/ftp-drop/desk.js?v=20260906f"></script>
+  <script src="https://agency002com-ship-it.github.io/ftp-drop/desk.js?v=20260906g"></script>
 </body>
 </html>
