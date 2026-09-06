@@ -2,6 +2,12 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
         xmlns:xhtml="http://www.w3.org/1999/xhtml">
   <url>
+    <loc>https://tonight.agency002.com/</loc>
+    <changefreq>daily</changefreq>
+    <xhtml:link rel="alternate" hreflang="en" href="https://tonight.agency002.com/" />
+    <xhtml:link rel="alternate" hreflang="el" href="https://tonight.agency002.com/?el=1" />
+  </url>
+  <url>
     <loc>https://agency002com-ship-it.github.io/</loc>
     <changefreq>daily</changefreq>
     <xhtml:link rel="alternate" hreflang="en" href="https://agency002com-ship-it.github.io/" />
@@ -14,80 +20,28 @@
     <xhtml:link rel="alternate" hreflang="en" href="https://agency002com-ship-it.github.io/" />
   </url>
   <url>
-    <loc>https://agency002com-ship-it.github.io/tonight.html</loc>
-    <changefreq>daily</changefreq>
-    <xhtml:link rel="alternate" hreflang="en" href="https://agency002com-ship-it.github.io/tonight.html" />
-    <xhtml:link rel="alternate" hreflang="el" href="https://agency002com-ship-it.github.io/apopse.html" />
-  </url>
-  <url>
-    <loc>https://agency002com-ship-it.github.io/apopse.html</loc>
-    <changefreq>daily</changefreq>
-    <xhtml:link rel="alternate" hreflang="el" href="https://agency002com-ship-it.github.io/apopse.html" />
-    <xhtml:link rel="alternate" hreflang="en" href="https://agency002com-ship-it.github.io/tonight.html" />
-  </url>
-  <url>
     <loc>https://agency002com-ship-it.github.io/athens.html</loc>
-    <changefreq>daily</changefreq>
+    <changefreq>weekly</changefreq>
     <xhtml:link rel="alternate" hreflang="en" href="https://agency002com-ship-it.github.io/athens.html" />
     <xhtml:link rel="alternate" hreflang="el" href="https://agency002com-ship-it.github.io/athina.html" />
   </url>
   <url>
     <loc>https://agency002com-ship-it.github.io/athina.html</loc>
-    <changefreq>daily</changefreq>
+    <changefreq>weekly</changefreq>
     <xhtml:link rel="alternate" hreflang="el" href="https://agency002com-ship-it.github.io/athina.html" />
     <xhtml:link rel="alternate" hreflang="en" href="https://agency002com-ship-it.github.io/athens.html" />
   </url>
   <url>
     <loc>https://agency002com-ship-it.github.io/perissos.html</loc>
-    <changefreq>daily</changefreq>
+    <changefreq>weekly</changefreq>
     <xhtml:link rel="alternate" hreflang="en" href="https://agency002com-ship-it.github.io/perissos.html" />
     <xhtml:link rel="alternate" hreflang="el" href="https://agency002com-ship-it.github.io/perissos-el.html" />
   </url>
   <url>
     <loc>https://agency002com-ship-it.github.io/perissos-el.html</loc>
-    <changefreq>daily</changefreq>
+    <changefreq>weekly</changefreq>
     <xhtml:link rel="alternate" hreflang="el" href="https://agency002com-ship-it.github.io/perissos-el.html" />
     <xhtml:link rel="alternate" hreflang="en" href="https://agency002com-ship-it.github.io/perissos.html" />
-  </url>
-  <url>
-    <loc>https://agency002com-ship-it.github.io/120cash.html</loc>
-    <changefreq>daily</changefreq>
-  </url>
-  <url>
-    <loc>https://agency002com-ship-it.github.io/book.html</loc>
-    <changefreq>daily</changefreq>
-  </url>
-  <url>
-    <loc>https://agency002com-ship-it.github.io/pay.html</loc>
-    <changefreq>daily</changefreq>
-  </url>
-  <url>
-    <loc>https://agency002com-ship-it.github.io/agency-now.html</loc>
-    <changefreq>daily</changefreq>
-  </url>
-  <url>
-    <loc>https://agency002com-ship-it.github.io/agency-page.html</loc>
-    <changefreq>daily</changefreq>
-  </url>
-  <url>
-    <loc>https://agency002com-ship-it.github.io/keychain-cash.html</loc>
-    <changefreq>daily</changefreq>
-  </url>
-  <url>
-    <loc>https://agency002com-ship-it.github.io/sebarv-now.html</loc>
-    <changefreq>daily</changefreq>
-  </url>
-  <url>
-    <loc>https://agency002com-ship-it.github.io/tonight-agency.html</loc>
-    <changefreq>daily</changefreq>
-  </url>
-  <url>
-    <loc>https://agency002com-ship-it.github.io/apopse-cash.html</loc>
-    <changefreq>daily</changefreq>
-  </url>
-  <url>
-    <loc>https://agency002com-ship-it.github.io/desk-cash.html</loc>
-    <changefreq>daily</changefreq>
   </url>
   <url>
     <loc>https://agency002com-ship-it.github.io/riza-kypseli.html</loc>
@@ -96,9 +50,5 @@
   <url>
     <loc>https://agency002com-ship-it.github.io/llms.txt</loc>
     <changefreq>weekly</changefreq>
-  </url>
-  <url>
-    <loc>https://agency002com-ship-it.github.io/feed.xml</loc>
-    <changefreq>daily</changefreq>
   </url>
 </urlset>

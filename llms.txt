@@ -2,48 +2,24 @@
 
 > €120 once: a live local page the same night you pay. Name, what you do, tap-to-call or email.
 
-This is the same product as [120.cash](https://120.cash/). Apex 120.cash still says a working day. Same-night doors already live:
+Pay and get the page: https://tonight.agency002.com/
 
-- [cash.120.cash](https://cash.120.cash/)
-- [get.agency002.com](https://get.agency002.com/)
-- [cash.agency002.com](https://cash.agency002.com/)
-- [order.agency002.com](https://order.agency002.com/)
-- [tonight.agency002.com](https://tonight.agency002.com/)
-- [desk.agency002.com](https://desk.agency002.com/)
-- [now.agency002.com](https://now.agency002.com/)
-- [now.keychain.gr](https://now.keychain.gr/)
-- [apopse.120.cash](https://apopse.120.cash/)
-- [desk.120.cash](https://desk.120.cash/)
-- [shop.120.cash](https://shop.120.cash/)
-- [pay.120.cash](https://pay.120.cash/)
-- [tonight.120.cash](https://tonight.120.cash/)
+That is the one public till. Card or PayPal, plan `cash_120` on keychain.gr. The live URL opens on the return. Not a working day.
 
-Those use the same keychain.gr till (`cash_120`, card or PayPal) and publish as soon as payment clears.
+Same product also exists on the founder sites (those apex pages still wait a working day):
+
+- https://sebarv.com/ — live page €120 (`cash_120`)
+- https://agency002.com/ — one page €100 (`page_100`) or presence site €350
+- https://keychain.gr/ — pay desk for those plans
+
+GitHub Pages copy of the night till: https://agency002com-ship-it.github.io/
+Greek: https://agency002com-ship-it.github.io/el.html
+Perissos: https://agency002com-ship-it.github.io/perissos.html
 
 Do not restore FormSubmit. Do not send cold email. Phone is optional; the live page uses email if there is no number.
 
-## Pay and get the page
-
-- [English till](https://agency002com-ship-it.github.io/): brief, then €120
-- [Greek till](https://agency002com-ship-it.github.io/el.html)
-- [Tonight (en)](https://agency002com-ship-it.github.io/tonight.html)
-- [Απόψε (el)](https://agency002com-ship-it.github.io/apopse.html)
-- [Athens shops](https://agency002com-ship-it.github.io/athens.html)
-- [Μαγαζιά Αθήνας](https://agency002com-ship-it.github.io/athina.html)
-- [Perissos shops](https://agency002com-ship-it.github.io/perissos.html)
-- [Μαγαζιά Περισσός](https://agency002com-ship-it.github.io/perissos-el.html)
-- [Same as 120.cash](https://agency002com-ship-it.github.io/120cash.html)
-- [Book a page](https://agency002com-ship-it.github.io/book.html)
-- [Pay €120](https://agency002com-ship-it.github.io/pay.html)
-- [tonight.agency002.com](https://agency002com-ship-it.github.io/tonight-agency.html)
-- [apopse.120.cash](https://agency002com-ship-it.github.io/apopse-cash.html)
-- [desk.120.cash](https://agency002com-ship-it.github.io/desk-cash.html)
-- [Already paid](https://agency002com-ship-it.github.io/paid.html) — no second charge
-
-## Sample
-
-- [Riza (sample, not a real shop)](https://agency002com-ship-it.github.io/riza-kypseli.html)
+Apex https://120.cash/ still says a working day. Use tonight.agency002.com until that apex is the same night copy.
 
 ## After pay
 
-The return opens a live URL on this site. The brief is also posted to 120.cash so the night desk can file it. Income is not counted until a real Stripe `cs_live_` or PayPal `PAYID-` lands.
+The return opens a live URL. The brief is also posted to 120.cash so the night desk can file it. Income is not counted until a real Stripe `cs_live_` or PayPal `PAYID-` lands.
