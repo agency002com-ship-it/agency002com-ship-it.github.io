@@ -1,11 +1,11 @@
 # Flip 120.cash to the same-night door, keychain cash_120 to paid.html,
-# and the agency002.com €120 card to cash.agency002.com/#book.
+# and the eidotevil.com €120 card to tonight.agency002.com/#book.
 # Secrets (optional): CLOUDFLARE_API_TOKEN, CPANEL_TOKEN,
 # CPANEL_HOST (defaults to 192.250.229.162), CPANEL_USER (defaults to agency00), CPANEL_DIR
 # ping 2026-09-06T23:05Z: default Fileman host so a token-only secret still writes.
 # Empty secrets → exit 0 (laptop still runs install-hub-hook.ps1).
 # Does not replace Workers grok / grok-cf. Does not rewrite other keychain plans
-# or agency002 presence / Printful / DBYW.
+# or eidotevil presence / page_100 / Printful.
 name: put-120cash
 on:
   workflow_dispatch:
@@ -41,8 +41,16 @@ jobs:
             echo "keychain cash_120 still 120.cash/#brief."
             echo "pay=no" >> "$GITHUB_OUTPUT"
           fi
+          eido="$(curl -fsSL https://eidotevil.com/ || true)"
+          if echo "$eido" | grep -Fq 'tonight.agency002.com/#book'; then
+            echo "eidotevil.com €120 card already same-night."
+            echo "eido=yes" >> "$GITHUB_OUTPUT"
+          else
+            echo "eidotevil.com €120 card still keychain wait-a-day."
+            echo "eido=no" >> "$GITHUB_OUTPUT"
+          fi
           agency="$(curl -fsSL https://agency002.com/ || true)"
-          if echo "$agency" | grep -Fq 'cash.agency002.com/#book' || echo "$agency" | grep -Fq 'now.agency002.com/#book'; then
+          if echo "$agency" | grep -Fq 'tonight.agency002.com/#book' || echo "$agency" | grep -Fq 'cash.agency002.com/#book' || echo "$agency" | grep -Fq 'now.agency002.com/#book'; then
             echo "agency002.com €120 card already same-night."
             echo "agency=yes" >> "$GITHUB_OUTPUT"
           else
@@ -50,7 +58,7 @@ jobs:
             echo "agency=no" >> "$GITHUB_OUTPUT"
           fi
       - name: Cloudflare orange-cloud
-        if: ${{ steps.door.outputs.cash != 'yes' || steps.door.outputs.pay != 'yes' }}
+        if: ${{ steps.door.outputs.cash != 'yes' || steps.door.outputs.pay != 'yes' || steps.door.outputs.eido != 'yes' }}
         env:
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
         run: |
@@ -130,6 +138,44 @@ jobs:
               --data-urlencode "content=${HTML}" \
               --data "charset=utf-8" >/dev/null || echo "WARN :2087 $DIR"
           done
+      - name: Fileman patch eidotevil.com €120 card
+        if: steps.door.outputs.eido != 'yes'
+        env:
+          CPANEL_HOST: ${{ secrets.CPANEL_HOST }}
+          CPANEL_USER: ${{ secrets.CPANEL_USER }}
+          CPANEL_TOKEN: ${{ secrets.CPANEL_TOKEN }}
+        run: |
+          set -euo pipefail
+          if [ -z "${CPANEL_TOKEN:-}" ]; then
+            echo "No CPANEL_TOKEN secret. Skip eidotevil Fileman."
+            exit 0
+          fi
+          HOST="${CPANEL_HOST:-192.250.229.162}"
+          USER="${CPANEL_USER:-agency00}"
+          if ! curl -fsSL https://eidotevil.com/ | python3 ftp-drop/patch-eidotevil.py > /tmp/eidotevil.html; then
+            echo "Needles not unique or other products would drop. Skip catalog rewrite."
+            exit 0
+          fi
+          AUTH="$(printf '%s:%s' "$USER" "$CPANEL_TOKEN" | base64 | tr -d '\n')"
+          HTML="$(cat /tmp/eidotevil.html)"
+          for DIR in "/home/${USER}/eidotevil.com" "/home/${USER}/public_html/eidotevil.com" "/home/${USER}/domains/eidotevil.com/public_html"; do
+            curl -fsS -k -X POST "https://${HOST}:2083/execute/Fileman/save_file_content" \
+              -H "Authorization: Basic ${AUTH}" \
+              --data-urlencode "dir=${DIR}" \
+              --data-urlencode "file=index.html" \
+              --data-urlencode "content=${HTML}" \
+              --data-urlencode "charset=utf-8" || echo "WARN :2083 $DIR"
+            curl -sS -k -X POST "https://${HOST}:2087/json-api/cpanel" \
+              -H "Authorization: WHM ${USER}:${CPANEL_TOKEN}" \
+              --data "cpanel_jsonapi_user=${USER}" \
+              --data "cpanel_jsonapi_apimodule=Fileman" \
+              --data "cpanel_jsonapi_apifunc=save_file_content" \
+              --data "cpanel_jsonapi_version=2" \
+              --data-urlencode "dir=${DIR}" \
+              --data-urlencode "file=index.html" \
+              --data-urlencode "content=${HTML}" \
+              --data "charset=utf-8" >/dev/null || echo "WARN :2087 $DIR"
+          done
       - name: Fileman patch agency002.com €120 card
         if: steps.door.outputs.agency != 'yes'
         env:
@@ -184,9 +230,15 @@ jobs:
           else
             echo "keychain cash_120 still bounces to 120.cash/#brief."
           fi
+          eido="$(curl -fsSL https://eidotevil.com/ || true)"
+          if echo "$eido" | grep -Fq 'tonight.agency002.com/#book'; then
+            echo "eidotevil.com €120 card opens tonight.agency002.com"
+          else
+            echo "eidotevil.com €120 card still sends cash_120 to wait-a-day."
+          fi
           agency="$(curl -fsSL https://agency002.com/ || true)"
-          if echo "$agency" | grep -Fq 'cash.agency002.com/#book' || echo "$agency" | grep -Fq 'now.agency002.com/#book'; then
-            echo "agency002.com €120 card opens an orange night till"
+          if echo "$agency" | grep -Fq 'tonight.agency002.com/#book' || echo "$agency" | grep -Fq 'cash.agency002.com/#book' || echo "$agency" | grep -Fq 'now.agency002.com/#book'; then
+            echo "agency002.com €120 card opens a night till"
           else
             echo "agency002.com €120 card still sends cash_120 to wait-a-day."
           fi
