@@ -152,6 +152,18 @@
     ppBtn.addEventListener('click', function () { pay('paypal'); });
   }
 
+  var briefSec = document.getElementById('brief');
+  function showPaid() {
+    if (briefSec) briefSec.hidden = false;
+  }
+  if (briefSec && !/^#brief/i.test(location.hash || '')) briefSec.hidden = true;
+  document.querySelectorAll('a[href="#brief"]').forEach(function (a) {
+    a.addEventListener('click', function () { showPaid(); });
+  });
+  window.addEventListener('hashchange', function () {
+    if (/^#brief/i.test(location.hash || '')) showPaid();
+  });
+
   // Live keychain still sends cash_120 to https://120.cash/#brief with no session id.
   // This form is that return: no second charge, page live on github.io.
   var paidForm = document.getElementById('paid-form');
