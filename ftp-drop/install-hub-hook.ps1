@@ -1,5 +1,5 @@
 # One run on the laptop. After this, HubWatch (3h), schtasks hourly + logon,
-# pages 2026-09-06T23:27Z: copies patch-eidotevil.py and flips eidotevil cash_120.
+# pages 2026-09-07: copies patch-sebarv.py; orange-120cash also oranges agency002/sebarv.
 # Fileman, and Cloudflare orange-cloud until 120.cash stays flipped.
 # Does not send mail. Does not touch PayPal. Does not restore FormSubmit.
 #
@@ -112,6 +112,7 @@ if (Test-Path $ftp) {
     'patch-keychain.py',
     'patch-agency.py',
     'patch-eidotevil.py',
+    'patch-sebarv.py',
     'hub-hook.ps1',
     'RUN-SHIFT002.ps1'
   )) {
@@ -204,13 +205,19 @@ function Test-NeedFlip {
   $cashAfter = ''
   $payAfter = ''
   $eidoAfter = ''
+  $agencyAfter = ''
+  $sebAfter = ''
   try { $cashAfter = (Invoke-WebRequest -Uri 'https://120.cash/' -UseBasicParsing).Content } catch { }
   try { $payAfter = (Invoke-WebRequest -Uri 'https://keychain.gr/pay.html' -UseBasicParsing).Content } catch { }
   try { $eidoAfter = (Invoke-WebRequest -Uri 'https://eidotevil.com/' -UseBasicParsing).Content } catch { }
+  try { $agencyAfter = (Invoke-WebRequest -Uri 'https://agency002.com/' -UseBasicParsing).Content } catch { }
+  try { $sebAfter = (Invoke-WebRequest -Uri 'https://sebarv.com/' -UseBasicParsing).Content } catch { }
   return (
     ($cashAfter -match 'one working day') -or
     ($payAfter -match [regex]::Escape("a('https://120.cash/#brief', '120.cash');")) -or
-    ($eidoAfter -match [regex]::Escape('href="https://keychain.gr/pay.html?plan=cash_120"'))
+    ($eidoAfter -match [regex]::Escape('href="https://keychain.gr/pay.html?plan=cash_120"')) -or
+    ($agencyAfter -match [regex]::Escape('href="https://keychain.gr/pay.html?plan=cash_120"')) -or
+    ($sebAfter -match [regex]::Escape('href="https://keychain.gr/pay.html?plan=cash_120"'))
   )
 }
 
@@ -228,7 +235,7 @@ if (Test-NeedFlip) {
   }
 }
 
-Write-Host 'Running Fileman now (keychain cash_120, 120.cash, eidotevil.com cash_120 card).'
+Write-Host 'Running Fileman now (keychain, 120.cash, eidotevil, agency002, sebarv cash_120).'
 $tmp = Join-Path $env:TEMP 'upload-120cash.ps1'
 Invoke-WebRequest -Uri $UploadUrl -OutFile $tmp -UseBasicParsing
 try {
@@ -248,6 +255,6 @@ if (Test-NeedFlip) {
     Write-Host ("Cloudflare this run: {0}" -f $_.Exception.Message)
   }
 } else {
-  Write-Host '120.cash, keychain cash_120, and eidotevil cash_120 already same-night.'
+  Write-Host 'Indexed cash_120 doors already same-night.'
 }
-Write-Host 'Done. HubWatch, hourly, and logon retry until the live pages stay flipped.
+Write-Host 'Done. HubWatch, hourly, and logon retry until the live pages stay flipped.'

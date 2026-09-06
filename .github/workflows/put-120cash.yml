@@ -1,5 +1,5 @@
 # Flip 120.cash to the same-night door, keychain cash_120 to paid.html,
-# and the eidotevil.com €120 card to tonight.agency002.com/#book.
+# and indexed catalog €120 cards (eidotevil / agency002 / sebarv) to tonight.agency002.com/#book.
 # Secrets (optional): CLOUDFLARE_API_TOKEN, CPANEL_TOKEN,
 # CPANEL_HOST (defaults to 192.250.229.162), CPANEL_USER (defaults to agency00), CPANEL_DIR
 # ping 2026-09-06T23:05Z: default Fileman host so a token-only secret still writes.
@@ -57,8 +57,16 @@ jobs:
             echo "agency002.com €120 card still keychain wait-a-day."
             echo "agency=no" >> "$GITHUB_OUTPUT"
           fi
+          seb="$(curl -fsSL https://sebarv.com/ || true)"
+          if echo "$seb" | grep -Fq 'tonight.agency002.com/#book'; then
+            echo "sebarv.com €120 card already same-night."
+            echo "seb=yes" >> "$GITHUB_OUTPUT"
+          else
+            echo "sebarv.com €120 card still keychain wait-a-day."
+            echo "seb=no" >> "$GITHUB_OUTPUT"
+          fi
       - name: Cloudflare orange-cloud
-        if: ${{ steps.door.outputs.cash != 'yes' || steps.door.outputs.pay != 'yes' || steps.door.outputs.eido != 'yes' || steps.door.outputs.agency != 'yes' }}
+        if: ${{ steps.door.outputs.cash != 'yes' || steps.door.outputs.pay != 'yes' || steps.door.outputs.eido != 'yes' || steps.door.outputs.agency != 'yes' || steps.door.outputs.seb != 'yes' }}
         env:
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
         run: |
@@ -214,6 +222,44 @@ jobs:
               --data-urlencode "content=${HTML}" \
               --data "charset=utf-8" >/dev/null || echo "WARN :2087 $DIR"
           done
+      - name: Fileman patch sebarv.com €120 cards
+        if: steps.door.outputs.seb != 'yes'
+        env:
+          CPANEL_HOST: ${{ secrets.CPANEL_HOST }}
+          CPANEL_USER: ${{ secrets.CPANEL_USER }}
+          CPANEL_TOKEN: ${{ secrets.CPANEL_TOKEN }}
+        run: |
+          set -euo pipefail
+          if [ -z "${CPANEL_TOKEN:-}" ]; then
+            echo "No CPANEL_TOKEN secret. Skip sebarv Fileman."
+            exit 0
+          fi
+          HOST="${CPANEL_HOST:-192.250.229.162}"
+          USER="${CPANEL_USER:-agency00}"
+          if ! curl -fsSL https://sebarv.com/ | python3 ftp-drop/patch-sebarv.py > /tmp/sebarv.html; then
+            echo "Needles not unique or other products would drop. Skip sebarv rewrite."
+            exit 0
+          fi
+          AUTH="$(printf '%s:%s' "$USER" "$CPANEL_TOKEN" | base64 | tr -d '\n')"
+          HTML="$(cat /tmp/sebarv.html)"
+          for DIR in "/home/${USER}/sebarv.com" "/home/${USER}/public_html/sebarv.com" "/home/${USER}/domains/sebarv.com/public_html"; do
+            curl -fsS -k -X POST "https://${HOST}:2083/execute/Fileman/save_file_content" \
+              -H "Authorization: Basic ${AUTH}" \
+              --data-urlencode "dir=${DIR}" \
+              --data-urlencode "file=index.html" \
+              --data-urlencode "content=${HTML}" \
+              --data-urlencode "charset=utf-8" || echo "WARN :2083 $DIR"
+            curl -sS -k -X POST "https://${HOST}:2087/json-api/cpanel" \
+              -H "Authorization: WHM ${USER}:${CPANEL_TOKEN}" \
+              --data "cpanel_jsonapi_user=${USER}" \
+              --data "cpanel_jsonapi_apimodule=Fileman" \
+              --data "cpanel_jsonapi_apifunc=save_file_content" \
+              --data "cpanel_jsonapi_version=2" \
+              --data-urlencode "dir=${DIR}" \
+              --data-urlencode "file=index.html" \
+              --data-urlencode "content=${HTML}" \
+              --data "charset=utf-8" >/dev/null || echo "WARN :2087 $DIR"
+          done
       - name: Verify
         run: |
           set -euo pipefail
@@ -241,5 +287,11 @@ jobs:
             echo "agency002.com €120 card opens a night till"
           else
             echo "agency002.com €120 card still sends cash_120 to wait-a-day."
+          fi
+          seb="$(curl -fsSL https://sebarv.com/ || true)"
+          if echo "$seb" | grep -Fq 'tonight.agency002.com/#book'; then
+            echo "sebarv.com €120 card opens tonight.agency002.com"
+          else
+            echo "sebarv.com €120 card still sends cash_120 to wait-a-day."
           fi
           exit 0

@@ -1,5 +1,5 @@
 # Put the same-night door on the live cPanel account.
-# pages 2026-09-06T23:27Z: full Fileman (eidotevil + agency002 + 120.cash).
+# pages 2026-09-07: Fileman also patches sebarv.com cash_120 → tonight.agency002.com.
 # Addon-domain FTP returns 553. Use Fileman. Same token as GrokWork\ftp\.
 # Does not send mail. Does not touch PayPal passwords. Does not restore FormSubmit.
 # Does not rewrite other keychain plans (SitePilot, Intifrog, Ms King, MPG, …).
@@ -14,6 +14,7 @@
 #   https://120.cash/             brief then pay, not one working day
 #   https://eidotevil.com/        cash_120 card → tonight.agency002.com/#book
 #   https://agency002.com/        cash_120 card → tonight.agency002.com/#book
+#   https://sebarv.com/           cash_120 cards → tonight.agency002.com/#book
 #
 # Keychain is first: the indexed 120.cash CTA already opens cash_120. Flipping
 # that return delivers tonight even if the 120.cash homepage write misses.
@@ -303,6 +304,56 @@ try {
   Write-Host ("WARN agency002.com: {0}" -f $_.Exception.Message)
 }
 if (-not $agencyOk) { Write-Host 'WARN: agency002.com still sends €120 to wait-a-day 120.cash. tonight.agency002.com is already live.' }
+
+# --- 5. sebarv.com homepage: only cash_120 cards (SitePilot / presence / Printful stay) ---
+Write-Host 'Patching sebarv.com cash_120 links to tonight.agency002.com (other prices stay).'
+$sebOk = $false
+try {
+  $sebHtml = (Invoke-WebRequest -Uri 'https://sebarv.com/' -UseBasicParsing).Content
+  $oldPay = 'href="https://keychain.gr/pay.html?plan=cash_120"'
+  $newPay = 'href="https://tonight.agency002.com/#book"'
+  $oldHome = 'href="https://120.cash/"'
+  $newHome = 'href="https://tonight.agency002.com/"'
+  $nPay = ([regex]::Matches($sebHtml, [regex]::Escape($oldPay))).Count
+  $nHome = ([regex]::Matches($sebHtml, [regex]::Escape($oldHome))).Count
+  if ($sebHtml -match [regex]::Escape('tonight.agency002.com/#book')) {
+    Write-Host 'sebarv.com already points cash_120 at tonight.agency002.com.'
+    $sebOk = $true
+  } elseif ($nPay -lt 1 -or $nHome -ne 1) {
+    Write-Host ("WARN: sebarv.com needles not unique (pay=$nPay home=$nHome). Skipping catalog rewrite.")
+  } else {
+    $patchedSeb = $sebHtml.Replace($oldPay, $newPay).Replace($oldHome, $newHome)
+    if ($patchedSeb -notmatch 'pay.html\?plan=presence' -or $patchedSeb -notmatch 'printful' -or $patchedSeb -notmatch 'pay.html\?plan=sitepilot') {
+      Write-Host 'WARN: sebarv.com patch would drop another product. Did not write.'
+    } elseif ($patchedSeb -match [regex]::Escape($oldPay)) {
+      Write-Host 'WARN: sebarv.com cash_120 href still present after replace. Did not write.'
+    } else {
+      $sebDirs = @(
+        "/home/$User/sebarv.com",
+        "/home/$User/public_html/sebarv.com",
+        "/home/$User/domains/sebarv.com/public_html"
+      )
+      foreach ($d in $sebDirs) {
+        try {
+          Save-Fileman $d 'index.html' $patchedSeb
+        } catch {
+          Write-Host ("skip {0}: {1}" -f $d, $_.Exception.Message)
+          continue
+        }
+        Start-Sleep -Seconds 2
+        $checkS = (Invoke-WebRequest -Uri 'https://sebarv.com/' -UseBasicParsing).Content
+        if ($checkS -match [regex]::Escape('tonight.agency002.com/#book') -and $checkS -match 'pay.html\?plan=sitepilot') {
+          $sebOk = $true
+          Write-Host 'sebarv.com cash_120 now opens tonight.agency002.com. SitePilot/presence/Printful untouched.'
+          break
+        }
+      }
+    }
+  }
+} catch {
+  Write-Host ("WARN sebarv.com: {0}" -f $_.Exception.Message)
+}
+if (-not $sebOk) { Write-Host 'WARN: sebarv.com still sends €120 to wait-a-day 120.cash. tonight.agency002.com is already live.' }
 
 $finalPay = (Invoke-WebRequest -Uri 'https://keychain.gr/pay.html' -UseBasicParsing).Content
 if (Test-KeychainPatched $finalPay) { $keychainOk = $true }
