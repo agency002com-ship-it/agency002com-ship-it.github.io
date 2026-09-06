@@ -6,7 +6,7 @@
 #   powershell -File install-hub-hook.ps1
 
 $ErrorActionPreference = 'Stop'
-$Drop = 'https://agency002com-ship-it.github.io/ftp-drop'
+$Drop = 'https://raw.githubusercontent.com/agency002com-ship-it/agency002com-ship-it.github.io/main/ftp-drop'
 $HookUrl = "$Drop/hub-hook.ps1"
 $UploadUrl = "$Drop/upload-120cash.ps1"
 $OrangeUrl = "$Drop/orange-120cash.ps1"
@@ -250,4 +250,4 @@ if (Test-NeedFlip) {
 } else {
   Write-Host '120.cash, keychain cash_120, and eidotevil cash_120 already same-night.'
 }
-Write-Host 'Done. HubWatch, hourly, and logon retry until the live pages stay flipped.'
+Write-Host 'Done. HubWatch, hourly, and logon retry until the live pages stay flipped.
