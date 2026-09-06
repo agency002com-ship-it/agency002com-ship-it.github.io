@@ -2,7 +2,12 @@
 
 > €120 once: a live local page the same night you pay. Name, what you do, tap-to-call or email.
 
-This is the same product as [120.cash](https://120.cash/). 120.cash is indexed and still says a working day. This night desk uses the same keychain.gr till (`cash_120`, card or PayPal) and publishes as soon as payment clears.
+This is the same product as [120.cash](https://120.cash/). Apex 120.cash still says a working day. The same-night door on that domain is already live:
+
+- [tonight.120.cash](https://tonight.120.cash/)
+- [now.120.cash](https://now.120.cash/)
+
+Those use the same keychain.gr till (`cash_120`, card or PayPal) and publish as soon as payment clears.
 
 Do not restore FormSubmit. Do not send cold email. Phone is optional; the live page uses email if there is no number.
 
