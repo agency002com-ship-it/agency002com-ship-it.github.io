@@ -13,7 +13,8 @@
     .lead, label, .hint { font-size: 1.05rem; line-height: 1.6; color: #c9c2b3; }
     button.btn { display: inline-block; margin-top: .4rem; padding: .9rem 1.3rem; background: #e2b15a; color: #1b140c; border: 0; border-radius: 999px; font-family: sans-serif; font-size: 1rem; cursor: pointer; }
     a { color: #e2b15a; }
-    form { display: grid; gap: .7rem; margin-top: 1.2rem; }
+    [hidden] { display: none !important; }
+    form:not([hidden]) { display: grid; gap: .7rem; margin-top: 1.2rem; }
     input, textarea { width: 100%; box-sizing: border-box; padding: .75rem .8rem; border-radius: .5rem; border: 1px solid #3a3a32; background: #14150f; color: #ece7db; font-size: 1rem; }
     textarea { min-height: 7rem; }
     .msg { min-height: 1.4rem; color: #c4a46a; }
@@ -27,7 +28,7 @@
     <h1>You paid.<br />Leave the brief.</h1>
     <p class="lead" id="lead">Do not pay again. Name, what you do, a number people can tap. The page goes live on this site.</p>
     <p class="msg err" id="gate" hidden></p>
-    <form id="brief-form" hidden>
+    <form id="brief-form" hidden inert>
       <label for="biz">Name / business</label>
       <input id="biz" name="biz" type="text" required maxlength="80" autocomplete="off" />
       <label for="phone">Phone / WhatsApp</label>
@@ -43,7 +44,7 @@
     </form>
     <p class="hint"><a href="./">Need to pay first?</a></p>
   </main>
-  <script src="./shop.js?v=20260906f"></script>
+  <script src="./shop.js?v=20260906g"></script>
   <script>
   (function () {
     var q = new URLSearchParams(location.search);
@@ -55,11 +56,13 @@
       gate.hidden = false;
       gate.textContent = text;
       form.hidden = true;
+      form.setAttribute("inert", "");
     }
 
     function openForm() {
       gate.hidden = true;
       form.hidden = false;
+      form.removeAttribute("inert");
     }
 
     var sid = q.get("session_id") || "";
