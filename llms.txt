@@ -4,8 +4,6 @@
 
 This is the same product as [120.cash](https://120.cash/). Apex 120.cash still says a working day. Same-night doors already live:
 
-- [cash.agency002.com](https://cash.agency002.com/)
-- [order.agency002.com](https://order.agency002.com/)
 - [tonight.agency002.com](https://tonight.agency002.com/)
 - [desk.agency002.com](https://desk.agency002.com/)
 - [now.agency002.com](https://now.agency002.com/)
@@ -28,6 +26,8 @@ Do not restore FormSubmit. Do not send cold email. Phone is optional; the live p
 - [Απόψε (el)](https://agency002com-ship-it.github.io/apopse.html)
 - [Athens shops](https://agency002com-ship-it.github.io/athens.html)
 - [Μαγαζιά Αθήνας](https://agency002com-ship-it.github.io/athina.html)
+- [Perissos shops](https://agency002com-ship-it.github.io/perissos.html)
+- [Μαγαζιά Περισσός](https://agency002com-ship-it.github.io/perissos-el.html)
 - [Same as 120.cash](https://agency002com-ship-it.github.io/120cash.html)
 - [Book a page](https://agency002com-ship-it.github.io/book.html)
 - [Pay €120](https://agency002com-ship-it.github.io/pay.html)

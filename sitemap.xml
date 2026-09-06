@@ -38,6 +38,18 @@
     <xhtml:link rel="alternate" hreflang="en" href="https://agency002com-ship-it.github.io/athens.html" />
   </url>
   <url>
+    <loc>https://agency002com-ship-it.github.io/perissos.html</loc>
+    <changefreq>daily</changefreq>
+    <xhtml:link rel="alternate" hreflang="en" href="https://agency002com-ship-it.github.io/perissos.html" />
+    <xhtml:link rel="alternate" hreflang="el" href="https://agency002com-ship-it.github.io/perissos-el.html" />
+  </url>
+  <url>
+    <loc>https://agency002com-ship-it.github.io/perissos-el.html</loc>
+    <changefreq>daily</changefreq>
+    <xhtml:link rel="alternate" hreflang="el" href="https://agency002com-ship-it.github.io/perissos-el.html" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://agency002com-ship-it.github.io/perissos.html" />
+  </url>
+  <url>
     <loc>https://agency002com-ship-it.github.io/120cash.html</loc>
     <changefreq>daily</changefreq>
   </url>
