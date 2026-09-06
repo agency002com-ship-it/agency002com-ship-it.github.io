@@ -20,7 +20,7 @@
     <p class="url" id="url" hidden></p>
     <p><a href="./">Back to the brief</a></p>
   </main>
-  <script src="./shop.js?v=20260906b"></script>
+  <script src="./shop.js?v=20260906c"></script>
   <script>
   (function () {
     var q = new URLSearchParams(location.search);
@@ -43,6 +43,11 @@
       location.replace(href);
     }
 
+    var packed = q.get("p") || "";
+    if (packed) {
+      var fromPay = NightDesk.decode(packed);
+      if (fromPay) NightDesk.save(fromPay);
+    }
     var brief = NightDesk.load();
     if (!brief) {
       fail("This tab does not have the brief. Pay from the brief page in this same browser, then use Stripe or PayPal return link.");

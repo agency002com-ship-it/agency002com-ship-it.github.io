@@ -141,6 +141,7 @@
   async function openCheckout(brief, rail) {
     save(brief);
     var here = origin();
+    var packed = encode(brief);
     if (rail === "paypal") {
       try {
         var pp = await postJson(KEYCHAIN, {
@@ -148,7 +149,7 @@
           amount: 120,
           currency: "EUR",
           description: "120.cash night page — " + brief.businessName,
-          return_url: here + "/thanks.html?rail=paypal",
+          return_url: here + "/thanks.html?rail=paypal&p=" + packed,
           cancel_url: here + "/?checkout=cancelled",
         });
         if (pp.j && pp.j.approve_url) {
@@ -164,7 +165,7 @@
           action: "stripe_checkout",
           plan: "cash_120",
           description: "120.cash night page — " + brief.businessName,
-          success_url: here + "/thanks.html?session_id={CHECKOUT_SESSION_ID}",
+          success_url: here + "/thanks.html?session_id={CHECKOUT_SESSION_ID}&p=" + packed,
           cancel_url: here + "/?checkout=cancelled",
         });
         if (card.j && card.j.url && String(card.j.url).indexOf("https://checkout.stripe.com/") === 0) {
