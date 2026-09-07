@@ -50,6 +50,30 @@
     <xhtml:link rel="alternate" hreflang="en" href="https://agency002com-ship-it.github.io/perissos.html" />
   </url>
   <url>
+    <loc>https://agency002com-ship-it.github.io/kypseli.html</loc>
+    <changefreq>weekly</changefreq>
+    <xhtml:link rel="alternate" hreflang="en" href="https://agency002com-ship-it.github.io/kypseli.html" />
+    <xhtml:link rel="alternate" hreflang="el" href="https://agency002com-ship-it.github.io/kypseli-el.html" />
+  </url>
+  <url>
+    <loc>https://agency002com-ship-it.github.io/kypseli-el.html</loc>
+    <changefreq>weekly</changefreq>
+    <xhtml:link rel="alternate" hreflang="el" href="https://agency002com-ship-it.github.io/kypseli-el.html" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://agency002com-ship-it.github.io/kypseli.html" />
+  </url>
+  <url>
+    <loc>https://agency002com-ship-it.github.io/kallithea.html</loc>
+    <changefreq>weekly</changefreq>
+    <xhtml:link rel="alternate" hreflang="en" href="https://agency002com-ship-it.github.io/kallithea.html" />
+    <xhtml:link rel="alternate" hreflang="el" href="https://agency002com-ship-it.github.io/kallithea-el.html" />
+  </url>
+  <url>
+    <loc>https://agency002com-ship-it.github.io/kallithea-el.html</loc>
+    <changefreq>weekly</changefreq>
+    <xhtml:link rel="alternate" hreflang="el" href="https://agency002com-ship-it.github.io/kallithea-el.html" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://agency002com-ship-it.github.io/kallithea.html" />
+  </url>
+  <url>
     <loc>https://agency002com-ship-it.github.io/riza-kypseli.html</loc>
     <changefreq>weekly</changefreq>
   </url>
