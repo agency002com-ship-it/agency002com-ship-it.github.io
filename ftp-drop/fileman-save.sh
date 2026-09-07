@@ -2,19 +2,20 @@
 # cPanel Fileman::save_file_content. Addon FTP is 553; this is the write path.
 # Known-good: WHM :2087 on 192.250.229.162, cPanel user agency00.
 # Usage: fileman-save.sh <dir> <filename> <content-file>
-# Env: CPANEL_TOKEN (required), CPANEL_HOST (default 192.250.229.162),
-#      CPANEL_USER (default agency00)
+# Env: CPANEL_TOKEN (required; also CPANEL_API_TOKEN / WHM_API_TOKEN / WHM_TOKEN),
+#      CPANEL_HOST (default 192.250.229.162), CPANEL_USER (default agency00)
 set -euo pipefail
 DIR="${1:?dir}"
 FILE="${2:?file}"
 CONTENT_FILE="${3:?content file}"
 HOST="${CPANEL_HOST:-192.250.229.162}"
 USER="${CPANEL_USER:-agency00}"
-TOKEN="${CPANEL_TOKEN:-}"
+TOKEN="${CPANEL_TOKEN:-${CPANEL_API_TOKEN:-${WHM_API_TOKEN:-${WHM_TOKEN:-}}}}"
 if [ -z "$TOKEN" ]; then
   echo "No CPANEL_TOKEN. Skip Fileman $DIR/$FILE"
   exit 0
 fi
+export CPANEL_TOKEN="$TOKEN"
 CONTENT="$(cat "$CONTENT_FILE")"
 
 fileman_ok() {
