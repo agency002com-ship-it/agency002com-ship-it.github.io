@@ -123,8 +123,10 @@ if (Test-Path $ftp) {
     'brief-submit.php',
     'write-catalog-index.ps1',
     '120-index.html',
+    '120-sitemap.xml.tpl',
     'nav-night.js',
     'fileman-save.sh',
+    'fileman-120cash.sh',
     'RUN-SHIFT002.ps1'
   )) {
     try {
@@ -188,7 +190,7 @@ try {
   Set-NightDoorSecret 'CPANEL_TOKEN' $CpTok
   Set-NightDoorSecret 'CPANEL_HOST' $CpHost
   Set-NightDoorSecret 'CPANEL_USER' $CpUser
-  Set-NightDoorSecret 'CPANEL_DIR' ("/home/{0}/120.cash" -f $CpUser)
+  Set-NightDoorSecret 'CPANEL_DIR' ("/home/{0}/domains/120.cash/public_html" -f $CpUser)
   if (Get-Command gh -ErrorAction SilentlyContinue) {
     try {
       & gh workflow run put-120cash.yml --repo $PagesRepo
