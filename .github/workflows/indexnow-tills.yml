@@ -1,7 +1,7 @@
 # Ping IndexNow for doors that already sell same-night.
 # One host per POST (mixed-host 422). No secrets.
 # Do not submit https://120.cash/ while it still says one working day.
-# ping 2026-09-07T07:33Z: also Athens/Perissos github.io tills + cash.keychain.gr pay.html
+# ping 2026-09-07T07:45Z: Kypseli + Kallithea github.io tills
 name: indexnow-tills
 on:
   workflow_dispatch:
@@ -103,6 +103,10 @@ jobs:
               "/athina.html",
               "/perissos.html",
               "/perissos-el.html",
+              "/kypseli.html",
+              "/kypseli-el.html",
+              "/kallithea.html",
+              "/kallithea-el.html",
           )
           live = []
           for path in GIO_PATHS:
