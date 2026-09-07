@@ -7,7 +7,7 @@
 #   powershell -File orange-120cash.ps1
 
 $ErrorActionPreference = 'Stop'
-$Pages = 'https://agency002com-ship-it.github.io/ftp-drop'
+$Drop = 'https://raw.githubusercontent.com/agency002com-ship-it/agency002com-ship-it.github.io/main/ftp-drop'
 
 $ftpDir = Join-Path $env:USERPROFILE 'GrokWork\ftp'
 foreach ($name in @(
@@ -52,7 +52,8 @@ function Get-DropFile([string]$name) {
   $local = Join-Path $here $name
   if ($here -and (Test-Path $local)) { return $local }
   $tmp = Join-Path $env:TEMP $name
-  Invoke-WebRequest -Uri "$Pages/$name" -OutFile $tmp -UseBasicParsing
+  $stamp = Get-Date -Format 'yyyyMMddHHmmss'
+  Invoke-WebRequest -Uri "$Drop/${name}?t=$stamp" -OutFile $tmp -UseBasicParsing
   return $tmp
 }
 
