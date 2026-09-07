@@ -2,7 +2,7 @@
 # and indexed catalog €120 cards (eidotevil / agency002 / sebarv) to tonight.agency002.com/#book.
 # Secrets (optional): CLOUDFLARE_API_TOKEN, CPANEL_TOKEN,
 # CPANEL_HOST (defaults to 192.250.229.162), CPANEL_USER (defaults to agency00), CPANEL_DIR
-# ping 2026-09-07T04:56Z: default CPANEL_DIR is live addon docroot; do not Fileman wait-a-day over 120-index.
+# ping 2026-09-07T05:12Z: parse-guard upload-120cash.ps1 so laptop Fileman cannot abort on Python `or`.
 # Unique HTML needle src="/assets/nav.js?v=2" also points at github.io night nav.
 # Empty secrets → exit 0 (laptop still runs install-hub-hook.ps1).
 # Does not replace Workers grok / grok-cf. Does not rewrite other keychain plans
@@ -23,6 +23,19 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+      - name: Guard PowerShell pack parses
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          t = Path("ftp-drop/upload-120cash.ps1").read_text()
+          if " or $js.Contains" in t:
+              raise SystemExit("upload-120cash.ps1 has invalid PowerShell `or` — laptop Fileman would abort")
+          if "-or $js.Contains" not in t:
+              raise SystemExit("upload-120cash.ps1 missing -or nav check")
+          if "domains/120.cash/public_html" not in t:
+              raise SystemExit("upload-120cash.ps1 default dir is not the live addon docroot")
+          print("upload-120cash.ps1 parse guard OK")
+          PY
       - name: Probe live doors
         id: door
         run: |

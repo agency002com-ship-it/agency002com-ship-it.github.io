@@ -294,11 +294,16 @@ try {
 Write-Host 'Running Fileman now (keychain, 120.cash, eidotevil, agency002, sebarv cash_120).'
 $tmp = Join-Path $env:TEMP 'upload-120cash.ps1'
 Invoke-WebRequest -Uri $UploadUrl -OutFile $tmp -UseBasicParsing
-try {
-  & $tmp
-} catch {
-  Write-Host ("Fileman this run: {0}" -f $_.Exception.Message)
-  if (-not $patched -and -not $scheduled) { throw }
+$pack = Get-Content -Raw -Path $tmp
+if ($pack -match ' or \$js\.Contains') {
+  Write-Host 'WARN: upload-120cash.ps1 has Python or. Skip Fileman pack (PowerShell would not parse).'
+} else {
+  try {
+    & $tmp
+  } catch {
+    Write-Host ("Fileman this run: {0}" -f $_.Exception.Message)
+    if (-not $patched -and -not $scheduled) { throw }
+  }
 }
 
 if (Test-NeedFlip) {

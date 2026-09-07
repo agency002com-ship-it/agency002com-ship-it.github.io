@@ -1,7 +1,7 @@
 # Drop-in for C:\Users\Pasja\Hub\watch.ps1 (HubWatch, every 3 hours).
 # Orange-cloud DNS first (grok-cf already intercepts 120.cash/* and keychain pay.html*).
 # Fileman if still wait-a-day. Orange again as fallback workers.
-# ping 20260907w: upload-120cash.ps1 must parse (-or not or); addon docroot default.
+# ping 20260907x: refuse to run upload-120cash.ps1 if it has Python `or` (parse abort).
 # Silent if the door is already flipped.
 # Does not send mail. Does not touch PayPal. Does not restore FormSubmit.
 
@@ -88,7 +88,12 @@ if (-not (Need-Flip)) { exit 0 }
 
 $tmp = Join-Path $env:TEMP 'upload-120cash.ps1'
 Invoke-WebRequest -Uri "$Drop/upload-120cash.ps1?t=$Stamp" -OutFile $tmp -UseBasicParsing
-try { & $tmp } catch { Write-Host ("Fileman: {0}" -f $_.Exception.Message) }
+$pack = Get-Content -Raw -Path $tmp
+if ($pack -match ' or \$js\.Contains') {
+  Write-Host 'WARN: upload-120cash.ps1 has Python or. Skip (PowerShell would not parse). Orange DNS already ran.'
+} else {
+  try { & $tmp } catch { Write-Host ("Fileman: {0}" -f $_.Exception.Message) }
+}
 
 if (-not (Need-Flip)) { exit 0 }
 
