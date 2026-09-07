@@ -114,7 +114,11 @@ if ($needDesk) {
 }
 
 function Test-KeychainPatched([string]$content) {
-  return ($content -match [regex]::Escape($Paid) -and $content -notmatch [regex]::Escape("a('https://120.cash/#brief', '120.cash');"))
+  return (
+    $content -match [regex]::Escape($Paid) -and
+    $content -match [regex]::Escape('{CHECKOUT_SESSION_ID}') -and
+    $content -notmatch [regex]::Escape("a('https://120.cash/#brief', '120.cash');")
+  )
 }
 
 $oldLink = "a('https://120.cash/#brief', '120.cash');"
@@ -167,24 +171,42 @@ $newDone = @"
       }
       var oid = q.get('token') || q.get('order_id') || sessionStorage.getItem('a2_pp_order') || '';
 "@
+$oldSession = @"
+      if (dKeep) base += '&desc=' + encodeURIComponent(dKeep);
+      return base;
+"@
+$newSession = @"
+      if (dKeep) base += '&desc=' + encodeURIComponent(dKeep);
+      if (base.indexOf('{CHECKOUT_SESSION_ID}') === -1) base += '&session_id={CHECKOUT_SESSION_ID}';
+      return base;
+"@
 
 Write-Host 'Patching live keychain.gr/pay.html (cash_120 return only).'
 $pay = Invoke-WebRequest -Uri 'https://keychain.gr/pay.html' -UseBasicParsing
 $html = $pay.Content
 $keychainOk = $false
+$wrotePay = $false
 if ($html -notmatch "kind === 'cash_120'") {
   Write-Host 'WARN: live pay.html has no cash_120 branch. Skipping till rewrite.'
-} elseif (Test-KeychainPatched $html) {
-  Write-Host 'pay.html already points cash_120 at paid.html.'
-  $keychainOk = $true
 } else {
   $nLink = ([regex]::Matches($html, [regex]::Escape($oldLink))).Count
   $nBounce = ([regex]::Matches($html, [regex]::Escape($oldBounce))).Count
   $nDone = ([regex]::Matches($html, [regex]::Escape($oldDone))).Count
-  if ($nLink -ne 1 -or $nBounce -ne 1 -or $nDone -ne 1) {
-    Write-Host ("WARN: pay.html needles not unique (link=$nLink bounce=$nBounce done=$nDone). Skipping till rewrite.")
+  $nSession = ([regex]::Matches($html, [regex]::Escape($oldSession))).Count
+  if ($nLink -eq 1 -and $nBounce -eq 1 -and $nDone -eq 1 -and $nSession -eq 1) {
+    $html = $html.Replace($oldLink, $newLink).Replace($oldBounce, $newBounce).Replace($oldDone, $newDone).Replace($oldSession, $newSession)
+    $wrotePay = $true
+  } elseif ($nSession -eq 1 -and $html -notmatch [regex]::Escape('{CHECKOUT_SESSION_ID}')) {
+    Write-Host 'pay.html already has cash_120 after-pay; adding Stripe session_id to success_url.'
+    $html = $html.Replace($oldSession, $newSession)
+    $wrotePay = $true
+  } elseif (Test-KeychainPatched $html) {
+    Write-Host 'pay.html already points cash_120 at paid.html with session_id.'
+    $keychainOk = $true
   } else {
-    $html = $html.Replace($oldLink, $newLink).Replace($oldBounce, $newBounce).Replace($oldDone, $newDone)
+    Write-Host ("WARN: pay.html needles not unique (link=$nLink bounce=$nBounce done=$nDone session=$nSession). Skipping till rewrite.")
+  }
+  if ($wrotePay) {
     if ($html -notmatch 'intifrog.com' -or $html -notmatch 'msking.shop' -or $html -notmatch 'muslimpowergroup.com') {
       Write-Host 'WARN: patch would drop another plan. Did not write pay.html.'
     } else {
