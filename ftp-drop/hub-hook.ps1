@@ -1,4 +1,4 @@
-# Drop-in for C:\\Users\\Pasja\\Hub\\watch.ps1 (HubWatch, every 3 hours).
+# Drop-in for C:\Users\Pasja\Hub\watch.ps1 (HubWatch, every 3 hours).
 # Orange-cloud DNS first (grok-cf already intercepts 120.cash/* and keychain pay.html*).
 # Fileman if still wait-a-day. Orange again as fallback workers.
 # ping 20260907w: upload-120cash.ps1 must parse (-or not or); addon docroot default.
@@ -35,7 +35,7 @@ function Need-Flip {
   foreach ($navHost in @('eidotevil.com', 'agency002.com', 'sebarv.com', '120.cash')) {
     $js = ''
     try { $js = (Invoke-WebRequest -Uri ("https://{0}/assets/nav.js" -f $navHost) -UseBasicParsing).Content } catch { }
-    if ($js -notmatch 'cash\\.keychain\\.gr') { $needNav = $true }
+    if ($js -notmatch 'cash\.keychain\.gr') { $needNav = $true }
   }
   return ($needCash -or $needPay -or $needEido -or $needAgency -or $needSeb -or $needCatalog -or $needNav)
 }
