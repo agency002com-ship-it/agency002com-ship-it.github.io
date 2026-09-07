@@ -10,7 +10,11 @@ OLD_HOME = 'href="https://120.cash/"'
 NEW_HOME = 'href="https://tonight.agency002.com/"'
 OLD_FETCH = "fetch('/brief-submit.php', {"
 NEW_FETCH = "fetch('https://tonight.agency002.com/brief-submit.php', {"
-NEW_NAV = 'src="https://agency002com-ship-it.github.io/ftp-drop/nav-night.js?v=20260907n"'
+OLD_HINT = "Use this form on sebarv.com. I answer within one working day."
+NEW_HINT = "Use this form on sebarv.com. A €120 page goes live the same night you pay."
+OLD_JS = "Got it. I will reply within one working day."
+NEW_JS = "Got it. Live tonight after this brief."
+NEW_NAV = 'src="https://agency002com-ship-it.github.io/ftp-drop/nav-night.js?v=20260907o"'
 OLD_NAVS = ('src="/assets/nav.js?v=2"', 'src="/assets/nav.js?v=4"')
 
 
@@ -46,6 +50,10 @@ def patch(html: str) -> str:
         out = out.replace(OLD_PAY, NEW_PAY).replace(OLD_HOME, NEW_HOME)
         if NEW_PAY not in out or OLD_PAY in out:
             raise SystemExit("cash_120 href not moved; skip")
+    if out.count(OLD_HINT) == 1:
+        out = out.replace(OLD_HINT, NEW_HINT)
+    if out.count(OLD_JS) == 1:
+        out = out.replace(OLD_JS, NEW_JS)
     out = rewrite_fetch(out)
     out = rewrite_nav_src(out)
     if "pay.html?plan=presence" not in out or "printful" not in out.lower():
