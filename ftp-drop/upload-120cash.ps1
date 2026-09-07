@@ -212,7 +212,7 @@ foreach ($site in @('eidotevil.com', 'agency002.com', 'sebarv.com', '120.cash'))
   try {
     $h = (Invoke-WebRequest -Uri ("https://{0}/" -f $site) -UseBasicParsing).Content
     $js = (Invoke-WebRequest -Uri ("https://{0}/assets/nav.js" -f $site) -UseBasicParsing).Content
-    if ($h.Contains('ftp-drop/nav-night.js') or $js.Contains('cash.keychain.gr')) {
+    if ($h.Contains('ftp-drop/nav-night.js') -or $js.Contains('cash.keychain.gr')) {
       Write-Host ("OK {0} night nav live." -f $site)
       $navLive++
     } else {
