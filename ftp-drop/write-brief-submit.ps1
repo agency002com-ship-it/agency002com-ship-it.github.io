@@ -1,5 +1,5 @@
 # Tiny Fileman: overwrite 120.cash/brief-submit.php only.
-# Grey 120.cash + orange tonight (grok-cf → origin) POST KV without waiting on Gmail.
+# Mails unpaid briefs. KV publish only when Stripe/PayPal id is on the POST.
 # Do not write eidotevil / agency002 / sebarv brief-submit.php.
 $ErrorActionPreference = 'Stop'
 $Drop = 'https://raw.githubusercontent.com/agency002com-ship-it/agency002com-ship-it.github.io/main/ftp-drop'
@@ -54,6 +54,10 @@ if (Test-Path $localPhp) {
 $php = [System.IO.File]::ReadAllText($phpTmp)
 if ($php.Length -lt 400 -or $php -notmatch 'cash\.120\.cash/api/publish') {
   Write-Error 'brief-submit.php is not the KV publisher. Skip origin overwrite.'
+  exit 1
+}
+if ($php -notmatch 'tonight\.agency002\.com/#book' -or $php -notmatch 'cs_\(live\|test\)_') {
+  Write-Error 'brief-submit.php would publish unpaid. Skip origin overwrite.'
   exit 1
 }
 

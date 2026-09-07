@@ -4,8 +4,8 @@ declare(strict_types=1);
 /**
  * 120.cash money-door briefs. Fileman this onto 120.cash docroots only.
  * Do not copy onto eidotevil / agency002 / sebarv (those forms are not cash_120).
- * POST JSON { email, biz, phone, message } → KV https://cash.120.cash/p/{slug}
- * plus NEW 120.cash BRIEF mail. GET stays 405 with kv:true so HubWatch can see it.
+ * Always mails NEW 120.cash BRIEF. KV publish only when session_id / PayPal id is present.
+ * Unpaid POSTs get the tonight till, not a free page. GET stays 405 with kv:true.
  */
 header('Cache-Control: no-store');
 header('X-Shift002: brief-kv');
@@ -133,6 +133,19 @@ $mail = ($saved !== '' ? "Saved: {$saved}\n" : '') . $bodyFile;
 $headers = "From: noreply@agency002.com\r\nReply-To: {$email}\r\nContent-Type: text/plain; charset=utf-8";
 @mail('agency002.com@gmail.com', 'NEW 120.cash BRIEF (money door)', $mail, $headers);
 
+$till = 'https://tonight.agency002.com/#book';
+$hasPay = (bool) (
+    (preg_match('/^cs_(live|test)_/', $paymentId) === 1 && strlen($paymentId) >= 40)
+    || (preg_match('/^[A-Za-z0-9_-]{12,64}$/', $paymentId) === 1 && preg_match('/^cs_/', $paymentId) !== 1)
+);
+if (!$hasPay) {
+    brief_out(200, [
+        'ok' => true,
+        'pay' => $till,
+        'message' => 'If you already paid, open the checkout return. If not, pay €120 at ' . $till,
+    ]);
+}
+
 $payload = json_encode([
     'businessName' => $biz,
     'whatYouDo' => $message,
@@ -177,6 +190,6 @@ if ($url !== '') {
 
 brief_out(200, [
     'ok' => true,
-    'kv' => true,
-    'message' => 'Got it. Building tonight — not a working day.',
+    'pay' => $till,
+    'message' => 'If you already paid, open the checkout return. If not, pay €120 at ' . $till,
 ]);
