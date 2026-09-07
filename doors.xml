@@ -1,6 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url><loc>https://tonight.agency002.com/</loc><changefreq>daily</changefreq></url>
+  <url><loc>https://pay.120.cash/pay.html?plan=cash_120</loc><changefreq>hourly</changefreq></url>
+  <url><loc>https://tonight.agency002.com/120cash.html</loc><changefreq>hourly</changefreq></url>
   <url><loc>https://tonight.agency002.com/pay.html?plan=cash_120</loc><changefreq>hourly</changefreq></url>
   <url><loc>https://tonight.agency002.com/perissos-el.html</loc><changefreq>daily</changefreq></url>
   <url><loc>https://tonight.agency002.com/athina.html</loc><changefreq>daily</changefreq></url>
@@ -8,6 +10,8 @@
   <url><loc>https://cash.keychain.gr/pay.html?plan=cash_120</loc><changefreq>hourly</changefreq></url>
   <url><loc>https://agency002com-ship-it.github.io/</loc><changefreq>daily</changefreq></url>
   <url><loc>https://agency002com-ship-it.github.io/el.html</loc><changefreq>daily</changefreq></url>
+  <url><loc>https://agency002com-ship-it.github.io/120cash.html</loc><changefreq>hourly</changefreq></url>
+  <url><loc>https://agency002com-ship-it.github.io/apopse.html</loc><changefreq>hourly</changefreq></url>
   <url><loc>https://agency002com-ship-it.github.io/kypseli.html</loc><changefreq>daily</changefreq></url>
   <url><loc>https://agency002com-ship-it.github.io/kallithea.html</loc><changefreq>daily</changefreq></url>
   <url><loc>https://agency002com-ship-it.github.io/perissos.html</loc><changefreq>daily</changefreq></url>
