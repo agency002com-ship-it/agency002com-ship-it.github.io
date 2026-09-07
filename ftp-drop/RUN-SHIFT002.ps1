@@ -12,6 +12,17 @@ $Stamp = Get-Date -Format 'yyyyMMddHHmmss'
 $Url = "$Drop/install-hub-hook.ps1?t=$Stamp"
 $Out = Join-Path $env:TEMP 'shift002-install-hub-hook.ps1'
 Invoke-WebRequest -Uri $Url -OutFile $Out -UseBasicParsing
+$pack = Get-Content -Raw -Path $Out
+$i = $pack.LastIndexOf("Write-Host 'Done. HubWatch")
+$chunk = if ($i -ge 0) { $pack.Substring($i, [Math]::Min(140, $pack.Length - $i)) } else { '' }
+if ($pack.Length -lt 500 -or $pack -match 'PLACEHOLDER - DO NOT USE') {
+  Write-Host 'WARN: install-hub-hook.ps1 looks truncated. Refusing to run.'
+  exit 1
+}
+if (-not $chunk.Contains("stay flipped.'")) {
+  Write-Host 'WARN: install-hub-hook.ps1 last Done line is unclosed. Refusing to run (PowerShell would parse-abort).'
+  exit 1
+}
 & $Out
 
 $Cat = Join-Path $env:TEMP 'shift002-write-catalog-index.ps1'
