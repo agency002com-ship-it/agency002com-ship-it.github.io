@@ -2,8 +2,10 @@
 # Nav.js first (eidotevil / agency002 / sebarv / 120.cash): Pay cash_120 →
 # cash.keychain.gr; unique wait-a-day copy → same night; briefs → tonight KV.
 # Then unique nav.js src cache-bust. Then 120.cash index.html if HTML still
-# says wait-a-day (curl/Google see source, not JS). Then keychain.gr pay.html
-# cash_120 after-pay. Other keychain plans stay. No mail. No PayPal passwords.
+# says wait-a-day (curl/Google see source, not JS). After index is same-night:
+# sitemap.xml (lastmod + hourly) + IndexNow key, ping 120.cash only (never the
+# wait-a-day page). Then keychain.gr pay.html cash_120 after-pay. Other keychain
+# plans stay. No mail. No PayPal passwords.
 #
 #   powershell -File upload-120cash.ps1
 
@@ -12,7 +14,7 @@ $Drop = 'https://raw.githubusercontent.com/agency002com-ship-it/agency002com-shi
 $Pages = 'https://agency002com-ship-it.github.io'
 $Paid = "$Pages/paid.html"
 
-$ftpDir = Join-Path $env:USERPROFILE 'GrokWork\ftp'
+$ftpDir = Join-Path $env:USERPROFILE 'GrokWork\\ftp'
 foreach ($name in @('config.cpanel.local.ps1', 'config.local.ps1', 'whm-api.ps1')) {
   $p = Join-Path $ftpDir $name
   if (Test-Path $p) { . $p }
@@ -39,7 +41,7 @@ $HostNames = @($HostName, '192.250.229.162', 'agency002.com', 'lemonpie.codes') 
 if (-not $Token) {
   Write-Error @"
 No cPanel token in this session.
-Dot-source GrokWork\ftp\config.cpanel.local.ps1 (already on the laptop),
+Dot-source GrokWork\\ftp\\config.cpanel.local.ps1 (already on the laptop),
 or set CPANEL_TOKEN. Do not invent a password. Do not use PayPal credentials.
 "@
 }
@@ -88,6 +90,37 @@ if (Test-Path $localSave) {
   . $save
 }
 
+function Write-OriginDiscover {
+  $stamp = (Get-Date).ToUniversalTime().ToString('yyyy-MM-ddTHH:mm:ssZ')
+  $sitemap = @"
+<?xml version=\"1.0\" encoding=\"UTF-8\"?>
+<urlset xmlns=\"http://www.sitemaps.org/schemas/sitemap/0.9\">
+  <url>
+    <loc>https://120.cash/</loc>
+    <lastmod>$stamp</lastmod>
+    <changefreq>hourly</changefreq>
+    <priority>1.0</priority>
+  </url>
+</urlset>
+"@
+  $key = '7c2a9f1e4b8d0c3a5e6f7a8b9c0d1e2f'
+  foreach ($d in @($Dir, "/home/$User/public_html/120.cash", "/home/$User/domains/120.cash/public_html")) {
+    try { Save-Fileman $d 'sitemap.xml' $sitemap } catch {
+      Write-Host ("skip sitemap {0}: {1}" -f $d, $_.Exception.Message)
+    }
+    try { Save-Fileman $d ($key + '.txt') $key } catch {
+      Write-Host ("skip IndexNow key {0}: {1}" -f $d, $_.Exception.Message)
+    }
+  }
+  $json = '{\"host\":\"120.cash\",\"key\":\"' + $key + '\",\"keyLocation\":\"https://120.cash/' + $key + '.txt\",\"urlList\":[\"https://120.cash/\"]}'
+  try {
+    Invoke-WebRequest -Uri 'https://api.indexnow.org/indexnow' -Method POST -ContentType 'application/json; charset=utf-8' -Body $json -UseBasicParsing | Out-Null
+    Write-Host 'IndexNow pinged https://120.cash/ (flipped homepage only).'
+  } catch {
+    Write-Host ("WARN IndexNow: {0}" -f $_.Exception.Message)
+  }
+}
+
 Write-Host 'Writing catalog /assets/nav.js (cash_120 only).'
 try { Invoke-DropScript 'write-nav.ps1' } catch {
   Write-Host ("WARN nav.js: {0}" -f $_.Exception.Message)
@@ -112,16 +145,17 @@ if ($page120 -match 'one working day') {
         Write-Host ("skip {0}: {1}" -f $d, $_.Exception.Message)
       }
     }
+    Start-Sleep -Seconds 2
   } else {
     Write-Host 'WARN: 120.cash index needles not unique. Skip index write.'
   }
 }
 
 function Test-KeychainPatched([string]$content) {
-  return ($content -match [regex]::Escape($Paid) -and $content -notmatch [regex]::Escape("a('https://120.cash/#brief', '120.cash');"))
+  return ($content -match [regex]::Escape($Paid) -and $content -notmatch [regex]::Escape(\"a('https://120.cash/#brief', '120.cash');\"))
 }
 
-$oldLink = "a('https://120.cash/#brief', '120.cash');"
+$oldLink = \"a('https://120.cash/#brief', '120.cash');\"
 $newLink = @"
         var sid = (new URLSearchParams(location.search)).get('session_id') || '';
         var tok = (new URLSearchParams(location.search)).get('token') || (new URLSearchParams(location.search)).get('order_id') || '';
@@ -176,7 +210,7 @@ Write-Host 'Patching live keychain.gr/pay.html (cash_120 return only).'
 $pay = Invoke-WebRequest -Uri 'https://keychain.gr/pay.html' -UseBasicParsing
 $html = $pay.Content
 $keychainOk = $false
-if ($html -notmatch "kind === 'cash_120'") {
+if ($html -notmatch \"kind === 'cash_120'\") {
   Write-Host 'WARN: live pay.html has no cash_120 branch. Skipping till rewrite.'
 } elseif (Test-KeychainPatched $html) {
   Write-Host 'pay.html already points cash_120 at paid.html.'
@@ -186,15 +220,15 @@ if ($html -notmatch "kind === 'cash_120'") {
   $nBounce = ([regex]::Matches($html, [regex]::Escape($oldBounce))).Count
   $nDone = ([regex]::Matches($html, [regex]::Escape($oldDone))).Count
   if ($nLink -ne 1 -or $nBounce -ne 1 -or $nDone -ne 1) {
-    Write-Host ("WARN: pay.html needles not unique (link=$nLink bounce=$nBounce done=$nDone). Skipping till rewrite.")
+    Write-Host (\"WARN: pay.html needles not unique (link=$nLink bounce=$nBounce done=$nDone). Skipping till rewrite.\")
   } else {
     $html = $html.Replace($oldLink, $newLink).Replace($oldBounce, $newBounce).Replace($oldDone, $newDone)
     if ($html -notmatch 'intifrog.com' -or $html -notmatch 'msking.shop' -or $html -notmatch 'muslimpowergroup.com') {
       Write-Host 'WARN: patch would drop another plan. Did not write pay.html.'
     } else {
-      foreach ($d in @("/home/$User/keychain.gr", "/home/$User/public_html/keychain.gr", "/home/$User/domains/keychain.gr/public_html")) {
+      foreach ($d in @(\"/home/$User/keychain.gr\", \"/home/$User/public_html/keychain.gr\", \"/home/$User/domains/keychain.gr/public_html\")) {
         try { Save-Fileman $d 'pay.html' $html } catch {
-          Write-Host ("skip {0}: {1}" -f $d, $_.Exception.Message)
+          Write-Host (\"skip {0}: {1}\" -f $d, $_.Exception.Message)
           continue
         }
         Start-Sleep -Seconds 2
@@ -214,16 +248,16 @@ if ($finalPay -notmatch 'intifrog.com' -or $finalPay -notmatch 'sitepilot') {
 $navLive = 0
 foreach ($site in @('eidotevil.com', 'agency002.com', 'sebarv.com', '120.cash')) {
   try {
-    $h = (Invoke-WebRequest -Uri ("https://{0}/" -f $site) -UseBasicParsing).Content
-    $js = (Invoke-WebRequest -Uri ("https://{0}/assets/nav.js" -f $site) -UseBasicParsing).Content
+    $h = (Invoke-WebRequest -Uri (\"https://{0}/\" -f $site) -UseBasicParsing).Content
+    $js = (Invoke-WebRequest -Uri (\"https://{0}/assets/nav.js\" -f $site) -UseBasicParsing).Content
     if ($h.Contains('ftp-drop/nav-night.js') -or $js.Contains('cash.keychain.gr')) {
-      Write-Host ("OK {0} night nav live." -f $site)
+      Write-Host (\"OK {0} night nav live.\" -f $site)
       $navLive++
     } else {
-      Write-Host ("WARN {0} nav.js still year-stamp." -f $site)
+      Write-Host (\"WARN {0} nav.js still year-stamp.\" -f $site)
     }
   } catch {
-    Write-Host ("WARN check {0}: {1}" -f $site, $_.Exception.Message)
+    Write-Host (\"WARN check {0}: {1}\" -f $site, $_.Exception.Message)
   }
 }
 
@@ -235,10 +269,17 @@ try {
   $stillCash = ((Invoke-WebRequest -Uri 'https://120.cash/' -UseBasicParsing).Content -match 'one working day')
 } catch { $stillCash = $true }
 
+if (-not $stillCash) {
+  Write-Host '120.cash same-night. Origin sitemap + IndexNow key, then ping IndexNow (not the wait-a-day page).'
+  try { Write-OriginDiscover } catch {
+    Write-Host (\"WARN origin discover: {0}\" -f $_.Exception.Message)
+  }
+}
+
 if (-not $keychainOk -or $navLive -lt 4 -or $stillCash) {
   Write-Host 'Still wait-a-day. Cloudflare orange-cloud (existing grok-cf routes).'
   try { Invoke-DropScript 'orange-120cash.ps1' } catch {
-    Write-Host ("Cloudflare orange: {0}" -f $_.Exception.Message)
+    Write-Host (\"Cloudflare orange: {0}\" -f $_.Exception.Message)
   }
 }
 Write-Host 'Done.'
