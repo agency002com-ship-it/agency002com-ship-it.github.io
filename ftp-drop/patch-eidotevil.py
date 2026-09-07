@@ -12,6 +12,8 @@ OLD_HOME = 'href="https://120.cash/"'
 NEW_HOME = 'href="https://tonight.agency002.com/"'
 OLD_LINE = "After pay: short brief on 120.cash"
 NEW_LINE = "After pay: same-night brief on tonight.agency002.com"
+OLD_HINT = "Form stays on eidotevil.com. We answer within one working day."
+NEW_HINT = "Form stays on eidotevil.com. A €120 page goes live the same night you pay."
 
 
 def already_ok(html: str) -> bool:
@@ -31,6 +33,7 @@ def patch(html: str) -> str:
         .replace(OLD_BRIEF, NEW_BRIEF)
         .replace(OLD_HOME, NEW_HOME)
         .replace(OLD_LINE, NEW_LINE)
+        .replace(OLD_HINT, NEW_HINT)
     )
     if "pay.html?plan=presence" not in out or "page_100" not in out or "printful" not in out.lower():
         raise SystemExit("patch would drop another product; skip")
