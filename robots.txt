@@ -3,6 +3,8 @@ Allow: /
 Allow: /llms.txt
 Allow: /feed.xml
 Allow: /doors.xml
+Allow: /120cash.html
+Allow: /apopse.html
 Disallow: /ftp-drop/
 Disallow: /thanks.html
 Disallow: /agency-now.html
@@ -12,7 +14,6 @@ Disallow: /sebarv-now.html
 Disallow: /tonight-agency.html
 Disallow: /apopse-cash.html
 Disallow: /desk-cash.html
-Disallow: /120cash.html
 Disallow: /book.html
 Disallow: /pay.html
 Sitemap: https://agency002com-ship-it.github.io/sitemap.xml
