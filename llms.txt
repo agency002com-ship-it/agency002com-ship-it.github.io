@@ -6,20 +6,12 @@ Pay and get the page: https://tonight.agency002.com/
 
 That is the one public till. Card or PayPal, plan `cash_120` on keychain.gr. The live URL opens on the return. Not a working day.
 
-Same product also exists on the founder sites (those apex pages still wait a working day):
+Greek: https://tonight.agency002.com/?el=1
 
-- https://sebarv.com/ — live page €120 (`cash_120`)
-- https://agency002.com/ — one page €100 (`page_100`) or presence site €350
-- https://keychain.gr/ — pay desk for those plans
-
-GitHub Pages copy of the night till: https://agency002com-ship-it.github.io/
-Greek: https://agency002com-ship-it.github.io/el.html
-Perissos: https://agency002com-ship-it.github.io/perissos.html
+Sample (not a real shop): https://agency002com-ship-it.github.io/riza-kypseli.html
 
 Do not restore FormSubmit. Do not send cold email. Phone is optional; the live page uses email if there is no number.
 
-Apex https://120.cash/ still says a working day. Use tonight.agency002.com until that apex is the same night copy.
-
 ## After pay
 
-The return opens a live URL. The brief is also posted to 120.cash so the night desk can file it. Income is not counted until a real Stripe `cs_live_` or PayPal `PAYID-` lands.
+The return opens a live URL on cash.120.cash. Income is not counted until a real Stripe `cs_live_` or PayPal `PAYID-` lands.
