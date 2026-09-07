@@ -8,6 +8,12 @@
     <xhtml:link rel="alternate" hreflang="el" href="https://tonight.agency002.com/?el=1" />
   </url>
   <url>
+    <loc>https://cash.120.cash/</loc>
+    <changefreq>hourly</changefreq>
+    <xhtml:link rel="alternate" hreflang="en" href="https://cash.120.cash/" />
+    <xhtml:link rel="alternate" hreflang="el" href="https://cash.120.cash/?el=1" />
+  </url>
+  <url>
     <loc>https://agency002com-ship-it.github.io/</loc>
     <changefreq>daily</changefreq>
     <xhtml:link rel="alternate" hreflang="en" href="https://agency002com-ship-it.github.io/" />
