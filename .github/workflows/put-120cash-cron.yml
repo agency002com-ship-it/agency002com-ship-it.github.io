@@ -1,11 +1,13 @@
-# Self-contained hourly Fileman/orange. Does not use workflow_call (the
-# nested schedule on put-120cash.yml has never produced a schedule event).
-# secrets: inherit from repo. Empty secrets skip inside the scripts.
+# Self-contained Fileman/orange. Does not use workflow_call (put-120cash.yml
+# nested schedule never produced a schedule event). indexnow-tills DID get a
+# schedule event at 07:31Z, so GitHub cron works on this repo — use */15 like
+# cron-alive. Empty secrets skip inside the scripts.
 # Does not replace Workers grok / grok-cf.
+# ping 2026-09-07T07:42Z: */15 so laptop secrets Fileman before the next hour.
 name: put-120cash-cron
 on:
   schedule:
-    - cron: "25 * * * *"
+    - cron: "*/15 * * * *"
   workflow_dispatch:
 jobs:
   put:
