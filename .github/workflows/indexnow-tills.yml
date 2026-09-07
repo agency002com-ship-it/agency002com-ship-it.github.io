@@ -1,6 +1,7 @@
 # Ping IndexNow for doors that already sell same-night.
 # One host per POST (mixed-host 422). No secrets.
 # Do not submit https://120.cash/ while it still says one working day.
+# ping 2026-09-07T14:42Z: llms.txt with Greek neighbourhood tills
 # ping 2026-09-07T14:32Z: sitemap.xml + feed.xml with neighbourhood tills
 # ping 2026-09-07T09:53Z: grok-cf.eid-ot-evil.workers.dev + remaining orange tills
 # ping 2026-09-07T09:43Z: 09:40 schedule missing (last schedule 07:31); force chain
@@ -144,7 +145,7 @@ jobs:
               else:
                   print("skip github.io{0} (not same-night)".format(path))
           extras = []
-          for path in ("/sitemap.xml", "/feed.xml"):
+          for path in ("/sitemap.xml", "/feed.xml", "/llms.txt"):
               try:
                   get("https://{0}{1}".format(gio_host, path))
                   extras.append(path)
