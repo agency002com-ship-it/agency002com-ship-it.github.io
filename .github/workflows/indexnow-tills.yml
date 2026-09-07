@@ -1,6 +1,7 @@
 # Ping IndexNow for doors that already sell same-night.
 # One host per POST (mixed-host 422). No secrets.
 # Do not submit https://120.cash/ while it still says one working day.
+# ping 2026-09-07T22:16Z: converting paths only — no neighbourhood github.io IndexNow.
 # ping 2026-09-07T21:48Z: pay.120.cash checkout + converting 120cash.html/apopse.html (no neighbourhood add).
 # ping 2026-09-07T14:42Z: llms.txt with Greek neighbourhood tills
 # ping 2026-09-07T14:32Z: sitemap.xml + feed.xml with neighbourhood tills
@@ -86,11 +87,14 @@ jobs:
               if not same_night(page):
                   print(host, "skip (not same-night)")
                   continue
-              paths = ["/"]
-              if host in ("cash.keychain.gr", "pay.120.cash"):
-                  paths = ["/", "/pay.html?plan=cash_120"]
-              elif host == "cash.120.cash":
-                  paths = ["/", "/120cash.html", "/apopse.html"]
+              CONVERTING = {
+                  "tonight.agency002.com": ["/", "/120cash.html", "/apopse.html", "/tonight.html", "/el.html", "/pay.html?plan=cash_120"],
+                  "pay.120.cash": ["/", "/pay.html?plan=cash_120", "/120cash.html", "/apopse.html", "/tonight.html", "/el.html", "/sitemap.xml"],
+                  "cash.120.cash": ["/", "/120cash.html", "/apopse.html", "/tonight.html", "/el.html", "/pay.html?plan=cash_120"],
+                  "cash.keychain.gr": ["/", "/pay.html?plan=cash_120"],
+                  "tonight.120.cash": ["/", "/120cash.html", "/apopse.html", "/tonight.html", "/el.html", "/pay.html?plan=cash_120"],
+              }
+              paths = CONVERTING.get(host, ["/"])
               try:
                   ping(host, paths)
               except Exception as e:
@@ -116,28 +120,6 @@ jobs:
               "/apopse.html",
               "/tonight.html",
               "/el.html",
-              "/athens.html",
-              "/athina.html",
-              "/perissos.html",
-              "/perissos-el.html",
-              "/kypseli.html",
-              "/kypseli-el.html",
-              "/kallithea.html",
-              "/kallithea-el.html",
-              "/nea-ionia.html",
-              "/nea-ionia-el.html",
-              "/patissia.html",
-              "/patissia-el.html",
-              "/pangrati.html",
-              "/pangrati-el.html",
-              "/galatsi.html",
-              "/galatsi-el.html",
-              "/marousi.html",
-              "/marousi-el.html",
-              "/zografou.html",
-              "/zografou-el.html",
-              "/koukaki.html",
-              "/koukaki-el.html",
           )
           live = []
           for path in GIO_PATHS:
