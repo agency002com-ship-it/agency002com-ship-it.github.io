@@ -21,6 +21,25 @@
     a.setAttribute("href", "https://tonight.agency002.com/#book");
   });
 
+  var swaps = [
+    ["Only after payment. We answer within one working day.", "Pay €120. The page goes live tonight. Not a working day."],
+    ["Form stays on eidotevil.com. We answer within one working day.", "Form stays on eidotevil.com. A €120 page goes live the same night you pay."],
+    ["Form stays on agency002.com. We answer within one working day.", "Form stays on agency002.com. A €120 page goes live the same night you pay."],
+    ["Use this form on sebarv.com. I answer within one working day.", "Use this form on sebarv.com. A €120 page goes live the same night you pay."],
+    ["After pay: short brief on 120.cash", "After pay: same-night brief on tonight.agency002.com"],
+    ["After pay: brief on 120.cash", "After pay: same-night brief on tonight.agency002.com"],
+  ];
+  document.querySelectorAll("p, li").forEach(function (el) {
+    var t = el.textContent || "";
+    var next = t;
+    for (var i = 0; i < swaps.length; i++) {
+      if (next.indexOf(swaps[i][0]) !== -1) {
+        next = next.split(swaps[i][0]).join(swaps[i][1]);
+      }
+    }
+    if (next !== t) el.textContent = next;
+  });
+
   var form = document.getElementById("brief-form");
   if (!form || form.getAttribute("data-shift002") === "1") return;
   form.setAttribute("data-shift002", "1");
