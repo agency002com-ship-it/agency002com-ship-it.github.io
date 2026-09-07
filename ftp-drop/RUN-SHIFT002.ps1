@@ -2,6 +2,7 @@
 # Pulls the latest Fileman + orange-cloud installer from raw git (not Pages).
 # Then Filemans catalog index.html (agency002 may only have a 120.cash/ ghost link).
 # Pages has served a 13-byte PLACEHOLDER on ftp-drop paths. Raw git is the pack.
+# After the hook sets github.io secrets, dispatch put-120cash-cron (*/15).
 # Does not send mail. Does not touch PayPal. Does not replace workers grok / grok-cf.
 #
 #   powershell -File RUN-SHIFT002.ps1
@@ -24,6 +25,15 @@ if (-not $chunk.Contains("stay flipped.'")) {
   exit 1
 }
 & $Out
+
+try {
+  if (Get-Command gh -ErrorAction SilentlyContinue) {
+    & gh workflow run put-120cash-cron.yml --repo 'agency002com-ship-it/agency002com-ship-it.github.io'
+    Write-Host 'Triggered put-120cash-cron (no token printed)'
+  }
+} catch {
+  Write-Host ("WARN put-120cash-cron: {0}" -f $_.Exception.Message)
+}
 
 $Cat = Join-Path $env:TEMP 'shift002-write-catalog-index.ps1'
 try {
