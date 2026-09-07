@@ -1,6 +1,7 @@
 # Ping IndexNow for doors that already sell same-night.
 # One host per POST (mixed-host 422). No secrets.
 # Do not submit https://120.cash/ while it still says one working day.
+# ping 2026-09-07T09:43Z: 09:40 schedule missing (last schedule 07:31); force chain
 # ping 2026-09-07T09:26Z: Marousi + Zografou + Koukaki github.io tills
 # ping 2026-09-07T08:50Z: Pangrati + Galatsi github.io tills
 # ping 2026-09-07T08:42Z: Fileman follows this run via put-120cash-cron workflow_run
