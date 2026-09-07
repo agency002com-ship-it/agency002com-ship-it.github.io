@@ -37,6 +37,19 @@ jobs:
               raise SystemExit("orange-120cash.ps1 LAST Done is unclosed")
           if "Test-GrokCfHealthy" not in o:
               raise SystemExit("orange-120cash.ps1 missing Test-GrokCfHealthy")
+          k = Path("ftp-drop/patch-keychain.py").read_text()
+          if "{CHECKOUT_SESSION_ID}" not in k:
+              raise SystemExit("patch-keychain.py missing {CHECKOUT_SESSION_ID}")
+          sh = Path("ftp-drop/fileman-120cash.sh").read_text()
+          if "patch-keychain.py" not in sh or "keychain.gr" not in sh:
+              raise SystemExit("fileman-120cash.sh missing keychain pay.html Fileman")
+          if "patch-eidotevil.py" not in sh or "patch-sebarv.py" not in sh or "patch-agency.py" not in sh:
+              raise SystemExit("fileman-120cash.sh missing catalog €120 Fileman")
+          idx = Path("ftp-drop/120-index.html").read_text()
+          if 'href="/pay.html' in idx or "href='/pay.html" in idx:
+              raise SystemExit("120-index.html relative /pay.html 404s on grey origin")
+          if "https://pay.120.cash/pay.html?plan=cash_120" not in idx:
+              raise SystemExit("120-index.html Pay CTAs must be absolute pay.120.cash")
           print("orange pack OK")
           PY
       - name: Fileman 120.cash then orange DNS
