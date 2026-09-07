@@ -20,7 +20,7 @@ function Need-Flip {
   try { $eido = (Invoke-WebRequest -Uri 'https://eidotevil.com/' -UseBasicParsing).Content } catch { }
   try { $agency = (Invoke-WebRequest -Uri 'https://agency002.com/' -UseBasicParsing).Content } catch { }
   try { $seb = (Invoke-WebRequest -Uri 'https://sebarv.com/' -UseBasicParsing).Content } catch { }
-  $needCash = $cash -match 'one working day'
+  $needCash = ($cash -match 'one working day') -or ($cash -notmatch '#book')
   $needPay = $pay -match [regex]::Escape("a('https://120.cash/#brief', '120.cash');")
   $needEido = $eido -match [regex]::Escape('href="https://keychain.gr/pay.html?plan=cash_120"')
   # agency002 live HTML dropped the cash_120 card; unique 120.cash home link is the €120 door.
