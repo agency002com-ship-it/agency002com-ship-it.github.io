@@ -7,6 +7,7 @@
 # never produced a schedule event.
 # ping 2026-09-07T09:43Z: still zero schedule events; re-register */15. Do not add push.paths.
 # ping 2026-09-07T08:42Z: also Fileman after indexnow-tills (hourly :40).
+# ping 2026-09-07T13:04Z: probe WHM :2087 even when CPANEL_TOKEN is empty.
 # ping 2026-09-07T10:23Z: Fileman origin first. Orange DNS after (token DNS 403).
 name: put-120cash-cron
 on:
