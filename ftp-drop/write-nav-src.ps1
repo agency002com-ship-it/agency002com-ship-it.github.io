@@ -58,7 +58,7 @@ $targets = @(
   @{ Url = 'https://eidotevil.com/'; Guard = 'page_100'; Dirs = @("/home/$User/eidotevil.com", "/home/$User/public_html/eidotevil.com", "/home/$User/domains/eidotevil.com/public_html") },
   @{ Url = 'https://agency002.com/'; Guard = 'eidotevil.com'; Dirs = @("/home/$User/public_html", "/home/$User/agency002.com", "/home/$User/public_html/agency002.com") },
   @{ Url = 'https://sebarv.com/'; Guard = 'pay.html?plan=sitepilot'; Dirs = @("/home/$User/sebarv.com", "/home/$User/public_html/sebarv.com", "/home/$User/domains/sebarv.com/public_html") },
-  @{ Url = 'https://120.cash/'; Guard = 'cash_120'; Dirs = @($Dir, "/home/$User/public_html/120.cash") }
+  @{ Url = 'https://120.cash/'; Guard = 'cash_120'; Dirs = @($Dir, "/home/$User/public_html/120.cash", "/home/$User/domains/120.cash/public_html") }
 )
 foreach ($t in $targets) {
   try {
