@@ -21,6 +21,13 @@
     a.setAttribute("href", "https://tonight.agency002.com/#book");
   });
 
+  // agency002.com dropped the cash_120 card; the remaining 120.cash ghost link is the €120 door.
+  if (location.hostname === "agency002.com" || location.hostname === "www.agency002.com") {
+    document.querySelectorAll('a[href="https://120.cash/"]').forEach(function (a) {
+      a.setAttribute("href", "https://tonight.agency002.com/");
+    });
+  }
+
   var swaps = [
     ["Only after payment. We answer within one working day.", "Pay €120. The page goes live tonight. Not a working day."],
     ["Form stays on eidotevil.com. We answer within one working day.", "Form stays on eidotevil.com. A €120 page goes live the same night you pay."],
