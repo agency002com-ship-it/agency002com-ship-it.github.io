@@ -55,19 +55,19 @@ jobs:
           set -euo pipefail
           night=0
           for host in eidotevil.com agency002.com sebarv.com 120.cash; do
-            html="$(curl -fsSL \"https://${host}/\" || true)"
-            js="$(curl -fsSL \"https://${host}/assets/nav.js\" || true)"
+            html="$(curl -fsSL "https://${host}/" || true)"
+            js="$(curl -fsSL "https://${host}/assets/nav.js" || true)"
             if echo "$html" | grep -Fq 'ftp-drop/nav-night.js' || echo "$js" | grep -Fq 'cash.keychain.gr'; then
-              echo \"${host} night nav live\"
+              echo "${host} night nav live"
               night=$((night+1))
             else
-              echo \"${host} nav.js still year-stamp\"
+              echo "${host} nav.js still year-stamp"
             fi
           done
-          if [ \"$night\" -eq 4 ]; then
-            echo \"all=yes\" >> \"$GITHUB_OUTPUT\"
+          if [ "$night" -eq 4 ]; then
+            echo "all=yes" >> "$GITHUB_OUTPUT"
           else
-            echo \"all=no\" >> \"$GITHUB_OUTPUT\"
+            echo "all=no" >> "$GITHUB_OUTPUT"
           fi
       - name: Fileman catalog nav.js
         if: steps.nav.outputs.all != 'yes'
@@ -82,34 +82,34 @@ jobs:
         run: |
           set -euo pipefail
           chmod +x ftp-drop/fileman-save.sh
-          CPANEL_TOKEN=\"${CPANEL_TOKEN:-${CPANEL_API_TOKEN:-${WHM_API_TOKEN:-${WHM_TOKEN:-}}}}\"
+          CPANEL_TOKEN="${CPANEL_TOKEN:-${CPANEL_API_TOKEN:-${WHM_API_TOKEN:-${WHM_TOKEN:-}}}}"
           export CPANEL_TOKEN
-          if [ -z \"${CPANEL_TOKEN:-}\" ]; then
-            echo \"No CPANEL_TOKEN. Skip. Laptop RUN-SHIFT002 still writes nav.js.\"
+          if [ -z "${CPANEL_TOKEN:-}" ]; then
+            echo "No CPANEL_TOKEN. Skip. Laptop RUN-SHIFT002 still writes nav.js."
             exit 0
           fi
           bytes=$(wc -c < ftp-drop/nav-night.js)
-          if [ \"$bytes\" -le 500 ] || ! grep -Fq 'cash.keychain.gr' ftp-drop/nav-night.js; then
-            echo \"nav-night.js is not the night pack (bytes=$bytes). Refuse Fileman.\"
+          if [ "$bytes" -le 500 ] || ! grep -Fq 'cash.keychain.gr' ftp-drop/nav-night.js; then
+            echo "nav-night.js is not the night pack (bytes=$bytes). Refuse Fileman."
             exit 0
           fi
-          USER=\"${CPANEL_USER:-agency00}\"
-          DIR=\"${CPANEL_DIR:-/home/${USER}/domains/120.cash/public_html}\"
-          for ASSETS in \\
-            \"${DIR}/assets\" \\
-            \"/home/${USER}/public_html/120.cash/assets\" \\
-            \"/home/${USER}/domains/120.cash/public_html/assets\" \\
-            \"/home/${USER}/eidotevil.com/assets\" \\
-            \"/home/${USER}/public_html/eidotevil.com/assets\" \\
-            \"/home/${USER}/domains/eidotevil.com/public_html/assets\" \\
-            \"/home/${USER}/public_html/assets\" \\
-            \"/home/${USER}/agency002.com/assets\" \\
-            \"/home/${USER}/public_html/agency002.com/assets\" \\
-            \"/home/${USER}/sebarv.com/assets\" \\
-            \"/home/${USER}/public_html/sebarv.com/assets\" \\
-            \"/home/${USER}/domains/sebarv.com/public_html/assets\"
+          USER="${CPANEL_USER:-agency00}"
+          DIR="${CPANEL_DIR:-/home/${USER}/domains/120.cash/public_html}"
+          for ASSETS in \
+            "${DIR}/assets" \
+            "/home/${USER}/public_html/120.cash/assets" \
+            "/home/${USER}/domains/120.cash/public_html/assets" \
+            "/home/${USER}/eidotevil.com/assets" \
+            "/home/${USER}/public_html/eidotevil.com/assets" \
+            "/home/${USER}/domains/eidotevil.com/public_html/assets" \
+            "/home/${USER}/public_html/assets" \
+            "/home/${USER}/agency002.com/assets" \
+            "/home/${USER}/public_html/agency002.com/assets" \
+            "/home/${USER}/sebarv.com/assets" \
+            "/home/${USER}/public_html/sebarv.com/assets" \
+            "/home/${USER}/domains/sebarv.com/public_html/assets"
           do
-            ftp-drop/fileman-save.sh \"$ASSETS\" nav.js ftp-drop/nav-night.js
+            ftp-drop/fileman-save.sh "$ASSETS" nav.js ftp-drop/nav-night.js
           done
       - name: Fileman unique nav.js src
         if: steps.nav.outputs.all != 'yes'
@@ -124,44 +124,44 @@ jobs:
         run: |
           set -euo pipefail
           chmod +x ftp-drop/fileman-save.sh
-          CPANEL_TOKEN=\"${CPANEL_TOKEN:-${CPANEL_API_TOKEN:-${WHM_API_TOKEN:-${WHM_TOKEN:-}}}}\"
+          CPANEL_TOKEN="${CPANEL_TOKEN:-${CPANEL_API_TOKEN:-${WHM_API_TOKEN:-${WHM_TOKEN:-}}}}"
           export CPANEL_TOKEN
-          if [ -z \"${CPANEL_TOKEN:-}\" ]; then
-            echo \"No CPANEL_TOKEN. Skip nav src.\"
+          if [ -z "${CPANEL_TOKEN:-}" ]; then
+            echo "No CPANEL_TOKEN. Skip nav src."
             exit 0
           fi
-          USER=\"${CPANEL_USER:-agency00}\"
-          DIR=\"${CPANEL_DIR:-/home/${USER}/domains/120.cash/public_html}\"
+          USER="${CPANEL_USER:-agency00}"
+          DIR="${CPANEL_DIR:-/home/${USER}/domains/120.cash/public_html}"
           patch_nav() {
-            local url=\"$1\"
-            local guard=\"$2\"
+            local url="$1"
+            local guard="$2"
             shift 2
-            if ! curl -fsSL \"$url\" | python3 ftp-drop/patch-nav-src.py \"$guard\" > /tmp/navsrc.html; then
-              echo \"skip $url\"
+            if ! curl -fsSL "$url" | python3 ftp-drop/patch-nav-src.py "$guard" > /tmp/navsrc.html; then
+              echo "skip $url"
               return 0
             fi
             local d
-            for d in \"$@\"; do
-              ftp-drop/fileman-save.sh \"$d\" index.html /tmp/navsrc.html
+            for d in "$@"; do
+              ftp-drop/fileman-save.sh "$d" index.html /tmp/navsrc.html
             done
           }
-          patch_nav https://eidotevil.com/ page_100 \\
-            \"/home/${USER}/eidotevil.com\" \"/home/${USER}/public_html/eidotevil.com\" \"/home/${USER}/domains/eidotevil.com/public_html\"
-          patch_nav https://agency002.com/ eidotevil.com \\
-            \"/home/${USER}/public_html\" \"/home/${USER}/agency002.com\" \"/home/${USER}/public_html/agency002.com\"
-          patch_nav https://sebarv.com/ 'pay.html?plan=sitepilot' \\
-            \"/home/${USER}/sebarv.com\" \"/home/${USER}/public_html/sebarv.com\" \"/home/${USER}/domains/sebarv.com/public_html\"
+          patch_nav https://eidotevil.com/ page_100 \
+            "/home/${USER}/eidotevil.com" "/home/${USER}/public_html/eidotevil.com" "/home/${USER}/domains/eidotevil.com/public_html"
+          patch_nav https://agency002.com/ eidotevil.com \
+            "/home/${USER}/public_html" "/home/${USER}/agency002.com" "/home/${USER}/public_html/agency002.com"
+          patch_nav https://sebarv.com/ 'pay.html?plan=sitepilot' \
+            "/home/${USER}/sebarv.com" "/home/${USER}/public_html/sebarv.com" "/home/${USER}/domains/sebarv.com/public_html"
           # 120.cash index.html is 120-index.html from put-120cash, not a nav-src patch of wait-a-day.
       - name: Verify
         run: |
           sleep 3
           for host in eidotevil.com agency002.com sebarv.com 120.cash; do
-            html=\"$(curl -fsSL \"https://${host}/\" || true)\"
-            js=\"$(curl -fsSL \"https://${host}/assets/nav.js\" || true)\"
-            if echo \"$html\" | grep -Fq 'ftp-drop/nav-night.js' || echo \"$js\" | grep -Fq 'cash.keychain.gr'; then
-              echo \"${host} night nav live\"
+            html="$(curl -fsSL "https://${host}/" || true)"
+            js="$(curl -fsSL "https://${host}/assets/nav.js" || true)"
+            if echo "$html" | grep -Fq 'ftp-drop/nav-night.js' || echo "$js" | grep -Fq 'cash.keychain.gr'; then
+              echo "${host} night nav live"
             else
-              echo \"${host} still year-stamp until CPANEL_TOKEN or laptop RUN-SHIFT002\"
+              echo "${host} still year-stamp until CPANEL_TOKEN or laptop RUN-SHIFT002"
             fi
           done
           exit 0
