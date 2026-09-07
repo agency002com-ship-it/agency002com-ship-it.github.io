@@ -2,9 +2,9 @@
 
 > €120 once: a live local page the same night you pay. Name, what you do, tap-to-call or email.
 
-Pay and get the page: https://tonight.agency002.com/pay.html?plan=cash_120
+Pay and get the page: https://pay.120.cash/pay.html?plan=cash_120
 
-Checkout (card or PayPal, plan cash_120): https://tonight.agency002.com/pay.html?plan=cash_120
+Checkout (card or PayPal, plan cash_120): https://pay.120.cash/pay.html?plan=cash_120
 
 Public till (brief + pay): https://tonight.agency002.com/
 
