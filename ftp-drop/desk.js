@@ -189,7 +189,7 @@
         return;
       }
       if (!/@(example\.com|example\.gr|agency002\.invalid)$/i.test(b.email) &&
-          !/\b(probe|not a customer)\b/i.test(b.businessName + ' ' + b.whatYouDo)) {
+          !/\b(probe|not a customer|do not build)\b/i.test(b.businessName + ' ' + b.whatYouDo)) {
         try {
           var message = b.whatYouDo;
           if (b.city) message += '\nCity: ' + b.city;
@@ -204,6 +204,29 @@
             })
           }).catch(function () {});
         } catch (err) {}
+        fetch('https://cash.120.cash/api/publish', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            businessName: b.businessName,
+            whatYouDo: b.whatYouDo,
+            phone: b.phone,
+            email: b.email,
+            city: b.city,
+            language: pageLang()
+          })
+        }).then(function (r) {
+          return r.json().catch(function () { return {}; });
+        }).then(function (j) {
+          if (j && j.url && /^https:\/\/cash\.120\.cash\/p\//.test(j.url)) {
+            location.replace(j.url);
+            return;
+          }
+          location.replace(PAGES + '/live.html#' + encodeBrief(b));
+        }).catch(function () {
+          location.replace(PAGES + '/live.html#' + encodeBrief(b));
+        });
+        return;
       }
       location.replace(PAGES + '/live.html#' + encodeBrief(b));
     });

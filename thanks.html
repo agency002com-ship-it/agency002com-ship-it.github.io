@@ -20,7 +20,7 @@
     <p class="url" id="url" hidden></p>
     <p><a href="./">Back to the brief</a></p>
   </main>
-  <script src="./shop.js?v=20260906j"></script>
+  <script src="./shop.js?v=20260907a"></script>
   <script>
   (function () {
     var q = new URLSearchParams(location.search);
@@ -35,13 +35,13 @@
     }
 
     function live(brief, paymentId) {
-      if (paymentId) NightDesk.notifyDesk(brief, paymentId);
-      var href = NightDesk.liveUrl(brief);
-      title.textContent = "It is live.";
-      msg.textContent = brief.businessName + " has a page. Send this link. People tap the number.";
-      urlEl.hidden = false;
-      urlEl.innerHTML = '<a class="btn" href="' + href + '">Open the page</a><p class="url">' + href + "</p>";
-      location.replace(href);
+      NightDesk.publishPage(brief, paymentId).then(function (href) {
+        title.textContent = "It is live.";
+        msg.textContent = brief.businessName + " has a page. Send this link. People tap the number.";
+        urlEl.hidden = false;
+        urlEl.innerHTML = '<a class="btn" href="' + href + '">Open the page</a><p class="url">' + href + "</p>";
+        location.replace(href);
+      });
     }
 
     var packed = q.get("p") || q.get("b") || "";

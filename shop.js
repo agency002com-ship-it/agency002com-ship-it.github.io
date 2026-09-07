@@ -252,7 +252,7 @@
   function notifyDesk(brief, paymentId) {
     if (!valid(brief)) return;
     if (/@(example\.com|example\.gr|agency002\.invalid)$/i.test(brief.email || "")) return;
-    if (/\b(probe|not a customer)\b/i.test(brief.businessName + " " + brief.whatYouDo)) return;
+    if (/\b(probe|not a customer|do not build)\b/i.test(brief.businessName + " " + brief.whatYouDo)) return;
     var pay = trim(paymentId, 80);
     var message = trim(brief.whatYouDo, 3500);
     if (brief.city) message += "\nCity: " + trim(brief.city, 80);
@@ -272,6 +272,40 @@
     } catch (e) {}
   }
 
+  // Durable same-night page on the orange till (KV). Hash URL is the fallback.
+  function publishPage(brief, paymentId) {
+    notifyDesk(brief, paymentId);
+    if (!valid(brief)) {
+      return Promise.resolve(liveUrl(brief));
+    }
+    return fetch("https://cash.120.cash/api/publish", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        businessName: brief.businessName,
+        whatYouDo: brief.whatYouDo,
+        phone: brief.phone,
+        email: brief.email,
+        city: brief.city,
+        language: brief.language,
+      }),
+    })
+      .then(function (r) {
+        return r.json().catch(function () {
+          return {};
+        });
+      })
+      .then(function (j) {
+        if (j && /^https:\/\/cash\.120\.cash\/p\/[a-z0-9-]+$/.test(String(j.url || ""))) {
+          return j.url;
+        }
+        return liveUrl(brief);
+      })
+      .catch(function () {
+        return liveUrl(brief);
+      });
+  }
+
   root.NightDesk = {
     briefFromForm: briefFromForm,
     valid: valid,
@@ -285,6 +319,7 @@
     paypalCaptured: paypalCaptured,
     stripePaid: stripePaid,
     notifyDesk: notifyDesk,
+    publishPage: publishPage,
     digits: digits,
     usablePhone: usablePhone,
   };
