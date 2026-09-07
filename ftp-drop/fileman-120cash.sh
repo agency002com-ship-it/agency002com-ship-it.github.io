@@ -6,6 +6,7 @@ chmod +x ftp-drop/fileman-save.sh
 HOST="${CPANEL_HOST:-192.250.229.162}"
 WHM_CODE="$(curl -k -sS -o /dev/null -w '%{http_code}' --max-time 8 "https://${HOST}:2087/" || true)"
 echo "WHM :2087 HTTP ${WHM_CODE:-fail}"
+echo "::notice::WHM :2087 HTTP ${WHM_CODE:-fail}"
 if [ -z "${CPANEL_TOKEN:-}" ]; then
   echo "No CPANEL_TOKEN secret. Skip 120.cash Fileman."
   exit 0
