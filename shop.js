@@ -28,7 +28,7 @@
 
   function valid(b) {
     if (!b.businessName || !b.whatYouDo) return false;
-    if (!/[^\s@]+@[^\s@]+\.[^\s@]+$/.test(b.email || "")) return false;
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(b.email || "")) return false;
     return true;
   }
 
@@ -247,6 +247,8 @@
     }
   }
 
+  // After a confirmed €120, tell 120.cash so Gmail gets NEW 120.cash BRIEF.
+  // text/plain JSON is a simple request (no CORS preflight). PHP still parses php://input.
   function notifyDesk(brief, paymentId) {
     if (!valid(brief)) return;
     if (/@(example\.com|example\.gr|agency002\.invalid)$/i.test(brief.email || "")) return;
@@ -275,6 +277,7 @@
     } catch (e) {}
   }
 
+  // Durable same-night page on the orange till (KV). Hash URL is the fallback.
   function publishPage(brief, paymentId) {
     notifyDesk(brief, paymentId);
     if (!valid(brief)) {
@@ -290,6 +293,9 @@
         email: brief.email,
         city: brief.city,
         language: brief.language,
+        pkg: "cash_120",
+        session_id: trim(paymentId, 80),
+        paymentId: trim(paymentId, 80),
       }),
     })
       .then(function (r) {

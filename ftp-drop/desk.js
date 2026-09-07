@@ -223,7 +223,10 @@
             phone: b.phone,
             email: b.email,
             city: b.city,
-            language: pageLang()
+            language: pageLang(),
+            pkg: 'cash_120',
+            session_id: pay,
+            paymentId: pay
           })
         }).then(function (r) {
           return r.json().catch(function () { return {}; });
