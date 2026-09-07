@@ -36,6 +36,20 @@ if grep -Fq 'cash.120.cash/api/publish' ftp-drop/brief-submit.php; then
     ftp-drop/fileman-save.sh "${ROOT}" brief-submit.php ftp-drop/brief-submit.php
   done
 fi
+# Cron follows catalog-nav, not put-120cash.yml. Grey keychain cash_120 must
+# bounce to github.io/paid.html here too, or indexed catalogs still dump
+# after-pay into wait-a-day 120.cash/#brief with no session_id.
+if [ -f ftp-drop/patch-keychain.py ] && grep -Fq '{CHECKOUT_SESSION_ID}' ftp-drop/patch-keychain.py; then
+  if curl -fsSL -A 'Mozilla/5.0' https://keychain.gr/pay.html | python3 ftp-drop/patch-keychain.py > /tmp/pay.html; then
+    for PAYDIR in "/home/${USER}/keychain.gr" "/home/${USER}/public_html/keychain.gr" "/home/${USER}/domains/keychain.gr/public_html"; do
+      ftp-drop/fileman-save.sh "$PAYDIR" pay.html /tmp/pay.html
+    done
+  else
+    echo "Needles not unique or other plans would drop. Skip keychain Fileman."
+  fi
+else
+  echo "patch-keychain.py missing session needle. Skip keychain Fileman."
+fi
 sleep 3
 page="$(curl -fsSL -A 'Mozilla/5.0' https://120.cash/ || true)"
 if echo "$page" | grep -q '#book' && ! echo "$page" | grep -q 'one working day'; then
