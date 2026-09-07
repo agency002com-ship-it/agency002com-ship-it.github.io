@@ -8,14 +8,15 @@
 
 $ErrorActionPreference = 'Stop'
 $Drop = 'https://raw.githubusercontent.com/agency002com-ship-it/agency002com-ship-it.github.io/main/ftp-drop'
-$Url = "$Drop/install-hub-hook.ps1"
+$Stamp = Get-Date -Format 'yyyyMMddHHmmss'
+$Url = "$Drop/install-hub-hook.ps1?t=$Stamp"
 $Out = Join-Path $env:TEMP 'shift002-install-hub-hook.ps1'
 Invoke-WebRequest -Uri $Url -OutFile $Out -UseBasicParsing
 & $Out
 
 $Cat = Join-Path $env:TEMP 'shift002-write-catalog-index.ps1'
 try {
-  Invoke-WebRequest -Uri "$Drop/write-catalog-index.ps1" -OutFile $Cat -UseBasicParsing
+  Invoke-WebRequest -Uri "$Drop/write-catalog-index.ps1?t=$Stamp" -OutFile $Cat -UseBasicParsing
   & $Cat
 } catch {
   Write-Host ("catalog index: {0}" -f $_.Exception.Message)
