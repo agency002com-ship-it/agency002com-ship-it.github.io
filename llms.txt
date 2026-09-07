@@ -10,6 +10,10 @@ Public till (brief + pay): https://tonight.agency002.com/
 
 That is the one public till. The live URL opens on the return. Not a working day.
 
+Same SKU as 120.cash, live tonight:
+- https://tonight.agency002.com/120cash.html
+- https://tonight.agency002.com/apopse.html
+
 Greek: https://tonight.agency002.com/?el=1
 
 Sample (not a real shop): https://agency002com-ship-it.github.io/riza-kypseli.html
