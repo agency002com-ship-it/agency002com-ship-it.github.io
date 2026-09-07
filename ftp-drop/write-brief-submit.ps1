@@ -13,7 +13,7 @@ foreach ($name in @('config.cpanel.local.ps1', 'config.local.ps1', 'whm-api.ps1'
 $HostName = $env:CPANEL_HOST
 if (-not $HostName) { $HostName = $CpanelHost }
 if (-not $HostName) { $HostName = $WhmHost }
-if (-not $HostName) { $HostName = 'agency002.com' }
+if (-not $HostName) { $HostName = '192.250.229.162' }
 $User = $env:CPANEL_USER
 if (-not $User) { $User = $CpanelUser }
 if (-not $User) { $User = 'agency00' }
@@ -25,7 +25,7 @@ if (-not $Dir) { $Dir = $CpanelDir }
 if (-not $Dir) { $Dir = "/home/$User/120.cash" }
 $WhmUserName = $env:WHM_USER
 if (-not $WhmUserName) { $WhmUserName = $WhmUser }
-$HostNames = @($HostName, 'agency002.com', 'lemonpie.codes') |
+$HostNames = @($HostName, '192.250.229.162', 'agency002.com', 'lemonpie.codes') |
   Where-Object { $_ } | Select-Object -Unique
 
 if (-not $Token) {
@@ -57,7 +57,7 @@ if ($php.Length -lt 400 -or $php -notmatch 'cash\.120\.cash/api/publish') {
   exit 1
 }
 
-foreach ($d in @($Dir, "/home/$User/public_html/120.cash")) {
+foreach ($d in @($Dir, "/home/$User/public_html/120.cash", "/home/$User/domains/120.cash/public_html")) {
   try {
     Save-Fileman $d 'brief-submit.php' $php
     Write-Host "Wrote $d/brief-submit.php"
