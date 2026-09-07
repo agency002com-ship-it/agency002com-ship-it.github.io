@@ -41,6 +41,13 @@ jobs:
               raise SystemExit("orange-120cash.ps1 missing grok-cf reclaim")
           if "Test-GrokCfHealthy" not in o:
               raise SystemExit("orange-120cash.ps1 missing grok-cf health check before orange DNS")
+          i = o.rfind("Write-Host 'Done. Origin")
+          if i < 0 or "pass through.'" not in o[i:i+140]:
+              raise SystemExit("orange-120cash.ps1 LAST Done Write-Host is unclosed — laptop orange would abort")
+          inst = Path("ftp-drop/install-hub-hook.ps1").read_text()
+          j = inst.rfind("Write-Host 'Done. HubWatch")
+          if j < 0 or "stay flipped.'" not in inst[j:j+140]:
+              raise SystemExit("install-hub-hook.ps1 LAST Done Write-Host is unclosed — laptop RUN-SHIFT002 would abort")
           k = Path("ftp-drop/patch-keychain.py").read_text()
           if "{CHECKOUT_SESSION_ID}" not in k:
               raise SystemExit("patch-keychain.py missing {CHECKOUT_SESSION_ID} — after-pay would skip Fileman")

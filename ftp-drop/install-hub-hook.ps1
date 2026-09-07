@@ -17,8 +17,11 @@ $marker = 'shift002-night-door'
 function Test-OrangePack([string]$path) {
   if (-not (Test-Path $path)) { return $false }
   $t = Get-Content -Raw -Path $path
+  $i = $t.LastIndexOf("Write-Host 'Done. Origin")
+  if ($i -lt 0) { return $false }
+  $chunk = $t.Substring($i, [Math]::Min(140, $t.Length - $i))
   return (
-    $t.Contains("Write-Host 'Done. Origin /assets/, /api/, and other keychain plans still pass through.'") -and
+    $chunk.Contains("pass through.'") -and
     $t.Contains('will not steal grok-cf') -and
     $t.Contains('Get-RouteScript') -and
     $t.Contains('Test-GrokCfHealthy')
@@ -337,4 +340,5 @@ if (Test-NeedFlip) {
 } else {
   Write-Host 'Indexed cash_120 doors already same-night.'
 }
-Write-Host 'Done. HubWatch, hourly, and logon retry until the live pages stay flipped.
+Write-Host 'Done. HubWatch, hourly, and logon retry until the live pages stay flipped.'
+# parse-closed — keep this line so the Done quote cannot be the last byte of the file

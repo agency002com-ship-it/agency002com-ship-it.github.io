@@ -14,8 +14,11 @@ $Stamp = Get-Date -Format 'yyyyMMddHHmmss'
 function Test-OrangePack([string]$path) {
   if (-not (Test-Path $path)) { return $false }
   $t = Get-Content -Raw -Path $path
+  $i = $t.LastIndexOf("Write-Host 'Done. Origin")
+  if ($i -lt 0) { return $false }
+  $chunk = $t.Substring($i, [Math]::Min(140, $t.Length - $i))
   return (
-    $t.Contains("Write-Host 'Done. Origin /assets/, /api/, and other keychain plans still pass through.'") -and
+    $chunk.Contains("pass through.'") -and
     $t.Contains('will not steal grok-cf') -and
     $t.Contains('Get-RouteScript') -and
     $t.Contains('Test-GrokCfHealthy')
