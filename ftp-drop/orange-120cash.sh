@@ -146,6 +146,7 @@ read -r zone_id account_id <<<"$(zone_info 120.cash)"
 if [ -n "${zone_id:-}" ] && [ "$zone_id" != "" ]; then
   echo "Orange-cloud 120.cash DNS first (do not replace grok-cf). zone=$zone_id"
   proxy_names "$zone_id" "120.cash" "www.120.cash" || true
+  ensure_routes "$zone_id" "grok-cf" '120.cash/*' 'www.120.cash/*' || true
 else
   echo "No Cloudflare zone 120.cash on this token."
 fi
@@ -154,6 +155,7 @@ read -r kzone kaccount <<<"$(zone_info keychain.gr)"
 if [ -n "${kzone:-}" ] && [ "$kzone" != "" ]; then
   echo "Orange-cloud keychain.gr DNS first (do not replace grok-cf). zone=$kzone"
   proxy_names "$kzone" "keychain.gr" "www.keychain.gr" || true
+  ensure_routes "$kzone" "grok-cf" 'keychain.gr/pay.html*' 'www.keychain.gr/pay.html*' || true
 else
   echo "No Cloudflare zone keychain.gr on this token."
 fi
@@ -178,7 +180,7 @@ fi
 
 read -r szone saccount <<<"$(zone_info sebarv.com)"
 if [ -n "${szone:-}" ] && [ "$szone" != "" ]; then
-  echo "Orange-cloud sebarv.com DNS (indexed catalog). Do not overlay 120-index. zone=$szone"
+  echo "Orange-cloud sebarv.com apex/www (indexed catalog). Do not overlay 120-index. zone=$szone"
   proxy_names "$szone" "sebarv.com" "www.sebarv.com" || true
   ensure_routes "$szone" "grok-cf" 'sebarv.com/*' 'www.sebarv.com/*' || true
 else
