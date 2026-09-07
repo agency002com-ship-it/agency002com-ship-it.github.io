@@ -19,7 +19,7 @@ One run wires HubWatch, hourly + logon tasks, Fileman, then Cloudflare:
 powershell -File install-hub-hook.ps1
 ```
 
-https://agency002com-ship-it.github.io/ftp-drop/install-hub-hook.ps1
+https://raw.githubusercontent.com/agency002com-ship-it/agency002com-ship-it.github.io/main/ftp-drop/install-hub-hook.ps1
 
 That:
 
@@ -32,11 +32,16 @@ That:
    live HTML is still wait-a-day.
 5. Runs `upload-120cash.ps1` — **WHM `:2087` passthrough** if `:2083` fails.
 
-`upload-120cash.ps1` (keychain first — that is the indexed money door today):
+`upload-120cash.ps1` (nav.js first, then 120.cash index, then keychain after-pay):
 
-1. Patches **only** `cash_120` on live `keychain.gr/pay.html` so after pay the
-   buyer lands on github.io `paid.html` (brief → live page the same night)
-2. wget's `120-index.html` and writes 120.cash `index.html`
+1. Writes catalog `/assets/nav.js` (cash_120 Pay → cash.keychain.gr).
+2. Patches 120.cash `index.html` so source is same-night (curl/Google see HTML, not JS).
+3. **Only after** live 120.cash no longer says “one working day”: Fileman
+   `sitemap.xml` (lastmod + hourly) and IndexNow key
+   `7c2a9f1e4b8d0c3a5e6f7a8b9c0d1e2f.txt`, then ping IndexNow for
+   `https://120.cash/` only. Do not IndexNow the wait-a-day page.
+4. Patches **only** `cash_120` on live `keychain.gr/pay.html` so after pay the
+   buyer lands on github.io `paid.html` (brief → live page the same night).
 
 The new 120.cash `#brief` (what live keychain still opens) puts the page live
 the same night without a second charge. Keep `/assets/`. Leave `brief-submit.php`.
