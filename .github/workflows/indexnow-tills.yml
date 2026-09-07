@@ -1,6 +1,7 @@
 # Ping IndexNow for doors that already sell same-night.
 # One host per POST (mixed-host 422). No secrets.
 # Do not submit https://120.cash/ while it still says one working day.
+# ping 2026-09-07T09:53Z: grok-cf.eid-ot-evil.workers.dev + remaining orange tills
 # ping 2026-09-07T09:43Z: 09:40 schedule missing (last schedule 07:31); force chain
 # ping 2026-09-07T09:26Z: Marousi + Zografou + Koukaki github.io tills
 # ping 2026-09-07T08:50Z: Pangrati + Galatsi github.io tills
@@ -31,6 +32,9 @@ jobs:
               "order.agency002.com",
               "get.agency002.com",
               "now.agency002.com",
+              "book.agency002.com",
+              "desk.agency002.com",
+              "live.agency002.com",
               "cash.120.cash",
               "tonight.120.cash",
               "shop.120.cash",
@@ -42,6 +46,7 @@ jobs:
               "book.keychain.gr",
               "now.sebarv.com",
               "book.sebarv.com",
+              "grok-cf.eid-ot-evil.workers.dev",
           )
 
           def get(url):
