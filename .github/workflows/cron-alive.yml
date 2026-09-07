@@ -1,0 +1,25 @@
+# Prove GitHub schedule events fire on this repo (put-120cash hourly never
+# showed a schedule run). No secrets. Does not Fileman. Does not IndexNow
+# wait-a-day 120.cash.
+name: cron-alive
+on:
+  schedule:
+    - cron: "*/15 * * * *"
+  workflow_dispatch:
+  push:
+    paths:
+      - ".github/workflows/cron-alive.yml"
+jobs:
+  ping:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Probe indexed vs orange doors
+        run: |
+          set -euo pipefail
+          date -u
+          echo "=== 120.cash ==="
+          curl -sSI -A "Mozilla/5.0" "https://120.cash/" | head -n 15 || true
+          echo "=== cash.120.cash ==="
+          curl -sSI -A "Mozilla/5.0" "https://cash.120.cash/" | head -n 15 || true
+          echo "=== tonight.agency002.com ==="
+          curl -sSI -A "Mozilla/5.0" "https://tonight.agency002.com/" | head -n 15 || true

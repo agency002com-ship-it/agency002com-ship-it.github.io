@@ -1,0 +1,14 @@
+# Thin scheduler. Nested `schedule` on put-120cash.yml has never produced a
+# schedule event (only push runs since the repo was created). A separate
+# workflow file re-registers cron with GitHub. secrets: inherit so laptop
+# `gh secret set` still reaches Fileman / orange-cloud.
+# Does not replace Workers grok / grok-cf. Empty secrets still skip Fileman.
+name: put-120cash-cron
+on:
+  schedule:
+    - cron: "25 * * * *"
+  workflow_dispatch:
+jobs:
+  put:
+    uses: ./.github/workflows/put-120cash.yml
+    secrets: inherit
