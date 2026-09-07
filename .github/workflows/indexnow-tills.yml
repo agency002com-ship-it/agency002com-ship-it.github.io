@@ -1,6 +1,7 @@
 # Ping IndexNow for doors that already sell same-night.
 # One host per POST (mixed-host 422). No secrets.
 # Do not submit https://120.cash/ while it still says one working day.
+# ping 2026-09-07T08:50Z: Pangrati + Galatsi github.io tills
 # ping 2026-09-07T08:42Z: Fileman follows this run via put-120cash-cron workflow_run
 # ping 2026-09-07T08:33Z: Nea Ionia + Patissia github.io tills
 name: indexnow-tills
@@ -112,6 +113,10 @@ jobs:
               "/nea-ionia-el.html",
               "/patissia.html",
               "/patissia-el.html",
+              "/pangrati.html",
+              "/pangrati-el.html",
+              "/galatsi.html",
+              "/galatsi-el.html",
           )
           live = []
           for path in GIO_PATHS:
