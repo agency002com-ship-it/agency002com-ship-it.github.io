@@ -88,6 +88,15 @@ try {
   Write-Host ("catalog index: {0}" -f $_.Exception.Message)
 }
 
+# Always Fileman IndexNow key on indexed catalogs (no HTML rewrite).
+try {
+  $ino = Join-Path $env:TEMP 'write-indexnow.ps1'
+  Invoke-WebRequest -Uri "$Drop/write-indexnow.ps1?t=$Stamp" -OutFile $ino -UseBasicParsing
+  & $ino
+} catch {
+  Write-Host ("IndexNow key: {0}" -f $_.Exception.Message)
+}
+
 if (-not (Need-Flip)) { exit 0 }
 
 try {
