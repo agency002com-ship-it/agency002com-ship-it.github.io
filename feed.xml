@@ -5,7 +5,7 @@
     <link>https://tonight.agency002.com/</link>
     <description>Pay €120. The local page is live the same night. Not a working day.</description>
     <language>en</language>
-    <lastBuildDate>Mon, 07 Sep 2026 17:09:00 GMT</lastBuildDate>
+    <lastBuildDate>Mon, 07 Sep 2026 19:13:00 GMT</lastBuildDate>
     <item>
       <title>tonight.agency002.com — €120 live page tonight</title>
       <link>https://tonight.agency002.com/</link>
@@ -17,6 +17,18 @@
       <link>https://tonight.agency002.com/pay.html?plan=cash_120</link>
       <guid>https://tonight.agency002.com/pay.html?plan=cash_120</guid>
       <description>Orange till. Live URL on the return with Stripe session_id.</description>
+    </item>
+    <item>
+      <title>120.cash same night</title>
+      <link>https://tonight.agency002.com/120cash.html</link>
+      <guid>https://tonight.agency002.com/120cash.html</guid>
+      <description>Same €120 SKU as 120.cash. Pay here. Live page on the return.</description>
+    </item>
+    <item>
+      <title>Απόψε €120</title>
+      <link>https://tonight.agency002.com/apopse.html</link>
+      <guid>https://tonight.agency002.com/apopse.html</guid>
+      <description>Same €120 rail in Greek. Live page the night you pay.</description>
     </item>
     <item>
       <title>Perissos Greek till</title>
