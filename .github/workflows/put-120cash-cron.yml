@@ -1,8 +1,7 @@
-# Thin scheduler. Nested `schedule` on put-120cash.yml has never produced a
-# schedule event (only push runs since the repo was created). A separate
-# workflow file re-registers cron with GitHub. secrets: inherit so laptop
-# `gh secret set` still reaches Fileman / orange-cloud.
-# Does not replace Workers grok / grok-cf. Empty secrets still skip Fileman.
+# Self-contained hourly Fileman/orange. Does not use workflow_call (the
+# nested schedule on put-120cash.yml has never produced a schedule event).
+# secrets: inherit from repo. Empty secrets skip inside the scripts.
+# Does not replace Workers grok / grok-cf.
 name: put-120cash-cron
 on:
   schedule:
@@ -10,5 +9,30 @@ on:
   workflow_dispatch:
 jobs:
   put:
-    uses: ./.github/workflows/put-120cash.yml
-    secrets: inherit
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Guard pack parses
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          o = Path("ftp-drop/orange-120cash.ps1").read_text()
+          i = o.rfind("Write-Host 'Done. Origin")
+          if i < 0 or "pass through.'" not in o[i:i+140]:
+              raise SystemExit("orange-120cash.ps1 LAST Done is unclosed")
+          if "Test-GrokCfHealthy" not in o:
+              raise SystemExit("orange-120cash.ps1 missing Test-GrokCfHealthy")
+          print("orange pack OK")
+          PY
+      - name: Orange DNS then Fileman 120.cash
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CPANEL_TOKEN: ${{ secrets.CPANEL_TOKEN }}
+          CPANEL_HOST: ${{ secrets.CPANEL_HOST }}
+          CPANEL_USER: ${{ secrets.CPANEL_USER }}
+          CPANEL_DIR: ${{ secrets.CPANEL_DIR }}
+        run: |
+          set -euo pipefail
+          chmod +x ftp-drop/orange-120cash.sh ftp-drop/fileman-120cash.sh ftp-drop/fileman-save.sh
+          ftp-drop/orange-120cash.sh || true
+          ftp-drop/fileman-120cash.sh
