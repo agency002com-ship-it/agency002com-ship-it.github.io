@@ -1,4 +1,5 @@
 # Tiny Fileman: overwrite grey /assets/nav.js on 120.cash and indexed catalogs.
+# ping 20260907r: first-level ftp-drop file so put-120cash can match after path-filter skip emails.
 # Pay €120 → cash.keychain.gr. cash_120 brief → tonight KV.
 # Does not rewrite other keychain plans. Does not send mail.
 $ErrorActionPreference = 'Stop'

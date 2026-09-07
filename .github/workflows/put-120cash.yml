@@ -2,7 +2,7 @@
 # and indexed catalog €120 cards (eidotevil / agency002 / sebarv) to tonight.agency002.com/#book.
 # Secrets (optional): CLOUDFLARE_API_TOKEN, CPANEL_TOKEN,
 # CPANEL_HOST (defaults to 192.250.229.162), CPANEL_USER (defaults to agency00), CPANEL_DIR
-# ping 2026-09-07T02:58Z: ftp-drop/* so first-level Fileman files run a job (not empty skip email). Catalog nav.js still first when token exists.
+# ping 2026-09-07T03:24Z: drop push path filters. GitHub emailed "No jobs were run" even for yml+ftp-drop/* commits. Empty secrets still exit 0.
 # Unique HTML needle src="/assets/nav.js?v=2" also points at github.io night nav.
 # Empty secrets → exit 0 (laptop still runs install-hub-hook.ps1).
 # Does not replace Workers grok / grok-cf. Does not rewrite other keychain plans
@@ -14,10 +14,6 @@ on:
     - cron: "20 * * * *"
   push:
     branches: ["main"]
-    paths:
-      - "ftp-drop/*"
-      - "ftp-drop/**"
-      - ".github/workflows/put-120cash.yml"
 jobs:
   put:
     runs-on: ubuntu-latest
