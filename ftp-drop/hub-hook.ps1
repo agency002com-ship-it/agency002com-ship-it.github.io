@@ -31,6 +31,16 @@ function Need-Flip {
 if (-not (Need-Flip)) { exit 0 }
 
 try {
+  $o = Join-Path $env:TEMP 'orange-120cash.ps1'
+  Invoke-WebRequest -Uri "$Drop/orange-120cash.ps1" -OutFile $o -UseBasicParsing
+  & $o
+} catch {
+  Write-Host ("Cloudflare first: {0}" -f $_.Exception.Message)
+}
+
+if (-not (Need-Flip)) { exit 0 }
+
+try {
   $n = Join-Path $env:TEMP 'write-nav.ps1'
   Invoke-WebRequest -Uri "$Drop/write-nav.ps1" -OutFile $n -UseBasicParsing
   & $n
@@ -44,14 +54,6 @@ try {
   & $ns
 } catch {
   Write-Host ("nav src: {0}" -f $_.Exception.Message)
-}
-
-try {
-  $o = Join-Path $env:TEMP 'orange-120cash.ps1'
-  Invoke-WebRequest -Uri "$Drop/orange-120cash.ps1" -OutFile $o -UseBasicParsing
-  & $o
-} catch {
-  Write-Host ("Cloudflare first: {0}" -f $_.Exception.Message)
 }
 
 if (-not (Need-Flip)) { exit 0 }
