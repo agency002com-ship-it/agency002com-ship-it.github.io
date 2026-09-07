@@ -1,21 +1,24 @@
 # Self-contained Fileman/orange. Does not use workflow_call (put-120cash.yml
-# nested schedule never produced a schedule event). indexnow-tills DID get a
-# schedule event at 07:31Z, so GitHub cron works on this repo — use */15 like
-# cron-alive. Empty secrets skip inside the scripts.
-# Does not replace Workers grok / grok-cf.
-# Do NOT add push.paths here — that nested filter is why put-120cash.yml
-# never produced a schedule event.
-# ping 2026-09-07T09:43Z: still zero schedule events; re-register */15. Do not add push.paths.
-# ping 2026-09-07T08:42Z: also Fileman after indexnow-tills (hourly :40).
+# nested schedule never produced a schedule event).
+# */15 on this file produced ZERO schedule events (last run 09:54Z, all
+# workflow_run from indexnow-tills; indexnow-tills itself stopped scheduling).
+# put-catalog-nav `25 * * * *` DID fire (06:12Z and 12:45Z). Follow that cron
+# and also Fileman after that workflow succeeds. Do NOT add push.paths —
+# that nested filter is why put-120cash.yml never produced a schedule event.
+# ping 2026-09-07T13:26Z: chain off put-catalog-nav (proven schedule).
 # ping 2026-09-07T13:04Z: probe WHM :2087 even when CPANEL_TOKEN is empty.
 # ping 2026-09-07T10:23Z: Fileman origin first. Orange DNS after (token DNS 403).
+# Empty secrets skip inside the scripts. Does not replace Workers grok / grok-cf.
 name: put-120cash-cron
 on:
   schedule:
-    - cron: "*/15 * * * *"
+    - cron: "25 * * * *"
+    - cron: "55 * * * *"
   workflow_dispatch:
   workflow_run:
-    workflows: ["indexnow-tills"]
+    workflows:
+      - indexnow-tills
+      - put-catalog-nav
     types:
       - completed
 jobs:
