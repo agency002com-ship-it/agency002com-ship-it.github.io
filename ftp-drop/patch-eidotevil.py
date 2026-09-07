@@ -16,7 +16,9 @@ OLD_HINT = "Form stays on eidotevil.com. We answer within one working day."
 NEW_HINT = "Form stays on eidotevil.com. A €120 page goes live the same night you pay."
 OLD_FETCH = "fetch('/brief-submit.php', {"
 NEW_FETCH = "fetch('https://tonight.agency002.com/brief-submit.php', {"
-NEW_NAV = 'src="https://agency002com-ship-it.github.io/ftp-drop/nav-night.js?v=20260907n"'
+OLD_JS = "Got it. We will reply within one working day."
+NEW_JS = "Got it. Live tonight after this brief."
+NEW_NAV = 'src="https://agency002com-ship-it.github.io/ftp-drop/nav-night.js?v=20260907o"'
 OLD_NAVS = ('src="/assets/nav.js?v=2"', 'src="/assets/nav.js?v=4"')
 
 
@@ -53,6 +55,8 @@ def patch(html: str) -> str:
         if NEW_PAY not in out or OLD_PAY in out:
             raise SystemExit("cash_120 href not moved; skip")
     out = out.replace(OLD_LINE, NEW_LINE).replace(OLD_HINT, NEW_HINT)
+    if out.count(OLD_JS) == 1:
+        out = out.replace(OLD_JS, NEW_JS)
     out = rewrite_fetch(out)
     out = rewrite_nav_src(out)
     if "pay.html?plan=presence" not in out or "page_100" not in out or "printful" not in out.lower():
