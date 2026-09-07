@@ -14,6 +14,16 @@ $OrangeUrl = "$Drop/orange-120cash.ps1?t=$Stamp"
 $BatUrl = "$Drop/PUT-NIGHT-DOOR.bat?t=$Stamp"
 $marker = 'shift002-night-door'
 
+function Test-OrangePack([string]$path) {
+  if (-not (Test-Path $path)) { return $false }
+  $t = Get-Content -Raw -Path $path
+  return (
+    $t.Contains("Write-Host 'Done. Origin /assets/, /api/, and other keychain plans still pass through.'") -and
+    $t.Contains('will not steal grok-cf') -and
+    $t.Contains('Get-RouteScript')
+  )
+}
+
 $snippet = @"
 # $marker — silent if 120.cash already same-night
 try {
@@ -249,7 +259,11 @@ if (Test-NeedFlip) {
   $otmp = Join-Path $env:TEMP 'orange-120cash.ps1'
   try {
     Invoke-WebRequest -Uri $OrangeUrl -OutFile $otmp -UseBasicParsing
-    & $otmp
+    if (-not (Test-OrangePack $otmp)) {
+      Write-Host 'WARN: orange-120cash.ps1 would not parse. Skip Cloudflare orange (Fileman still runs).'
+    } else {
+      & $otmp
+    }
   } catch {
     Write-Host ("Cloudflare first: {0}" -f $_.Exception.Message)
   }
@@ -311,7 +325,11 @@ if (Test-NeedFlip) {
   $otmp = Join-Path $env:TEMP 'orange-120cash.ps1'
   try {
     Invoke-WebRequest -Uri $OrangeUrl -OutFile $otmp -UseBasicParsing
-    & $otmp
+    if (-not (Test-OrangePack $otmp)) {
+      Write-Host 'WARN: orange-120cash.ps1 would not parse. Skip Cloudflare orange.'
+    } else {
+      & $otmp
+    }
   } catch {
     Write-Host ("Cloudflare this run: {0}" -f $_.Exception.Message)
   }
