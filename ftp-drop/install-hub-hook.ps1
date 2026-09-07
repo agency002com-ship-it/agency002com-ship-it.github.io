@@ -1,6 +1,6 @@
 # One run on the laptop. After this, HubWatch (3h), schtasks hourly + logon,
 # pages 2026-09-07: copies patch-sebarv.py; orange-120cash also oranges agency002/sebarv.
-# Fileman, and Cloudflare orange-cloud until 120.cash stays flipped.
+# Fileman origin first (WHM). Orange DNS is best-effort — grok-cf Builds token DNS 403.
 # Does not send mail. Does not touch PayPal. Does not restore FormSubmit.
 #
 #   powershell -File install-hub-hook.ps1
@@ -259,24 +259,8 @@ function Test-NeedFlip {
   )
 }
 
-# Orange DNS first: grok-cf already intercepts 120.cash and keychain pay.html.
-# Fileman is origin permanence. Do not skip Fileman if orange already flipped —
-# HubWatch will skip later once live HTML stays same-night.
-if (Test-NeedFlip) {
-  Write-Host 'Orange-cloud DNS first (existing grok-cf routes).'
-  $otmp = Join-Path $env:TEMP 'orange-120cash.ps1'
-  try {
-    Invoke-WebRequest -Uri $OrangeUrl -OutFile $otmp -UseBasicParsing
-    if (-not (Test-OrangePack $otmp)) {
-      Write-Host 'WARN: orange-120cash.ps1 would not parse. Skip Cloudflare orange (Fileman still runs).'
-    } else {
-      & $otmp
-    }
-  } catch {
-    Write-Host ("Cloudflare first: {0}" -f $_.Exception.Message)
-  }
-}
-
+# Fileman origin first. grok-cf Builds / laptop cfat_ GET /zones works, DNS PATCH 10000.
+# Do not block origin write on orange-cloud. Orange after Fileman is best-effort.
 Write-Host 'Writing catalog /assets/nav.js (tiny Fileman; cash_120 only).'
 $ntmp = Join-Path $env:TEMP 'write-nav.ps1'
 try {
@@ -313,7 +297,7 @@ try {
   Write-Host ("catalog index this run: {0}" -f $_.Exception.Message)
 }
 
-Write-Host 'Running Fileman now (keychain, 120.cash, eidotevil, agency002, sebarv cash_120).'
+Write-Host 'Running Fileman now (origin first; keychain, 120.cash, eidotevil, agency002, sebarv cash_120).'
 $tmp = Join-Path $env:TEMP 'upload-120cash.ps1'
 Invoke-WebRequest -Uri $UploadUrl -OutFile $tmp -UseBasicParsing
 $pack = Get-Content -Raw -Path $tmp
@@ -329,7 +313,7 @@ if ($pack -match ' or \$js\.Contains') {
 }
 
 if (Test-NeedFlip) {
-  Write-Host 'Still wait-a-day. Cloudflare orange-cloud again (fallback workers).'
+  Write-Host 'Fileman origin wrote. Cloudflare orange-cloud best-effort (token often lacks DNS Edit).'
   $otmp = Join-Path $env:TEMP 'orange-120cash.ps1'
   try {
     Invoke-WebRequest -Uri $OrangeUrl -OutFile $otmp -UseBasicParsing
