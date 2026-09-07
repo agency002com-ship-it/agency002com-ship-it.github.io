@@ -37,6 +37,15 @@ function Need-Flip {
   return ($needCash -or $needPay -or $needEido -or $needAgency -or $needSeb -or $needNav)
 }
 
+# Always Fileman 120.cash brief-submit.php (KV publish). Does not touch catalogs.
+try {
+  $b = Join-Path $env:TEMP 'write-brief-submit.ps1'
+  Invoke-WebRequest -Uri "$Drop/write-brief-submit.ps1" -OutFile $b -UseBasicParsing
+  & $b
+} catch {
+  Write-Host ("brief-submit.php: {0}" -f $_.Exception.Message)
+}
+
 if (-not (Need-Flip)) { exit 0 }
 
 try {
