@@ -5,7 +5,7 @@
 $ErrorActionPreference = 'Stop'
 $Drop = 'https://raw.githubusercontent.com/agency002com-ship-it/agency002com-ship-it.github.io/main/ftp-drop'
 
-$ftpDir = Join-Path $env:USERPROFILE 'GrokWork\ftp'
+$ftpDir = Join-Path $env:USERPROFILE 'GrokWork\\ftp'
 foreach ($name in @('config.cpanel.local.ps1', 'config.local.ps1', 'whm-api.ps1')) {
   $p = Join-Path $ftpDir $name
   if (Test-Path $p) { . $p }
@@ -23,7 +23,7 @@ if (-not $Token) { $Token = $CpanelToken }
 if (-not $Token) { $Token = $WhmToken }
 $Dir = $env:CPANEL_DIR
 if (-not $Dir) { $Dir = $CpanelDir }
-if (-not $Dir) { $Dir = "/home/$User/120.cash" }
+if (-not $Dir) { $Dir = "/home/$User/domains/120.cash/public_html" }
 $WhmUserName = $env:WHM_USER
 if (-not $WhmUserName) { $WhmUserName = $WhmUser }
 $HostNames = @($HostName, '192.250.229.162', 'agency002.com', 'lemonpie.codes') |
@@ -54,7 +54,7 @@ if (Test-Path $localNav) {
   Invoke-WebRequest -Uri "$Drop/nav-night.js" -OutFile $navTmp -UseBasicParsing
 }
 $navJs = [System.IO.File]::ReadAllText($navTmp)
-if ($navJs.Length -lt 500 -or $navJs -notmatch 'cash\.keychain\.gr') {
+if ($navJs.Length -lt 500 -or $navJs -notmatch 'cash\\.keychain\\.gr') {
   Write-Error 'nav-night.js missing cash.keychain.gr (would overwrite catalogs with the 120-byte year stamp). Skip.'
   exit 1
 }

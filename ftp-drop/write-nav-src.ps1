@@ -5,7 +5,7 @@ $Pages = 'https://agency002com-ship-it.github.io'
 $Drop = 'https://raw.githubusercontent.com/agency002com-ship-it/agency002com-ship-it.github.io/main/ftp-drop'
 $NewSrc = 'src="https://agency002com-ship-it.github.io/ftp-drop/nav-night.js?v=20260907s"'
 
-$ftpDir = Join-Path $env:USERPROFILE 'GrokWork\ftp'
+$ftpDir = Join-Path $env:USERPROFILE 'GrokWork\\ftp'
 foreach ($name in @('config.cpanel.local.ps1', 'config.local.ps1', 'whm-api.ps1')) {
   $p = Join-Path $ftpDir $name
   if (Test-Path $p) { . $p }
@@ -19,7 +19,7 @@ if (-not $Token) { $Token = $CpanelToken }
 if (-not $Token) { $Token = $WhmToken }
 $Dir = $env:CPANEL_DIR
 if (-not $Dir) { $Dir = $CpanelDir }
-if (-not $Dir) { $Dir = "/home/$User/120.cash" }
+if (-not $Dir) { $Dir = "/home/$User/domains/120.cash/public_html" }
 $WhmUserName = $env:WHM_USER
 if (-not $WhmUserName) { $WhmUserName = $WhmUser }
 $HostName = $env:CPANEL_HOST
@@ -63,6 +63,10 @@ $targets = @(
 foreach ($t in $targets) {
   try {
     $liveHtml = (Invoke-WebRequest -Uri $t.Url -UseBasicParsing).Content
+    if ($t.Url -eq 'https://120.cash/' -and ($liveHtml -match 'one working day' -or $liveHtml -notmatch '#book')) {
+      Write-Host 'Skip nav-src Fileman of wait-a-day 120.cash; upload-120cash writes 120-index.html onto the addon docroot.'
+      continue
+    }
     $patched = Update-NavSrc $liveHtml
     if ($patched -eq $liveHtml) {
       if ($liveHtml.Contains('ftp-drop/nav-night.js')) {

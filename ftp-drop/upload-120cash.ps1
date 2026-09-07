@@ -15,7 +15,7 @@ $Drop = 'https://raw.githubusercontent.com/agency002com-ship-it/agency002com-shi
 $Pages = 'https://agency002com-ship-it.github.io'
 $Paid = "$Pages/paid.html"
 
-$ftpDir = Join-Path $env:USERPROFILE 'GrokWork\ftp'
+$ftpDir = Join-Path $env:USERPROFILE 'GrokWork\\ftp'
 foreach ($name in @('config.cpanel.local.ps1', 'config.local.ps1', 'whm-api.ps1')) {
   $p = Join-Path $ftpDir $name
   if (Test-Path $p) { . $p }
@@ -33,7 +33,7 @@ if (-not $Token) { $Token = $CpanelToken }
 if (-not $Token) { $Token = $WhmToken }
 $Dir = $env:CPANEL_DIR
 if (-not $Dir) { $Dir = $CpanelDir }
-if (-not $Dir) { $Dir = "/home/$User/120.cash" }
+if (-not $Dir) { $Dir = "/home/$User/domains/120.cash/public_html" }
 $WhmUserName = $env:WHM_USER
 if (-not $WhmUserName) { $WhmUserName = $WhmUser }
 $HostNames = @($HostName, '192.250.229.162', 'agency002.com', 'lemonpie.codes') |
@@ -42,7 +42,7 @@ $HostNames = @($HostName, '192.250.229.162', 'agency002.com', 'lemonpie.codes') 
 if (-not $Token) {
   Write-Error @"
 No cPanel token in this session.
-Dot-source GrokWork\ftp\config.cpanel.local.ps1 (already on the laptop),
+Dot-source GrokWork\\ftp\\config.cpanel.local.ps1 (already on the laptop),
 or set CPANEL_TOKEN. Do not invent a password. Do not use PayPal credentials.
 "@
 }
