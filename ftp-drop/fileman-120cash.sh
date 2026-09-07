@@ -17,8 +17,8 @@ if ! grep -q '#book' ftp-drop/120-index.html || grep -q 'one working day' ftp-dr
   exit 0
 fi
 USER="${CPANEL_USER:-agency00}"
-DIR="${CPANEL_DIR:-/home/${USER}/120.cash}"
-ROOTS="${DIR} /home/${USER}/public_html/120.cash /home/${USER}/domains/120.cash/public_html"
+DIR="${CPANEL_DIR:-/home/${USER}/domains/120.cash/public_html}"
+ROOTS="${DIR} /home/${USER}/120.cash /home/${USER}/public_html/120.cash /home/${USER}/domains/120.cash/public_html"
 for ROOT in $ROOTS; do
   ftp-drop/fileman-save.sh "${ROOT}/assets" nav.js ftp-drop/nav-night.js
   ftp-drop/fileman-save.sh "${ROOT}" index.html ftp-drop/120-index.html
