@@ -1,5 +1,5 @@
-# Tiny Fileman: overwrite grey 120.cash /assets/nav.js.
-# Pay €120 → cash.keychain.gr. #brief → cash.120.cash KV.
+# Tiny Fileman: overwrite grey /assets/nav.js on 120.cash and indexed catalogs.
+# Pay €120 → cash.keychain.gr. cash_120 brief → tonight KV.
 # Does not rewrite other keychain plans. Does not send mail.
 $ErrorActionPreference = 'Stop'
 $Pages = 'https://agency002com-ship-it.github.io'
@@ -46,9 +46,28 @@ if (Test-Path $localSave) {
 }
 
 $navTmp = Join-Path $env:TEMP 'nav-night.js'
-Invoke-WebRequest -Uri "$Pages/ftp-drop/nav-night.js" -OutFile $navTmp -UseBasicParsing
+$localNav = Join-Path $here 'nav-night.js'
+if (Test-Path $localNav) {
+  Copy-Item $localNav $navTmp -Force
+} else {
+  Invoke-WebRequest -Uri "$Pages/ftp-drop/nav-night.js" -OutFile $navTmp -UseBasicParsing
+}
 $navJs = [System.IO.File]::ReadAllText($navTmp)
-foreach ($d in @("$Dir/assets", "/home/$User/public_html/120.cash/assets")) {
+
+$assetDirs = @(
+  "$Dir/assets",
+  "/home/$User/public_html/120.cash/assets",
+  "/home/$User/eidotevil.com/assets",
+  "/home/$User/public_html/eidotevil.com/assets",
+  "/home/$User/domains/eidotevil.com/public_html/assets",
+  "/home/$User/public_html/assets",
+  "/home/$User/agency002.com/assets",
+  "/home/$User/public_html/agency002.com/assets",
+  "/home/$User/sebarv.com/assets",
+  "/home/$User/public_html/sebarv.com/assets",
+  "/home/$User/domains/sebarv.com/public_html/assets"
+)
+foreach ($d in $assetDirs) {
   try {
     Save-Fileman $d 'nav.js' $navJs
     Write-Host "Wrote $d/nav.js"
