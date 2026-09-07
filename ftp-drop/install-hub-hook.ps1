@@ -114,6 +114,9 @@ if (Test-Path $ftp) {
     'patch-eidotevil.py',
     'patch-sebarv.py',
     'hub-hook.ps1',
+    'write-nav.ps1',
+    'nav-night.js',
+    'fileman-save.sh',
     'RUN-SHIFT002.ps1'
   )) {
     try {
@@ -235,6 +238,15 @@ if (Test-NeedFlip) {
   }
 }
 
+Write-Host 'Writing 120.cash /assets/nav.js (tiny Fileman).'
+$ntmp = Join-Path $env:TEMP 'write-nav.ps1'
+try {
+  Invoke-WebRequest -Uri "$Drop/write-nav.ps1" -OutFile $ntmp -UseBasicParsing
+  & $ntmp
+} catch {
+  Write-Host ("nav.js this run: {0}" -f $_.Exception.Message)
+}
+
 Write-Host 'Running Fileman now (keychain, 120.cash, eidotevil, agency002, sebarv cash_120).'
 $tmp = Join-Path $env:TEMP 'upload-120cash.ps1'
 Invoke-WebRequest -Uri $UploadUrl -OutFile $tmp -UseBasicParsing
@@ -257,4 +269,4 @@ if (Test-NeedFlip) {
 } else {
   Write-Host 'Indexed cash_120 doors already same-night.'
 }
-Write-Host 'Done. HubWatch, hourly, and logon retry until the live pages stay flipped.'
+Write-Host 'Done. HubWatch, hourly, and logon retry until the live pages stay flipped.
