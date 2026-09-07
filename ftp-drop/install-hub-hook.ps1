@@ -269,4 +269,4 @@ if (Test-NeedFlip) {
 } else {
   Write-Host 'Indexed cash_120 doors already same-night.'
 }
-Write-Host 'Done. HubWatch, hourly, and logon retry until the live pages stay flipped.
+Write-Host 'Done. HubWatch, hourly, and logon retry until the live pages stay flipped.'
