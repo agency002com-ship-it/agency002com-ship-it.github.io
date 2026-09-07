@@ -1,5 +1,5 @@
 # Tiny Fileman: overwrite grey /assets/nav.js on 120.cash and indexed catalogs.
-# ping 20260907s: Fileman host defaults to WHM 192.250.229.162.
+# ping 20260907t: also Fileman addon docroot /home/agency00/domains/120.cash/public_html.
 # Pay €120 → cash.keychain.gr. cash_120 brief → tonight KV.
 # Does not rewrite other keychain plans. Does not send mail.
 $ErrorActionPreference = 'Stop'
@@ -62,6 +62,7 @@ if ($navJs.Length -lt 500 -or $navJs -notmatch 'cash\.keychain\.gr') {
 $assetDirs = @(
   "$Dir/assets",
   "/home/$User/public_html/120.cash/assets",
+  "/home/$User/domains/120.cash/public_html/assets",
   "/home/$User/eidotevil.com/assets",
   "/home/$User/public_html/eidotevil.com/assets",
   "/home/$User/domains/eidotevil.com/public_html/assets",
