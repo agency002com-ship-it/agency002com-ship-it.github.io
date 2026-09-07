@@ -1,6 +1,7 @@
 # Ping IndexNow for doors that already sell same-night.
 # One host per POST (mixed-host 422). No secrets.
 # Do not submit https://120.cash/ while it still says one working day.
+# ping 2026-09-07T21:48Z: pay.120.cash checkout + converting 120cash.html/apopse.html (no neighbourhood add).
 # ping 2026-09-07T14:42Z: llms.txt with Greek neighbourhood tills
 # ping 2026-09-07T14:32Z: sitemap.xml + feed.xml with neighbourhood tills
 # ping 2026-09-07T09:53Z: grok-cf.eid-ot-evil.workers.dev + remaining orange tills
@@ -38,6 +39,7 @@ jobs:
               "desk.agency002.com",
               "live.agency002.com",
               "cash.120.cash",
+              "pay.120.cash",
               "tonight.120.cash",
               "shop.120.cash",
               "apopse.120.cash",
@@ -85,8 +87,10 @@ jobs:
                   print(host, "skip (not same-night)")
                   continue
               paths = ["/"]
-              if host == "cash.keychain.gr":
+              if host in ("cash.keychain.gr", "pay.120.cash"):
                   paths = ["/", "/pay.html?plan=cash_120"]
+              elif host == "cash.120.cash":
+                  paths = ["/", "/120cash.html", "/apopse.html"]
               try:
                   ping(host, paths)
               except Exception as e:
@@ -108,6 +112,8 @@ jobs:
           gio_host = "agency002com-ship-it.github.io"
           GIO_PATHS = (
               "/",
+              "/120cash.html",
+              "/apopse.html",
               "/tonight.html",
               "/el.html",
               "/athens.html",
@@ -140,7 +146,8 @@ jobs:
               except Exception as e:
                   print("github.io{0} fetch fail".format(path), e)
                   continue
-              if same_night(page):
+              converting = "pay.120.cash/pay.html?plan=cash_120" in page and "one working day" not in page.lower()
+              if same_night(page) or converting:
                   live.append(path)
               else:
                   print("skip github.io{0} (not same-night)".format(path))
