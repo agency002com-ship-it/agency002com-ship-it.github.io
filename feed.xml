@@ -5,6 +5,7 @@
     <link>https://tonight.agency002.com/</link>
     <description>Pay €120. The local page is live the same night. Not a working day.</description>
     <language>en</language>
+    <lastBuildDate>Mon, 07 Sep 2026 14:29:00 GMT</lastBuildDate>
     <item>
       <title>tonight.agency002.com — €120 live page tonight</title>
       <link>https://tonight.agency002.com/</link>
@@ -18,12 +19,6 @@
       <description>Same €120 rail. Canonical till is tonight.agency002.com.</description>
     </item>
     <item>
-      <title>Perissos shops</title>
-      <link>https://agency002com-ship-it.github.io/perissos.html</link>
-      <guid>https://agency002com-ship-it.github.io/perissos.html</guid>
-      <description>Same-night €120 page for a shop in Perissos.</description>
-    </item>
-    <item>
       <title>Kypseli shops</title>
       <link>https://agency002com-ship-it.github.io/kypseli.html</link>
       <guid>https://agency002com-ship-it.github.io/kypseli.html</guid>
@@ -34,6 +29,72 @@
       <link>https://agency002com-ship-it.github.io/kallithea.html</link>
       <guid>https://agency002com-ship-it.github.io/kallithea.html</guid>
       <description>Same-night €120 page for a shop in Kallithea.</description>
+    </item>
+    <item>
+      <title>Perissos shops</title>
+      <link>https://agency002com-ship-it.github.io/perissos.html</link>
+      <guid>https://agency002com-ship-it.github.io/perissos.html</guid>
+      <description>Same-night €120 page for a shop in Perissos.</description>
+    </item>
+    <item>
+      <title>Nea Ionia shops</title>
+      <link>https://agency002com-ship-it.github.io/nea-ionia.html</link>
+      <guid>https://agency002com-ship-it.github.io/nea-ionia.html</guid>
+      <description>Same-night €120 page for a shop in Nea Ionia.</description>
+    </item>
+    <item>
+      <title>Patissia shops</title>
+      <link>https://agency002com-ship-it.github.io/patissia.html</link>
+      <guid>https://agency002com-ship-it.github.io/patissia.html</guid>
+      <description>Same-night €120 page for a shop in Patissia.</description>
+    </item>
+    <item>
+      <title>Pangrati shops</title>
+      <link>https://agency002com-ship-it.github.io/pangrati.html</link>
+      <guid>https://agency002com-ship-it.github.io/pangrati.html</guid>
+      <description>Same-night €120 page for a shop in Pangrati.</description>
+    </item>
+    <item>
+      <title>Galatsi shops</title>
+      <link>https://agency002com-ship-it.github.io/galatsi.html</link>
+      <guid>https://agency002com-ship-it.github.io/galatsi.html</guid>
+      <description>Same-night €120 page for a shop in Galatsi.</description>
+    </item>
+    <item>
+      <title>Marousi shops</title>
+      <link>https://agency002com-ship-it.github.io/marousi.html</link>
+      <guid>https://agency002com-ship-it.github.io/marousi.html</guid>
+      <description>Same-night €120 page for a shop in Marousi.</description>
+    </item>
+    <item>
+      <title>Zografou shops</title>
+      <link>https://agency002com-ship-it.github.io/zografou.html</link>
+      <guid>https://agency002com-ship-it.github.io/zografou.html</guid>
+      <description>Same-night €120 page for a shop in Zografou.</description>
+    </item>
+    <item>
+      <title>Koukaki shops</title>
+      <link>https://agency002com-ship-it.github.io/koukaki.html</link>
+      <guid>https://agency002com-ship-it.github.io/koukaki.html</guid>
+      <description>Same-night €120 page for a shop in Koukaki.</description>
+    </item>
+    <item>
+      <title>Athens shops</title>
+      <link>https://agency002com-ship-it.github.io/athens.html</link>
+      <guid>https://agency002com-ship-it.github.io/athens.html</guid>
+      <description>Same-night €120 page for a shop in Athens.</description>
+    </item>
+    <item>
+      <title>Greek till</title>
+      <link>https://agency002com-ship-it.github.io/el.html</link>
+      <guid>https://agency002com-ship-it.github.io/el.html</guid>
+      <description>Same €120 rail in Greek. Canonical till is tonight.agency002.com.</description>
+    </item>
+    <item>
+      <title>Orange keychain cash_120</title>
+      <link>https://cash.keychain.gr/pay.html?plan=cash_120</link>
+      <guid>https://cash.keychain.gr/pay.html?plan=cash_120</guid>
+      <description>Same-night after-pay with Stripe session_id.</description>
     </item>
   </channel>
 </rss>
