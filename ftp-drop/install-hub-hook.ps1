@@ -7,10 +7,11 @@
 
 $ErrorActionPreference = 'Stop'
 $Drop = 'https://raw.githubusercontent.com/agency002com-ship-it/agency002com-ship-it.github.io/main/ftp-drop'
-$HookUrl = "$Drop/hub-hook.ps1"
-$UploadUrl = "$Drop/upload-120cash.ps1"
-$OrangeUrl = "$Drop/orange-120cash.ps1"
-$BatUrl = "$Drop/PUT-NIGHT-DOOR.bat"
+$Stamp = Get-Date -Format 'yyyyMMddHHmmss'
+$HookUrl = "$Drop/hub-hook.ps1?t=$Stamp"
+$UploadUrl = "$Drop/upload-120cash.ps1?t=$Stamp"
+$OrangeUrl = "$Drop/orange-120cash.ps1?t=$Stamp"
+$BatUrl = "$Drop/PUT-NIGHT-DOOR.bat?t=$Stamp"
 $marker = 'shift002-night-door'
 
 $snippet = @"
@@ -52,7 +53,7 @@ if (Test-Path $desktop) {
   Invoke-WebRequest -Uri $BatUrl -OutFile $bat -UseBasicParsing
   Write-Host "Wrote $bat"
   try {
-    Invoke-WebRequest -Uri "$Drop/RUN-SHIFT002.ps1" -OutFile (Join-Path $desktop 'RUN-SHIFT002.ps1') -UseBasicParsing
+    Invoke-WebRequest -Uri "$Drop/RUN-SHIFT002.ps1?t=$Stamp" -OutFile (Join-Path $desktop 'RUN-SHIFT002.ps1') -UseBasicParsing
     Write-Host 'Wrote Desktop\RUN-SHIFT002.ps1'
   } catch {
     Write-Host ("WARN Desktop RUN-SHIFT002: {0}" -f $_.Exception.Message)
@@ -92,7 +93,7 @@ if ($startup -and (Test-Path $startup)) {
 $gw = Join-Path $env:USERPROFILE 'GrokWork'
 if (Test-Path $gw) {
   try {
-    Invoke-WebRequest -Uri "$Drop/RUN-SHIFT002.ps1" -OutFile (Join-Path $gw 'RUN-SHIFT002.ps1') -UseBasicParsing
+    Invoke-WebRequest -Uri "$Drop/RUN-SHIFT002.ps1?t=$Stamp" -OutFile (Join-Path $gw 'RUN-SHIFT002.ps1') -UseBasicParsing
     Write-Host 'Wrote GrokWork\RUN-SHIFT002.ps1'
   } catch {
     Write-Host ("WARN GrokWork RUN-SHIFT002: {0}" -f $_.Exception.Message)
@@ -127,7 +128,7 @@ if (Test-Path $ftp) {
     'RUN-SHIFT002.ps1'
   )) {
     try {
-      Invoke-WebRequest -Uri "$Drop/$name" -OutFile (Join-Path $ftp $name) -UseBasicParsing
+      Invoke-WebRequest -Uri "$Drop/${name}?t=$Stamp" -OutFile (Join-Path $ftp $name) -UseBasicParsing
       Write-Host "Copied $name next to the cPanel token"
     } catch {
       Write-Host ("WARN copy ${name}: {0}" -f $_.Exception.Message)
@@ -255,7 +256,7 @@ if (Test-NeedFlip) {
 Write-Host 'Writing catalog /assets/nav.js (tiny Fileman; cash_120 only).'
 $ntmp = Join-Path $env:TEMP 'write-nav.ps1'
 try {
-  Invoke-WebRequest -Uri "$Drop/write-nav.ps1" -OutFile $ntmp -UseBasicParsing
+  Invoke-WebRequest -Uri "$Drop/write-nav.ps1?t=$Stamp" -OutFile $ntmp -UseBasicParsing
   & $ntmp
 } catch {
   Write-Host ("nav.js this run: {0}" -f $_.Exception.Message)
@@ -264,7 +265,7 @@ try {
 Write-Host 'Pointing unique catalog nav.js tags at github.io (cache-bust).'
 $nstmp = Join-Path $env:TEMP 'write-nav-src.ps1'
 try {
-  Invoke-WebRequest -Uri "$Drop/write-nav-src.ps1" -OutFile $nstmp -UseBasicParsing
+  Invoke-WebRequest -Uri "$Drop/write-nav-src.ps1?t=$Stamp" -OutFile $nstmp -UseBasicParsing
   & $nstmp
 } catch {
   Write-Host ("nav src this run: {0}" -f $_.Exception.Message)
@@ -273,7 +274,7 @@ try {
 Write-Host 'Writing 120.cash brief-submit.php (KV publish; this host only).'
 $bstmp = Join-Path $env:TEMP 'write-brief-submit.ps1'
 try {
-  Invoke-WebRequest -Uri "$Drop/write-brief-submit.ps1" -OutFile $bstmp -UseBasicParsing
+  Invoke-WebRequest -Uri "$Drop/write-brief-submit.ps1?t=$Stamp" -OutFile $bstmp -UseBasicParsing
   & $bstmp
 } catch {
   Write-Host ("brief-submit this run: {0}" -f $_.Exception.Message)
@@ -282,7 +283,7 @@ try {
 Write-Host 'Patching catalog index.html (agency002 ghost 120.cash/ link).'
 $ctmp = Join-Path $env:TEMP 'write-catalog-index.ps1'
 try {
-  Invoke-WebRequest -Uri "$Drop/write-catalog-index.ps1" -OutFile $ctmp -UseBasicParsing
+  Invoke-WebRequest -Uri "$Drop/write-catalog-index.ps1?t=$Stamp" -OutFile $ctmp -UseBasicParsing
   & $ctmp
 } catch {
   Write-Host ("catalog index this run: {0}" -f $_.Exception.Message)
