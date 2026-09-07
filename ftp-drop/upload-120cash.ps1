@@ -74,6 +74,15 @@ function Test-KeychainPatched([string]$content) {
   return ($content -match [regex]::Escape($Paid) -and $content -notmatch [regex]::Escape("a('https://120.cash/#brief', '120.cash');"))
 }
 
+function Update-BriefFetch([string]$content) {
+  $old = "fetch('/brief-submit.php', {"
+  $new = "fetch('https://tonight.agency002.com/brief-submit.php', {"
+  if ($content.Contains($new)) { return $content }
+  $n = ([regex]::Matches($content, [regex]::Escape($old))).Count
+  if ($n -ne 1) { return $content }
+  return $content.Replace($old, $new)
+}
+
 $oldLink = "a('https://120.cash/#brief', '120.cash');"
 $newLink = @"
         var sid = (new URLSearchParams(location.search)).get('session_id') || '';
@@ -354,6 +363,50 @@ try {
   Write-Host ("WARN sebarv.com: {0}" -f $_.Exception.Message)
 }
 if (-not $sebOk) { Write-Host 'WARN: sebarv.com still sends €120 to wait-a-day 120.cash. tonight.agency002.com is already live.' }
+
+# --- 6. Grey catalog forms still POST same-origin /brief-submit.php. Point that
+# unique fetch at orange tonight so grok-cf can persist cash_120 to KV tonight. ---
+Write-Host 'Pointing grey catalog brief forms at tonight.agency002.com/brief-submit.php.'
+$briefTargets = @(
+  @{ Url = 'https://eidotevil.com/'; Guard = 'page_100'; Dirs = @("/home/$User/eidotevil.com", "/home/$User/public_html/eidotevil.com", "/home/$User/domains/eidotevil.com/public_html") },
+  @{ Url = 'https://agency002.com/'; Guard = 'eidotevil.com'; Dirs = @("/home/$User/public_html", "/home/$User/agency002.com", "/home/$User/public_html/agency002.com") },
+  @{ Url = 'https://sebarv.com/'; Guard = 'pay.html?plan=sitepilot'; Dirs = @("/home/$User/sebarv.com", "/home/$User/public_html/sebarv.com", "/home/$User/domains/sebarv.com/public_html") },
+  @{ Url = 'https://120.cash/'; Guard = 'cash_120'; Dirs = @($Dir, "/home/$User/public_html/120.cash") }
+)
+foreach ($t in $briefTargets) {
+  try {
+    $liveHtml = (Invoke-WebRequest -Uri $t.Url -UseBasicParsing).Content
+    $patchedBrief = Update-BriefFetch $liveHtml
+    if ($patchedBrief -eq $liveHtml) {
+      if ($liveHtml.Contains("fetch('https://tonight.agency002.com/brief-submit.php', {")) {
+        Write-Host ("OK {0} brief already posts to tonight." -f $t.Url)
+      } else {
+        Write-Host ("WARN {0} brief fetch not unique; left origin PHP." -f $t.Url)
+      }
+      continue
+    }
+    if ($patchedBrief -notmatch [regex]::Escape($t.Guard)) {
+      Write-Host ("WARN {0} brief rewrite would drop {1}. Skip." -f $t.Url, $t.Guard)
+      continue
+    }
+    foreach ($d in $t.Dirs) {
+      try {
+        Save-Fileman $d 'index.html' $patchedBrief
+      } catch {
+        Write-Host ("skip {0}: {1}" -f $d, $_.Exception.Message)
+        continue
+      }
+      Start-Sleep -Seconds 2
+      $checkB = (Invoke-WebRequest -Uri $t.Url -UseBasicParsing).Content
+      if ($checkB.Contains("fetch('https://tonight.agency002.com/brief-submit.php', {") -and $checkB -match [regex]::Escape($t.Guard)) {
+        Write-Host ("OK {0} brief now posts to tonight. Other products stay." -f $t.Url)
+        break
+      }
+    }
+  } catch {
+    Write-Host ("WARN brief rewrite {0}: {1}" -f $t.Url, $_.Exception.Message)
+  }
+}
 
 $finalPay = (Invoke-WebRequest -Uri 'https://keychain.gr/pay.html' -UseBasicParsing).Content
 if (Test-KeychainPatched $finalPay) { $keychainOk = $true }
