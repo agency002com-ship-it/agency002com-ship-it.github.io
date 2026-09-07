@@ -181,6 +181,25 @@ if ($html -notmatch "kind === 'cash_120'") {
   }
 }
 
+# --- 1b. 120.cash /assets/nav.js (tiny). Grey homepage already loads it.
+# Pay €120 → cash.keychain.gr (patched). #brief → cash.120.cash KV.
+# Index.html still needed to drop "one working day".
+Write-Host 'Writing 120.cash /assets/nav.js (same-night pay + brief, keep the year stamp).'
+try {
+  $navTmp = Join-Path $env:TEMP 'nav-night.js'
+  Invoke-WebRequest -Uri "$Pages/ftp-drop/nav-night.js" -OutFile $navTmp -UseBasicParsing
+  $navJs = [System.IO.File]::ReadAllText($navTmp)
+  foreach ($d in @("$Dir/assets", "/home/$User/public_html/120.cash/assets")) {
+    try {
+      Save-Fileman $d 'nav.js' $navJs
+    } catch {
+      Write-Host ("skip nav.js {0}: {1}" -f $d, $_.Exception.Message)
+    }
+  }
+} catch {
+  Write-Host ("WARN nav.js: {0}" -f $_.Exception.Message)
+}
+
 # --- 2. 120.cash homepage ---
 $cashOk = $false
 $Tmp = Join-Path $env:TEMP '120-index.html'
