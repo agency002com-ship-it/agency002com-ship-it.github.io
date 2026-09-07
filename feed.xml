@@ -23,5 +23,17 @@
       <guid>https://agency002com-ship-it.github.io/perissos.html</guid>
       <description>Same-night €120 page for a shop in Perissos.</description>
     </item>
+    <item>
+      <title>Kypseli shops</title>
+      <link>https://agency002com-ship-it.github.io/kypseli.html</link>
+      <guid>https://agency002com-ship-it.github.io/kypseli.html</guid>
+      <description>Same-night €120 page for a shop in Kypseli.</description>
+    </item>
+    <item>
+      <title>Kallithea shops</title>
+      <link>https://agency002com-ship-it.github.io/kallithea.html</link>
+      <guid>https://agency002com-ship-it.github.io/kallithea.html</guid>
+      <description>Same-night €120 page for a shop in Kallithea.</description>
+    </item>
   </channel>
 </rss>
