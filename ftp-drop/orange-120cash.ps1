@@ -145,6 +145,15 @@ function Get-Zone([string]$ZoneName) {
   }
 }
 
+function Test-GrokCfHealthy {
+  try {
+    $r = Invoke-WebRequest -Uri 'https://cash.120.cash/' -UseBasicParsing
+    $html = [string]$r.Content
+    $mark = [string]$r.Headers['x-shift002']
+    return ($html -match '#book' -and $html -notmatch 'one working day' -and $mark -eq 'orange')
+  } catch { return $false }
+}
+
 function Test-CashNight {
   try {
     $html = (Invoke-WebRequest -Uri 'https://120.cash/' -UseBasicParsing).Content
@@ -181,6 +190,13 @@ function Test-SebarvNight {
 }
 
 # 1. Orange DNS first. grok-cf already intercepts these hostnames when traffic hits Cloudflare.
+# Refuse to orange the indexed apex onto a truncated grok-cf (PLACEHOLDER worker.js).
+if (-not (Test-GrokCfHealthy)) {
+  Write-Host 'grok-cf unhealthy (https://cash.120.cash/ missing #book). Refusing to orange 120.cash onto a truncated worker.'
+  Write-Host 'Done. Origin /assets/, /api/, and other keychain plans still pass through.'
+  return
+}
+
 $cashZone = Get-Zone '120.cash'
 if ($cashZone) {
   Write-Host 'Orange-cloud 120.cash DNS (do not replace grok-cf).'
@@ -290,4 +306,4 @@ if (Test-AgencyNight) { Write-Host 'https://agency002.com/ cash_120 now opens to
 else { Write-Host 'WARN: agency002.com still sends cash_120 to wait-a-day (need orange DNS or Fileman).' }
 if (Test-SebarvNight) { Write-Host 'https://sebarv.com/ cash_120 now opens tonight.agency002.com.' }
 else { Write-Host 'WARN: sebarv.com still sends cash_120 to wait-a-day (need orange DNS or Fileman).' }
-Write-Host 'Done. Origin /assets/, /api/, and other keychain plans still pass through.'
+Write-Host 'Done. Origin /assets/, /api/, and other keychain plans still pass through.

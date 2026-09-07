@@ -17,7 +17,8 @@ function Test-OrangePack([string]$path) {
   return (
     $t.Contains("Write-Host 'Done. Origin /assets/, /api/, and other keychain plans still pass through.'") -and
     $t.Contains('will not steal grok-cf') -and
-    $t.Contains('Get-RouteScript')
+    $t.Contains('Get-RouteScript') -and
+    $t.Contains('Test-GrokCfHealthy')
   )
 }
 

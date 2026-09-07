@@ -39,6 +39,8 @@ jobs:
               raise SystemExit("orange-120cash.ps1 last Write-Host is unclosed or missing — laptop orange would abort")
           if "will not steal grok-cf" not in o or "Get-RouteScript" not in o:
               raise SystemExit("orange-120cash.ps1 missing grok-cf reclaim")
+          if "Test-GrokCfHealthy" not in o:
+              raise SystemExit("orange-120cash.ps1 missing grok-cf health check before orange DNS")
           print("upload-120cash.ps1 + orange-120cash.ps1 parse guard OK")
           PY
       - name: Probe live doors
