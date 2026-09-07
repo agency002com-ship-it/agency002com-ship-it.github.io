@@ -1,7 +1,9 @@
 # Laptop Fileman for the same-night €120 door.
 # Nav.js first (eidotevil / agency002 / sebarv / 120.cash): Pay cash_120 →
 # cash.keychain.gr; unique wait-a-day copy → same night; briefs → tonight KV.
-# Then unique nav.js src cache-bust. Then keychain.gr pay.html cash_120 after-pay.
+# Then unique nav.js src cache-bust. Then 120.cash brief-submit.php (KV).
+# Then 120.cash index.html from 120-index.html (#book desk — curl/Google see
+# source, not JS). Then keychain.gr pay.html cash_120 after-pay.
 # Other keychain plans stay. No mail. No PayPal passwords. No FormSubmit.
 #
 #   powershell -File upload-120cash.ps1
@@ -79,6 +81,28 @@ try { Invoke-DropScript 'write-nav-src.ps1' } catch {
 Write-Host 'Writing 120.cash brief-submit.php (KV publish; this host only).'
 try { Invoke-DropScript 'write-brief-submit.ps1' } catch {
   Write-Host ("WARN brief-submit.php: {0}" -f $_.Exception.Message)
+}
+
+$page120 = ''
+try { $page120 = (Invoke-WebRequest -Uri 'https://120.cash/' -UseBasicParsing).Content } catch { }
+$needDesk = ($page120 -match 'one working day') -or ($page120 -notmatch '#book')
+if ($needDesk) {
+  Write-Host 'Writing 120.cash index.html from 120-index.html (same-night #book desk).'
+  $indexFile = Join-Path $here '120-index.html'
+  if (-not (Test-Path $indexFile)) {
+    $indexFile = Join-Path $env:TEMP 'shift002-120-index.html'
+    Invoke-WebRequest -Uri "$Drop/120-index.html" -OutFile $indexFile -UseBasicParsing
+  }
+  $deskHtml = [System.IO.File]::ReadAllText($indexFile)
+  if ($deskHtml -notmatch '#book' -or $deskHtml -match 'one working day' -or $deskHtml -notmatch 'ftp-drop/desk.js') {
+    Write-Error '120-index.html is not the same-night desk. Refusing to overwrite origin index.html.'
+  }
+  foreach ($d in @($Dir, "/home/$User/public_html/120.cash", "/home/$User/domains/120.cash/public_html")) {
+    try { Save-Fileman $d 'index.html' $deskHtml } catch {
+      Write-Host ("skip {0}: {1}" -f $d, $_.Exception.Message)
+    }
+  }
+  Start-Sleep -Seconds 2
 }
 
 function Test-KeychainPatched([string]$content) {
@@ -194,7 +218,13 @@ foreach ($site in @('eidotevil.com', 'agency002.com', 'sebarv.com', '120.cash'))
 if ($keychainOk) { Write-Host 'keychain cash_120 now returns to the night desk. Other plans untouched.' }
 if (-not $keychainOk) { Write-Host 'WARN: keychain still sends cash_120 to 120.cash/#brief. Catalog nav.js still flips Pay to cash.keychain.gr.' }
 
-if (-not $keychainOk -or $navLive -lt 4) {
+$stillCash = $false
+try {
+  $liveCash = (Invoke-WebRequest -Uri 'https://120.cash/' -UseBasicParsing).Content
+  $stillCash = ($liveCash -match 'one working day') -or ($liveCash -notmatch '#book')
+} catch { $stillCash = $true }
+
+if (-not $keychainOk -or $navLive -lt 4 -or $stillCash) {
   Write-Host 'Still wait-a-day. Cloudflare orange-cloud (existing grok-cf routes).'
   try { Invoke-DropScript 'orange-120cash.ps1' } catch {
     Write-Host ("Cloudflare orange: {0}" -f $_.Exception.Message)
