@@ -109,7 +109,7 @@ zone_info() {
   python3 -c 'import json,sys
 d=json.load(sys.stdin)
 r=d.get("result") or []
-print((r[0]["id"]+" "+r[0]["account"]["id"]) if r else " ")' <<<"$zones"
+print((r[0]["id"]+" "+r[0]["account"]["id"]) if r else " ")' <<<"$zones" 2>/dev/null || echo " "
 }
 
 cash_night() {
@@ -132,8 +132,8 @@ eido_night() {
 
 agency_night() {
   local page
-  page="$(curl -fsSL https://agency002.com/ || true)"
-  echo "$page" | grep -Fq 'tonight.agency002.com/#book'
+  page="$(curl -fsSL -A 'Mozilla/5.0' https://agency002.com/ || true)"
+  echo "$page" | grep -Fq 'tonight.agency002.com'
 }
 
 sebarv_night() {
@@ -178,7 +178,7 @@ fi
 
 read -r szone saccount <<<"$(zone_info sebarv.com)"
 if [ -n "${szone:-}" ] && [ "$szone" != "" ]; then
-  echo "Orange-cloud sebarv.com apex/www (indexed catalog). Do not overlay 120-index. zone=$szone"
+  echo "Orange-cloud sebarv.com DNS (indexed catalog). Do not overlay 120-index. zone=$szone"
   proxy_names "$szone" "sebarv.com" "www.sebarv.com" || true
   ensure_routes "$szone" "grok-cf" 'sebarv.com/*' 'www.sebarv.com/*' || true
 else
