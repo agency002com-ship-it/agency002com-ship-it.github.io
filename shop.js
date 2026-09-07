@@ -1,6 +1,6 @@
 /* Shared night-desk helpers for the public GitHub Pages door. */
 (function (root) {
-  var KEYCHAIN = "https://keychain.gr/api/owner-checkout.php";
+  var KEYCHAIN = "https://cash.120.cash/api/owner-checkout.php";
   var HERE = "https://agency002com-ship-it.github.io";
   var STORE = "shift002-brief";
 
@@ -247,8 +247,6 @@
     }
   }
 
-  // After a confirmed €120, tell 120.cash so Gmail gets NEW 120.cash BRIEF.
-  // text/plain JSON is a simple request (no CORS preflight). PHP still parses php://input.
   function notifyDesk(brief, paymentId) {
     if (!valid(brief)) return;
     if (/@(example\.com|example\.gr|agency002\.invalid)$/i.test(brief.email || "")) return;
@@ -277,7 +275,6 @@
     } catch (e) {}
   }
 
-  // Durable same-night page on the orange till (KV). Hash URL is the fallback.
   function publishPage(brief, paymentId) {
     notifyDesk(brief, paymentId);
     if (!valid(brief)) {

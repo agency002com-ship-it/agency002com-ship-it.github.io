@@ -1,5 +1,5 @@
 (function () {
-  var KEYCHAIN = 'https://keychain.gr/api/owner-checkout.php';
+  var KEYCHAIN = 'https://cash.120.cash/api/owner-checkout.php';
   var PAGES = 'https://agency002com-ship-it.github.io';
   var y = document.getElementById('y');
   if (y) y.textContent = String(new Date().getFullYear());
