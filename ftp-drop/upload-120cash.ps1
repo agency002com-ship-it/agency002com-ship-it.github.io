@@ -1,31 +1,15 @@
-# Put the same-night door on the live cPanel account.
-# pages 2026-09-07: Fileman also patches sebarv.com cash_120 → tonight.agency002.com.
-# Addon-domain FTP returns 553. Use Fileman. Same token as GrokWork\ftp\.
-# Does not send mail. Does not touch PayPal passwords. Does not restore FormSubmit.
-# Does not rewrite other keychain plans (SitePilot, Intifrog, Ms King, MPG, …).
+# Laptop Fileman for the same-night €120 door.
+# Nav.js first (eidotevil / agency002 / sebarv / 120.cash): Pay cash_120 →
+# cash.keychain.gr; unique wait-a-day copy → same night; briefs → tonight KV.
+# Then unique nav.js src cache-bust. Then keychain.gr pay.html cash_120 after-pay.
+# Other keychain plans stay. No mail. No PayPal passwords. No FormSubmit.
 #
-# Laptop:  powershell -File upload-120cash.ps1
-# Needs one of:
-#   GrokWork\ftp\config.cpanel.local.ps1
-#   env CPANEL_HOST, CPANEL_USER, CPANEL_TOKEN
-#
-# After:
-#   https://keychain.gr/pay.html  cash_120 return → github.io/paid.html
-#   https://120.cash/             brief then pay, not one working day
-#   https://eidotevil.com/        cash_120 card → tonight.agency002.com/#book
-#   https://agency002.com/        cash_120 card → tonight.agency002.com/#book
-#   https://sebarv.com/           cash_120 cards → tonight.agency002.com/#book
-#
-# Keychain is first: the indexed 120.cash CTA already opens cash_120. Flipping
-# that return delivers tonight even if the 120.cash homepage write misses.
-# eidotevil.com is Google-indexed; only the €120 card is rewritten.
-# Agency002.com homepage is grey so Fileman rewrites only the cash_120 links.
-# Presence / Printful / DBYW stay.
+#   powershell -File upload-120cash.ps1
 
 $ErrorActionPreference = 'Stop'
+$Drop = 'https://raw.githubusercontent.com/agency002com-ship-it/agency002com-ship-it.github.io/main/ftp-drop'
 $Pages = 'https://agency002com-ship-it.github.io'
 $Paid = "$Pages/paid.html"
-$IndexSource = "$Pages/ftp-drop/120-index.html"
 
 $ftpDir = Join-Path $env:USERPROFILE 'GrokWork\ftp'
 foreach ($name in @('config.cpanel.local.ps1', 'config.local.ps1', 'whm-api.ps1')) {
@@ -46,6 +30,10 @@ if (-not $Token) { $Token = $WhmToken }
 $Dir = $env:CPANEL_DIR
 if (-not $Dir) { $Dir = $CpanelDir }
 if (-not $Dir) { $Dir = "/home/$User/120.cash" }
+$WhmUserName = $env:WHM_USER
+if (-not $WhmUserName) { $WhmUserName = $WhmUser }
+$HostNames = @($HostName, 'agency002.com', 'lemonpie.codes') |
+  Where-Object { $_ } | Select-Object -Unique
 
 if (-not $Token) {
   Write-Error @"
@@ -55,32 +43,41 @@ or set CPANEL_TOKEN. Do not invent a password. Do not use PayPal credentials.
 "@
 }
 
-$WhmUserName = $env:WHM_USER
-if (-not $WhmUserName) { $WhmUserName = $WhmUser }
-$HostNames = @($HostName, 'agency002.com', 'lemonpie.codes') |
-  Where-Object { $_ } | Select-Object -Unique
 $here = $PSScriptRoot
 if (-not $here) { $here = Split-Path -Parent $MyInvocation.MyCommand.Path }
+
+function Invoke-DropScript([string]$name) {
+  $local = Join-Path $here $name
+  if (Test-Path $local) {
+    & $local
+    return
+  }
+  $tmp = Join-Path $env:TEMP "shift002-$name"
+  Invoke-WebRequest -Uri "$Drop/$name" -OutFile $tmp -UseBasicParsing
+  & $tmp
+}
+
 $localSave = Join-Path $here 'save-fileman.ps1'
 if (Test-Path $localSave) {
   . $localSave
 } else {
   $save = Join-Path $env:TEMP 'shift002-save-fileman.ps1'
-  Invoke-WebRequest -Uri 'https://raw.githubusercontent.com/agency002com-ship-it/agency002com-ship-it.github.io/main/ftp-drop/save-fileman.ps1' -OutFile $save -UseBasicParsing
+  Invoke-WebRequest -Uri "$Drop/save-fileman.ps1" -OutFile $save -UseBasicParsing
   . $save
+}
+
+Write-Host 'Writing catalog /assets/nav.js (cash_120 only).'
+try { Invoke-DropScript 'write-nav.ps1' } catch {
+  Write-Host ("WARN nav.js: {0}" -f $_.Exception.Message)
+}
+
+Write-Host 'Pointing unique nav.js tags at github.io night nav.'
+try { Invoke-DropScript 'write-nav-src.ps1' } catch {
+  Write-Host ("WARN nav src: {0}" -f $_.Exception.Message)
 }
 
 function Test-KeychainPatched([string]$content) {
   return ($content -match [regex]::Escape($Paid) -and $content -notmatch [regex]::Escape("a('https://120.cash/#brief', '120.cash');"))
-}
-
-function Update-BriefFetch([string]$content) {
-  $old = "fetch('/brief-submit.php', {"
-  $new = "fetch('https://tonight.agency002.com/brief-submit.php', {"
-  if ($content.Contains($new)) { return $content }
-  $n = ([regex]::Matches($content, [regex]::Escape($old))).Count
-  if ($n -ne 1) { return $content }
-  return $content.Replace($old, $new)
 }
 
 $oldLink = "a('https://120.cash/#brief', '120.cash');"
@@ -92,7 +89,6 @@ $newLink = @"
         else if (tok) paid += '?token=' + encodeURIComponent(tok);
         a(paid, 'the night desk');
 "@
-
 $oldBounce = @"
         return false;
       }
@@ -121,7 +117,6 @@ $newBounce = @"
 
     /* ---------------- return from PayPal / Stripe ---------------- */
 "@
-
 $oldDone = @"
       showProductNextStep(); // product-aware next step as soon as thank-you shows
       var oid = q.get('token') || q.get('order_id') || sessionStorage.getItem('a2_pp_order') || '';
@@ -136,12 +131,10 @@ $newDone = @"
       var oid = q.get('token') || q.get('order_id') || sessionStorage.getItem('a2_pp_order') || '';
 "@
 
-# --- 1. keychain.gr/pay.html : cash_120 only (indexed money door already uses this) ---
-Write-Host 'Patching live keychain.gr/pay.html (cash_120 return + bounce).'
+Write-Host 'Patching live keychain.gr/pay.html (cash_120 return only).'
 $pay = Invoke-WebRequest -Uri 'https://keychain.gr/pay.html' -UseBasicParsing
 $html = $pay.Content
 $keychainOk = $false
-
 if ($html -notmatch "kind === 'cash_120'") {
   Write-Host 'WARN: live pay.html has no cash_120 branch. Skipping till rewrite.'
 } elseif (Test-KeychainPatched $html) {
@@ -158,272 +151,16 @@ if ($html -notmatch "kind === 'cash_120'") {
     if ($html -notmatch 'intifrog.com' -or $html -notmatch 'msking.shop' -or $html -notmatch 'muslimpowergroup.com') {
       Write-Host 'WARN: patch would drop another plan. Did not write pay.html.'
     } else {
-      $payDirs = @(
-        "/home/$User/keychain.gr",
-        "/home/$User/public_html/keychain.gr",
-        "/home/$User/domains/keychain.gr/public_html"
-      )
-      foreach ($d in $payDirs) {
-        try {
-          Save-Fileman $d 'pay.html' $html
-        } catch {
+      foreach ($d in @("/home/$User/keychain.gr", "/home/$User/public_html/keychain.gr", "/home/$User/domains/keychain.gr/public_html")) {
+        try { Save-Fileman $d 'pay.html' $html } catch {
           Write-Host ("skip {0}: {1}" -f $d, $_.Exception.Message)
           continue
         }
         Start-Sleep -Seconds 2
         $check = Invoke-WebRequest -Uri 'https://keychain.gr/pay.html' -UseBasicParsing
-        if (Test-KeychainPatched $check.Content) {
-          $keychainOk = $true
-          break
-        }
+        if (Test-KeychainPatched $check.Content) { $keychainOk = $true; break }
       }
     }
-  }
-}
-
-# --- 1b. 120.cash /assets/nav.js (tiny). Grey homepage already loads it.
-# Pay €120 → cash.keychain.gr (patched). #brief → cash.120.cash KV.
-# Index.html still needed to drop "one working day".
-Write-Host 'Writing 120.cash /assets/nav.js (same-night pay + brief, keep the year stamp).'
-try {
-  $navTmp = Join-Path $env:TEMP 'nav-night.js'
-  Invoke-WebRequest -Uri "$Pages/ftp-drop/nav-night.js" -OutFile $navTmp -UseBasicParsing
-  $navJs = [System.IO.File]::ReadAllText($navTmp)
-  foreach ($d in @("$Dir/assets", "/home/$User/public_html/120.cash/assets")) {
-    try {
-      Save-Fileman $d 'nav.js' $navJs
-    } catch {
-      Write-Host ("skip nav.js {0}: {1}" -f $d, $_.Exception.Message)
-    }
-  }
-} catch {
-  Write-Host ("WARN nav.js: {0}" -f $_.Exception.Message)
-}
-
-# --- 2. 120.cash homepage ---
-$cashOk = $false
-$Tmp = Join-Path $env:TEMP '120-index.html'
-Write-Host "Downloading $IndexSource"
-Invoke-WebRequest -Uri $IndexSource -OutFile $Tmp -UseBasicParsing
-$indexHtml = [System.IO.File]::ReadAllText($Tmp)
-try {
-  Save-Fileman $Dir 'index.html' $indexHtml
-} catch {
-  Write-Host ("WARN 120.cash primary dir: {0}" -f $_.Exception.Message)
-}
-
-$live = Invoke-WebRequest -Uri 'https://120.cash/' -UseBasicParsing
-if ($live.Content -match 'one working day' -or $live.Content -notmatch '#book') {
-  Write-Host 'Trying public_html addon path for 120.cash.'
-  try {
-    Save-Fileman "/home/$User/public_html/120.cash" 'index.html' $indexHtml
-  } catch {
-    Write-Host ("WARN 120.cash addon dir: {0}" -f $_.Exception.Message)
-  }
-  $live = Invoke-WebRequest -Uri 'https://120.cash/' -UseBasicParsing
-}
-if ($live.Content -notmatch 'one working day' -and $live.Content -match '#book') {
-  $cashOk = $true
-  Write-Host 'https://120.cash/ is brief then pay. Keep /assets/. Leave brief-submit.php.'
-} else {
-  Write-Host 'WARN: https://120.cash/ still says one working day. Keychain bounce can still deliver tonight.'
-}
-
-# --- 3. eidotevil.com homepage: only the €120 card (Google already indexes this catalog) ---
-Write-Host 'Patching eidotevil.com cash_120 links to tonight.agency002.com (other prices stay).'
-$eidoOk = $false
-try {
-  $eidoHtml = (Invoke-WebRequest -Uri 'https://eidotevil.com/' -UseBasicParsing).Content
-  $oldPay = 'href="https://keychain.gr/pay.html?plan=cash_120"'
-  $newPay = 'href="https://tonight.agency002.com/#book"'
-  $oldBrief = 'href="https://120.cash/#brief"'
-  $newBrief = 'href="https://tonight.agency002.com/"'
-  $oldHome = 'href="https://120.cash/"'
-  $newHome = 'href="https://tonight.agency002.com/"'
-  $oldLine = 'After pay: short brief on 120.cash'
-  $newLine = 'After pay: same-night brief on tonight.agency002.com'
-  $nPay = ([regex]::Matches($eidoHtml, [regex]::Escape($oldPay))).Count
-  $nBrief = ([regex]::Matches($eidoHtml, [regex]::Escape($oldBrief))).Count
-  $nHome = ([regex]::Matches($eidoHtml, [regex]::Escape($oldHome))).Count
-  if ($eidoHtml -match [regex]::Escape('tonight.agency002.com/#book')) {
-    Write-Host 'eidotevil.com already points cash_120 at tonight.agency002.com.'
-    $eidoOk = $true
-  } elseif ($nPay -ne 1 -or $nBrief -ne 1 -or $nHome -ne 1) {
-    Write-Host ("WARN: eidotevil.com needles not unique (pay=$nPay brief=$nBrief home=$nHome). Skipping catalog rewrite.")
-  } else {
-    $patchedEido = $eidoHtml.Replace($oldPay, $newPay).Replace($oldBrief, $newBrief).Replace($oldHome, $newHome).Replace($oldLine, $newLine)
-    if ($patchedEido -notmatch 'pay.html\?plan=presence' -or $patchedEido -notmatch 'page_100' -or $patchedEido -notmatch 'printful') {
-      Write-Host 'WARN: eidotevil.com patch would drop another product. Did not write.'
-    } else {
-      $eidoDirs = @(
-        "/home/$User/eidotevil.com",
-        "/home/$User/public_html/eidotevil.com",
-        "/home/$User/domains/eidotevil.com/public_html"
-      )
-      foreach ($d in $eidoDirs) {
-        try {
-          Save-Fileman $d 'index.html' $patchedEido
-        } catch {
-          Write-Host ("skip {0}: {1}" -f $d, $_.Exception.Message)
-          continue
-        }
-        Start-Sleep -Seconds 2
-        $checkE = (Invoke-WebRequest -Uri 'https://eidotevil.com/' -UseBasicParsing).Content
-        if ($checkE -match [regex]::Escape('tonight.agency002.com/#book') -and $checkE -match 'pay.html\?plan=presence') {
-          $eidoOk = $true
-          Write-Host 'eidotevil.com cash_120 now opens tonight.agency002.com. Other prices untouched.'
-          break
-        }
-      }
-    }
-  }
-} catch {
-  Write-Host ("WARN eidotevil.com: {0}" -f $_.Exception.Message)
-}
-if (-not $eidoOk) { Write-Host 'WARN: eidotevil.com still sends €120 to wait-a-day 120.cash. tonight.agency002.com is already live.' }
-
-# --- 4. agency002.com homepage: only the €120 card (grey apex; orange wildcard already serves tonight.agency002.com) ---
-Write-Host 'Patching agency002.com cash_120 links to tonight.agency002.com (other plans stay).'
-$agencyOk = $false
-try {
-  $agencyHtml = (Invoke-WebRequest -Uri 'https://agency002.com/' -UseBasicParsing).Content
-  $oldPay = 'href="https://keychain.gr/pay.html?plan=cash_120"'
-  $newPay = 'href="https://tonight.agency002.com/#book"'
-  $oldBrief = 'href="https://120.cash/#brief"'
-  $newBrief = 'href="https://tonight.agency002.com/"'
-  $oldHome = 'href="https://120.cash/"'
-  $newHome = 'href="https://tonight.agency002.com/"'
-  $nPay = ([regex]::Matches($agencyHtml, [regex]::Escape($oldPay))).Count
-  $nBrief = ([regex]::Matches($agencyHtml, [regex]::Escape($oldBrief))).Count
-  $nHome = ([regex]::Matches($agencyHtml, [regex]::Escape($oldHome))).Count
-  if ($agencyHtml -match [regex]::Escape('tonight.agency002.com/#book') -or $agencyHtml -match [regex]::Escape('cash.agency002.com/#book') -or $agencyHtml -match [regex]::Escape('now.agency002.com/#book')) {
-    Write-Host 'agency002.com already points cash_120 at an orange night till.'
-    $agencyOk = $true
-  } elseif ($nPay -ne 1 -or $nBrief -ne 1 -or $nHome -ne 1) {
-    Write-Host ("WARN: agency002.com needles not unique (pay=$nPay brief=$nBrief home=$nHome). Skipping brand rewrite.")
-  } else {
-    $patchedAgency = $agencyHtml.Replace($oldPay, $newPay).Replace($oldBrief, $newBrief).Replace($oldHome, $newHome)
-    if ($patchedAgency -notmatch 'pay.html\?plan=presence' -or $patchedAgency -notmatch 'eidotevil.com' -or $patchedAgency -notmatch 'printful') {
-      Write-Host 'WARN: agency002.com patch would drop another product. Did not write.'
-    } else {
-      $agencyDirs = @(
-        "/home/$User/public_html",
-        "/home/$User/agency002.com",
-        "/home/$User/public_html/agency002.com"
-      )
-      foreach ($d in $agencyDirs) {
-        try {
-          Save-Fileman $d 'index.html' $patchedAgency
-        } catch {
-          Write-Host ("skip {0}: {1}" -f $d, $_.Exception.Message)
-          continue
-        }
-        Start-Sleep -Seconds 2
-        $checkA = (Invoke-WebRequest -Uri 'https://agency002.com/' -UseBasicParsing).Content
-        if ($checkA -match [regex]::Escape('tonight.agency002.com/#book') -and $checkA -match 'pay.html\?plan=presence') {
-          $agencyOk = $true
-          Write-Host 'agency002.com cash_120 now opens tonight.agency002.com. Presence/Printful/DBYW untouched.'
-          break
-        }
-      }
-    }
-  }
-} catch {
-  Write-Host ("WARN agency002.com: {0}" -f $_.Exception.Message)
-}
-if (-not $agencyOk) { Write-Host 'WARN: agency002.com still sends €120 to wait-a-day 120.cash. tonight.agency002.com is already live.' }
-
-# --- 5. sebarv.com homepage: only cash_120 cards (SitePilot / presence / Printful stay) ---
-Write-Host 'Patching sebarv.com cash_120 links to tonight.agency002.com (other prices stay).'
-$sebOk = $false
-try {
-  $sebHtml = (Invoke-WebRequest -Uri 'https://sebarv.com/' -UseBasicParsing).Content
-  $oldPay = 'href="https://keychain.gr/pay.html?plan=cash_120"'
-  $newPay = 'href="https://tonight.agency002.com/#book"'
-  $oldHome = 'href="https://120.cash/"'
-  $newHome = 'href="https://tonight.agency002.com/"'
-  $nPay = ([regex]::Matches($sebHtml, [regex]::Escape($oldPay))).Count
-  $nHome = ([regex]::Matches($sebHtml, [regex]::Escape($oldHome))).Count
-  if ($sebHtml -match [regex]::Escape('tonight.agency002.com/#book')) {
-    Write-Host 'sebarv.com already points cash_120 at tonight.agency002.com.'
-    $sebOk = $true
-  } elseif ($nPay -lt 1 -or $nHome -ne 1) {
-    Write-Host ("WARN: sebarv.com needles not unique (pay=$nPay home=$nHome). Skipping catalog rewrite.")
-  } else {
-    $patchedSeb = $sebHtml.Replace($oldPay, $newPay).Replace($oldHome, $newHome)
-    if ($patchedSeb -notmatch 'pay.html\?plan=presence' -or $patchedSeb -notmatch 'printful' -or $patchedSeb -notmatch 'pay.html\?plan=sitepilot') {
-      Write-Host 'WARN: sebarv.com patch would drop another product. Did not write.'
-    } elseif ($patchedSeb -match [regex]::Escape($oldPay)) {
-      Write-Host 'WARN: sebarv.com cash_120 href still present after replace. Did not write.'
-    } else {
-      $sebDirs = @(
-        "/home/$User/sebarv.com",
-        "/home/$User/public_html/sebarv.com",
-        "/home/$User/domains/sebarv.com/public_html"
-      )
-      foreach ($d in $sebDirs) {
-        try {
-          Save-Fileman $d 'index.html' $patchedSeb
-        } catch {
-          Write-Host ("skip {0}: {1}" -f $d, $_.Exception.Message)
-          continue
-        }
-        Start-Sleep -Seconds 2
-        $checkS = (Invoke-WebRequest -Uri 'https://sebarv.com/' -UseBasicParsing).Content
-        if ($checkS -match [regex]::Escape('tonight.agency002.com/#book') -and $checkS -match 'pay.html\?plan=sitepilot') {
-          $sebOk = $true
-          Write-Host 'sebarv.com cash_120 now opens tonight.agency002.com. SitePilot/presence/Printful untouched.'
-          break
-        }
-      }
-    }
-  }
-} catch {
-  Write-Host ("WARN sebarv.com: {0}" -f $_.Exception.Message)
-}
-if (-not $sebOk) { Write-Host 'WARN: sebarv.com still sends €120 to wait-a-day 120.cash. tonight.agency002.com is already live.' }
-
-# --- 6. Grey catalog forms still POST same-origin /brief-submit.php. Point that
-# unique fetch at orange tonight so grok-cf can persist cash_120 to KV tonight. ---
-Write-Host 'Pointing grey catalog brief forms at tonight.agency002.com/brief-submit.php.'
-$briefTargets = @(
-  @{ Url = 'https://eidotevil.com/'; Guard = 'page_100'; Dirs = @("/home/$User/eidotevil.com", "/home/$User/public_html/eidotevil.com", "/home/$User/domains/eidotevil.com/public_html") },
-  @{ Url = 'https://agency002.com/'; Guard = 'eidotevil.com'; Dirs = @("/home/$User/public_html", "/home/$User/agency002.com", "/home/$User/public_html/agency002.com") },
-  @{ Url = 'https://sebarv.com/'; Guard = 'pay.html?plan=sitepilot'; Dirs = @("/home/$User/sebarv.com", "/home/$User/public_html/sebarv.com", "/home/$User/domains/sebarv.com/public_html") },
-  @{ Url = 'https://120.cash/'; Guard = 'cash_120'; Dirs = @($Dir, "/home/$User/public_html/120.cash") }
-)
-foreach ($t in $briefTargets) {
-  try {
-    $liveHtml = (Invoke-WebRequest -Uri $t.Url -UseBasicParsing).Content
-    $patchedBrief = Update-BriefFetch $liveHtml
-    if ($patchedBrief -eq $liveHtml) {
-      if ($liveHtml.Contains("fetch('https://tonight.agency002.com/brief-submit.php', {")) {
-        Write-Host ("OK {0} brief already posts to tonight." -f $t.Url)
-      } else {
-        Write-Host ("WARN {0} brief fetch not unique; left origin PHP." -f $t.Url)
-      }
-      continue
-    }
-    if ($patchedBrief -notmatch [regex]::Escape($t.Guard)) {
-      Write-Host ("WARN {0} brief rewrite would drop {1}. Skip." -f $t.Url, $t.Guard)
-      continue
-    }
-    foreach ($d in $t.Dirs) {
-      try {
-        Save-Fileman $d 'index.html' $patchedBrief
-      } catch {
-        Write-Host ("skip {0}: {1}" -f $d, $_.Exception.Message)
-        continue
-      }
-      Start-Sleep -Seconds 2
-      $checkB = (Invoke-WebRequest -Uri $t.Url -UseBasicParsing).Content
-      if ($checkB.Contains("fetch('https://tonight.agency002.com/brief-submit.php', {") -and $checkB -match [regex]::Escape($t.Guard)) {
-        Write-Host ("OK {0} brief now posts to tonight. Other products stay." -f $t.Url)
-        break
-      }
-    }
-  } catch {
-    Write-Host ("WARN brief rewrite {0}: {1}" -f $t.Url, $_.Exception.Message)
   }
 }
 
@@ -433,25 +170,28 @@ if ($finalPay -notmatch 'intifrog.com' -or $finalPay -notmatch 'sitepilot') {
   Write-Error 'Other keychain plans missing after write. Stop.'
 }
 
-if (-not $keychainOk -and -not $cashOk) {
-  Write-Error 'Neither keychain cash_120 nor 120.cash homepage flipped. Stop.'
-}
-if ($keychainOk) { Write-Host 'keychain cash_120 now returns to the night desk. Other plans untouched.' }
-if (-not $keychainOk) { Write-Host 'WARN: keychain still sends cash_120 to 120.cash/#brief. New 120.cash #brief still puts the page live.' }
-if (-not $cashOk) {
-  Write-Host 'Fileman did not flip 120.cash. Trying Cloudflare orange-cloud worker.'
-  $here = $PSScriptRoot
-  if (-not $here) { $here = Split-Path -Parent $MyInvocation.MyCommand.Path }
-  $localOrange = Join-Path $here 'orange-120cash.ps1'
+$navLive = 0
+foreach ($site in @('eidotevil.com', 'agency002.com', 'sebarv.com', '120.cash')) {
   try {
-    if (Test-Path $localOrange) {
-      & $localOrange
+    $h = (Invoke-WebRequest -Uri ("https://{0}/" -f $site) -UseBasicParsing).Content
+    $js = (Invoke-WebRequest -Uri ("https://{0}/assets/nav.js" -f $site) -UseBasicParsing).Content
+    if ($h.Contains('ftp-drop/nav-night.js') -or $js.Contains('cash.keychain.gr')) {
+      Write-Host ("OK {0} night nav live." -f $site)
+      $navLive++
     } else {
-      $o = Join-Path $env:TEMP 'orange-120cash.ps1'
-      Invoke-WebRequest -Uri "$Pages/ftp-drop/orange-120cash.ps1" -OutFile $o -UseBasicParsing
-      & $o
+      Write-Host ("WARN {0} nav.js still year-stamp." -f $site)
     }
   } catch {
+    Write-Host ("WARN check {0}: {1}" -f $site, $_.Exception.Message)
+  }
+}
+
+if ($keychainOk) { Write-Host 'keychain cash_120 now returns to the night desk. Other plans untouched.' }
+if (-not $keychainOk) { Write-Host 'WARN: keychain still sends cash_120 to 120.cash/#brief. Catalog nav.js still flips Pay to cash.keychain.gr.' }
+
+if (-not $keychainOk -or $navLive -lt 4) {
+  Write-Host 'Still wait-a-day. Cloudflare orange-cloud (existing grok-cf routes).'
+  try { Invoke-DropScript 'orange-120cash.ps1' } catch {
     Write-Host ("Cloudflare orange: {0}" -f $_.Exception.Message)
   }
 }
