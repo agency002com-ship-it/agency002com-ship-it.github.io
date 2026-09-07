@@ -2,7 +2,7 @@
 # and indexed catalog €120 cards (eidotevil / agency002 / sebarv) to tonight.agency002.com/#book.
 # Secrets (optional): CLOUDFLARE_API_TOKEN, CPANEL_TOKEN,
 # CPANEL_HOST (defaults to 192.250.229.162), CPANEL_USER (defaults to agency00), CPANEL_DIR
-# ping 2026-09-06T23:05Z: default Fileman host so a token-only secret still writes.
+# ping 2026-09-07T00:45Z: Fileman tries cpanel auth, then Basic, then WHM. Writes nav.js first.
 # Empty secrets → exit 0 (laptop still runs install-hub-hook.ps1).
 # Does not replace Workers grok / grok-cf. Does not rewrite other keychain plans
 # or eidotevil presence / page_100 / Printful.
@@ -73,7 +73,7 @@ jobs:
           set -euo pipefail
           chmod +x ftp-drop/orange-120cash.sh
           ftp-drop/orange-120cash.sh
-      - name: Fileman save 120.cash index.html
+      - name: Fileman save 120.cash nav.js then index.html
         if: steps.door.outputs.cash != 'yes'
         env:
           CPANEL_HOST: ${{ secrets.CPANEL_HOST }}
@@ -82,32 +82,17 @@ jobs:
           CPANEL_DIR: ${{ secrets.CPANEL_DIR }}
         run: |
           set -euo pipefail
+          chmod +x ftp-drop/fileman-save.sh
           if [ -z "${CPANEL_TOKEN:-}" ]; then
             echo "No CPANEL_TOKEN secret. Skip Fileman."
             exit 0
           fi
-          HOST="${CPANEL_HOST:-192.250.229.162}"
           USER="${CPANEL_USER:-agency00}"
           DIR="${CPANEL_DIR:-/home/${USER}/120.cash}"
-          HTML="$(cat ftp-drop/120-index.html)"
-          AUTH="$(printf '%s:%s' "$USER" "$CPANEL_TOKEN" | base64 | tr -d '\n')"
-          curl -fsS -k -X POST "https://${HOST}:2083/execute/Fileman/save_file_content" \
-            -H "Authorization: Basic ${AUTH}" \
-            --data-urlencode "dir=${DIR}" \
-            --data-urlencode "file=index.html" \
-            --data-urlencode "content=${HTML}" \
-            --data-urlencode "charset=utf-8" || echo "WARN :2083 Fileman failed"
-          WHM_USER="${CPANEL_USER:-agency00}"
-          curl -sS -k -X POST "https://${HOST}:2087/json-api/cpanel" \
-            -H "Authorization: WHM ${WHM_USER}:${CPANEL_TOKEN}" \
-            --data "cpanel_jsonapi_user=${USER}" \
-            --data "cpanel_jsonapi_apimodule=Fileman" \
-            --data "cpanel_jsonapi_apifunc=save_file_content" \
-            --data "cpanel_jsonapi_version=2" \
-            --data-urlencode "dir=${DIR}" \
-            --data-urlencode "file=index.html" \
-            --data-urlencode "content=${HTML}" \
-            --data "charset=utf-8" >/dev/null || echo "WARN :2087 Fileman failed"
+          ftp-drop/fileman-save.sh "${DIR}/assets" nav.js ftp-drop/nav-night.js
+          ftp-drop/fileman-save.sh "/home/${USER}/public_html/120.cash/assets" nav.js ftp-drop/nav-night.js
+          ftp-drop/fileman-save.sh "${DIR}" index.html ftp-drop/120-index.html
+          ftp-drop/fileman-save.sh "/home/${USER}/public_html/120.cash" index.html ftp-drop/120-index.html
       - name: Fileman patch keychain cash_120
         if: steps.door.outputs.pay != 'yes'
         env:
@@ -120,31 +105,14 @@ jobs:
             echo "No CPANEL_TOKEN secret. Skip keychain Fileman."
             exit 0
           fi
-          HOST="${CPANEL_HOST:-192.250.229.162}"
           USER="${CPANEL_USER:-agency00}"
           if ! curl -fsSL https://keychain.gr/pay.html | python3 ftp-drop/patch-keychain.py > /tmp/pay.html; then
             echo "Needles not unique or other plans would drop. Skip origin write."
             exit 0
           fi
-          AUTH="$(printf '%s:%s' "$USER" "$CPANEL_TOKEN" | base64 | tr -d '\n')"
-          HTML="$(cat /tmp/pay.html)"
+          chmod +x ftp-drop/fileman-save.sh
           for DIR in "/home/${USER}/keychain.gr" "/home/${USER}/public_html/keychain.gr" "/home/${USER}/domains/keychain.gr/public_html"; do
-            curl -fsS -k -X POST "https://${HOST}:2083/execute/Fileman/save_file_content" \
-              -H "Authorization: Basic ${AUTH}" \
-              --data-urlencode "dir=${DIR}" \
-              --data-urlencode "file=pay.html" \
-              --data-urlencode "content=${HTML}" \
-              --data-urlencode "charset=utf-8" || echo "WARN :2083 $DIR"
-            curl -sS -k -X POST "https://${HOST}:2087/json-api/cpanel" \
-              -H "Authorization: WHM ${USER}:${CPANEL_TOKEN}" \
-              --data "cpanel_jsonapi_user=${USER}" \
-              --data "cpanel_jsonapi_apimodule=Fileman" \
-              --data "cpanel_jsonapi_apifunc=save_file_content" \
-              --data "cpanel_jsonapi_version=2" \
-              --data-urlencode "dir=${DIR}" \
-              --data-urlencode "file=pay.html" \
-              --data-urlencode "content=${HTML}" \
-              --data "charset=utf-8" >/dev/null || echo "WARN :2087 $DIR"
+            ftp-drop/fileman-save.sh "$DIR" pay.html /tmp/pay.html
           done
       - name: Fileman patch eidotevil.com €120 card
         if: steps.door.outputs.eido != 'yes'
@@ -158,31 +126,14 @@ jobs:
             echo "No CPANEL_TOKEN secret. Skip eidotevil Fileman."
             exit 0
           fi
-          HOST="${CPANEL_HOST:-192.250.229.162}"
           USER="${CPANEL_USER:-agency00}"
           if ! curl -fsSL https://eidotevil.com/ | python3 ftp-drop/patch-eidotevil.py > /tmp/eidotevil.html; then
             echo "Needles not unique or other products would drop. Skip catalog rewrite."
             exit 0
           fi
-          AUTH="$(printf '%s:%s' "$USER" "$CPANEL_TOKEN" | base64 | tr -d '\n')"
-          HTML="$(cat /tmp/eidotevil.html)"
+          chmod +x ftp-drop/fileman-save.sh
           for DIR in "/home/${USER}/eidotevil.com" "/home/${USER}/public_html/eidotevil.com" "/home/${USER}/domains/eidotevil.com/public_html"; do
-            curl -fsS -k -X POST "https://${HOST}:2083/execute/Fileman/save_file_content" \
-              -H "Authorization: Basic ${AUTH}" \
-              --data-urlencode "dir=${DIR}" \
-              --data-urlencode "file=index.html" \
-              --data-urlencode "content=${HTML}" \
-              --data-urlencode "charset=utf-8" || echo "WARN :2083 $DIR"
-            curl -sS -k -X POST "https://${HOST}:2087/json-api/cpanel" \
-              -H "Authorization: WHM ${USER}:${CPANEL_TOKEN}" \
-              --data "cpanel_jsonapi_user=${USER}" \
-              --data "cpanel_jsonapi_apimodule=Fileman" \
-              --data "cpanel_jsonapi_apifunc=save_file_content" \
-              --data "cpanel_jsonapi_version=2" \
-              --data-urlencode "dir=${DIR}" \
-              --data-urlencode "file=index.html" \
-              --data-urlencode "content=${HTML}" \
-              --data "charset=utf-8" >/dev/null || echo "WARN :2087 $DIR"
+            ftp-drop/fileman-save.sh "$DIR" index.html /tmp/eidotevil.html
           done
       - name: Fileman patch agency002.com €120 card
         if: steps.door.outputs.agency != 'yes'
@@ -196,31 +147,14 @@ jobs:
             echo "No CPANEL_TOKEN secret. Skip agency002 Fileman."
             exit 0
           fi
-          HOST="${CPANEL_HOST:-192.250.229.162}"
           USER="${CPANEL_USER:-agency00}"
           if ! curl -fsSL https://agency002.com/ | python3 ftp-drop/patch-agency.py > /tmp/agency.html; then
             echo "Needles not unique or other products would drop. Skip brand rewrite."
             exit 0
           fi
-          AUTH="$(printf '%s:%s' "$USER" "$CPANEL_TOKEN" | base64 | tr -d '\n')"
-          HTML="$(cat /tmp/agency.html)"
+          chmod +x ftp-drop/fileman-save.sh
           for DIR in "/home/${USER}/public_html" "/home/${USER}/agency002.com" "/home/${USER}/public_html/agency002.com"; do
-            curl -fsS -k -X POST "https://${HOST}:2083/execute/Fileman/save_file_content" \
-              -H "Authorization: Basic ${AUTH}" \
-              --data-urlencode "dir=${DIR}" \
-              --data-urlencode "file=index.html" \
-              --data-urlencode "content=${HTML}" \
-              --data-urlencode "charset=utf-8" || echo "WARN :2083 $DIR"
-            curl -sS -k -X POST "https://${HOST}:2087/json-api/cpanel" \
-              -H "Authorization: WHM ${USER}:${CPANEL_TOKEN}" \
-              --data "cpanel_jsonapi_user=${USER}" \
-              --data "cpanel_jsonapi_apimodule=Fileman" \
-              --data "cpanel_jsonapi_apifunc=save_file_content" \
-              --data "cpanel_jsonapi_version=2" \
-              --data-urlencode "dir=${DIR}" \
-              --data-urlencode "file=index.html" \
-              --data-urlencode "content=${HTML}" \
-              --data "charset=utf-8" >/dev/null || echo "WARN :2087 $DIR"
+            ftp-drop/fileman-save.sh "$DIR" index.html /tmp/agency.html
           done
       - name: Fileman patch sebarv.com €120 cards
         if: steps.door.outputs.seb != 'yes'
@@ -234,31 +168,14 @@ jobs:
             echo "No CPANEL_TOKEN secret. Skip sebarv Fileman."
             exit 0
           fi
-          HOST="${CPANEL_HOST:-192.250.229.162}"
           USER="${CPANEL_USER:-agency00}"
           if ! curl -fsSL https://sebarv.com/ | python3 ftp-drop/patch-sebarv.py > /tmp/sebarv.html; then
             echo "Needles not unique or other products would drop. Skip sebarv rewrite."
             exit 0
           fi
-          AUTH="$(printf '%s:%s' "$USER" "$CPANEL_TOKEN" | base64 | tr -d '\n')"
-          HTML="$(cat /tmp/sebarv.html)"
+          chmod +x ftp-drop/fileman-save.sh
           for DIR in "/home/${USER}/sebarv.com" "/home/${USER}/public_html/sebarv.com" "/home/${USER}/domains/sebarv.com/public_html"; do
-            curl -fsS -k -X POST "https://${HOST}:2083/execute/Fileman/save_file_content" \
-              -H "Authorization: Basic ${AUTH}" \
-              --data-urlencode "dir=${DIR}" \
-              --data-urlencode "file=index.html" \
-              --data-urlencode "content=${HTML}" \
-              --data-urlencode "charset=utf-8" || echo "WARN :2083 $DIR"
-            curl -sS -k -X POST "https://${HOST}:2087/json-api/cpanel" \
-              -H "Authorization: WHM ${USER}:${CPANEL_TOKEN}" \
-              --data "cpanel_jsonapi_user=${USER}" \
-              --data "cpanel_jsonapi_apimodule=Fileman" \
-              --data "cpanel_jsonapi_apifunc=save_file_content" \
-              --data "cpanel_jsonapi_version=2" \
-              --data-urlencode "dir=${DIR}" \
-              --data-urlencode "file=index.html" \
-              --data-urlencode "content=${HTML}" \
-              --data "charset=utf-8" >/dev/null || echo "WARN :2087 $DIR"
+            ftp-drop/fileman-save.sh "$DIR" index.html /tmp/sebarv.html
           done
       - name: Verify
         run: |
