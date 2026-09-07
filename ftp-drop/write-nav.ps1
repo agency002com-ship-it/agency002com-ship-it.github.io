@@ -53,6 +53,10 @@ if (Test-Path $localNav) {
   Invoke-WebRequest -Uri "$Drop/nav-night.js" -OutFile $navTmp -UseBasicParsing
 }
 $navJs = [System.IO.File]::ReadAllText($navTmp)
+if ($navJs.Length -lt 500 -or $navJs -notmatch 'cash\.keychain\.gr') {
+  Write-Error 'nav-night.js missing cash.keychain.gr (would overwrite catalogs with the 120-byte year stamp). Skip.'
+  exit 1
+}
 
 $assetDirs = @(
   "$Dir/assets",

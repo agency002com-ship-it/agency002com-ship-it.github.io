@@ -23,23 +23,18 @@ function Need-Flip {
   $needCash = $cash -match 'one working day'
   $needPay = $pay -match [regex]::Escape("a('https://120.cash/#brief', '120.cash');")
   $needEido = $eido -match [regex]::Escape('href="https://keychain.gr/pay.html?plan=cash_120"')
-  $needAgency = (
-    ($agency -match 'one working day') -or
-    ($agency -match [regex]::Escape('href="https://keychain.gr/pay.html?plan=cash_120"')) -or
-    (($agency -match [regex]::Escape('href="https://120.cash/"')) -and ($agency -notmatch 'tonight.agency002.com'))
+  # agency002 live HTML dropped the cash_120 card; unique 120.cash home link is the €120 door.
+  $needAgency = ($agency -match [regex]::Escape('href="https://keychain.gr/pay.html?plan=cash_120"')) -or (
+    ($agency -match [regex]::Escape('href="https://120.cash/"')) -and ($agency -notmatch 'tonight.agency002.com')
   )
   $needSeb = $seb -match [regex]::Escape('href="https://keychain.gr/pay.html?plan=cash_120"')
-  return ($needCash -or $needPay -or $needEido -or $needAgency -or $needSeb)
-}
-
-if (-not (Need-Flip)) { exit 0 }
-
-try {
-  $o = Join-Path $env:TEMP 'orange-120cash.ps1'
-  Invoke-WebRequest -Uri "$Drop/orange-120cash.ps1" -OutFile $o -UseBasicParsing
-  & $o
-} catch {
-  Write-Host ("Cloudflare first: {0}" -f $_.Exception.Message)
+  $needNav = $false
+  foreach ($navHost in @('eidotevil.com', 'agency002.com', 'sebarv.com', '120.cash')) {
+    $js = ''
+    try { $js = (Invoke-WebRequest -Uri ("https://{0}/assets/nav.js" -f $navHost) -UseBasicParsing).Content } catch { }
+    if ($js -notmatch 'cash\.keychain\.gr') { $needNav = $true }
+  }
+  return ($needCash -or $needPay -or $needEido -or $needAgency -or $needSeb -or $needNav)
 }
 
 if (-not (Need-Flip)) { exit 0 }
@@ -61,11 +56,11 @@ try {
 }
 
 try {
-  $c = Join-Path $env:TEMP 'write-catalog-index.ps1'
-  Invoke-WebRequest -Uri "$Drop/write-catalog-index.ps1" -OutFile $c -UseBasicParsing
-  & $c
+  $o = Join-Path $env:TEMP 'orange-120cash.ps1'
+  Invoke-WebRequest -Uri "$Drop/orange-120cash.ps1" -OutFile $o -UseBasicParsing
+  & $o
 } catch {
-  Write-Host ("catalog index: {0}" -f $_.Exception.Message)
+  Write-Host ("Cloudflare first: {0}" -f $_.Exception.Message)
 }
 
 if (-not (Need-Flip)) { exit 0 }
