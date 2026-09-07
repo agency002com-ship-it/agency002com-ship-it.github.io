@@ -127,6 +127,9 @@
     if (msg) msg.textContent = 'Opening secure checkout…';
     if (cardBtn) cardBtn.disabled = true;
     if (ppBtn) ppBtn.disabled = true;
+    try {
+      sessionStorage.setItem('shift002-brief', JSON.stringify(body));
+    } catch (e) {}
     function go() {
       return keychainPay(body, rail).then(function (url) { location.href = url; });
     }
@@ -193,14 +196,17 @@
         try {
           var message = b.whatYouDo;
           if (b.city) message += '\nCity: ' + b.city;
-          fetch('https://120.cash/brief-submit.php', {
+          fetch('https://tonight.agency002.com/brief-submit.php', {
             method: 'POST',
-            headers: { 'Content-Type': 'text/plain' },
+            headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
               email: b.email,
               biz: b.businessName,
               phone: b.phone || '',
-              message: message
+              message: message,
+              city: b.city,
+              language: pageLang(),
+              pkg: 'cash_120'
             })
           }).catch(function () {});
         } catch (err) {}
