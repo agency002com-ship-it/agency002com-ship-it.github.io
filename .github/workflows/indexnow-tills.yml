@@ -1,6 +1,7 @@
 # Ping IndexNow for doors that already sell same-night.
 # One host per POST (mixed-host 422). No secrets.
 # Do not submit https://120.cash/ while it still says one working day.
+# ping 2026-09-07T07:33Z: also Athens/Perissos github.io tills + cash.keychain.gr pay.html
 name: indexnow-tills
 on:
   workflow_dispatch:
@@ -47,12 +48,12 @@ jobs:
           def same_night(page):
               return bool(page) and ("#book" in page or 'id="book"' in page) and "one working day" not in page.lower()
 
-          def ping(host, path="/"):
+          def ping(host, paths):
               body = json.dumps({
                   "host": host,
                   "key": KEY,
                   "keyLocation": "https://{0}/{1}.txt".format(host, KEY),
-                  "urlList": ["https://{0}{1}".format(host, path)],
+                  "urlList": ["https://{0}{1}".format(host, p) for p in paths],
               }).encode()
               req = urllib.request.Request(
                   "https://api.indexnow.org/indexnow",
@@ -61,7 +62,7 @@ jobs:
                   method="POST",
               )
               with urllib.request.urlopen(req, timeout=20) as r:
-                  print(host, r.status)
+                  print(host, paths, r.status)
 
           for host in CANDIDATES:
               try:
@@ -72,8 +73,11 @@ jobs:
               if not same_night(page):
                   print(host, "skip (not same-night)")
                   continue
+              paths = ["/"]
+              if host == "cash.keychain.gr":
+                  paths = ["/", "/pay.html?plan=cash_120"]
               try:
-                  ping(host)
+                  ping(host, paths)
               except Exception as e:
                   print(host, "fail", e)
 
@@ -84,36 +88,38 @@ jobs:
               page = ""
           if same_night(page):
               try:
-                  ping("120.cash")
+                  ping("120.cash", ["/"])
               except Exception as e:
                   print("120.cash IndexNow fail", e)
           else:
               print("skip 120.cash IndexNow (still wait-a-day or fetch failed)")
 
           gio_host = "agency002com-ship-it.github.io"
-          try:
-              page = get("https://{0}/tonight.html".format(gio_host))
-          except Exception as e:
-              print("github.io/tonight.html fetch fail", e)
-              page = ""
-          if same_night(page):
+          GIO_PATHS = (
+              "/",
+              "/tonight.html",
+              "/el.html",
+              "/athens.html",
+              "/athina.html",
+              "/perissos.html",
+              "/perissos-el.html",
+          )
+          live = []
+          for path in GIO_PATHS:
               try:
-                  ping(gio_host, "/tonight.html")
+                  page = get("https://{0}{1}".format(gio_host, path))
               except Exception as e:
-                  print("github.io/tonight.html fail", e)
-          else:
-              print("skip github.io/tonight.html (not same-night)")
-
-          try:
-              page = get("https://{0}/".format(gio_host))
-          except Exception as e:
-              print("github.io/ fetch fail", e)
-              page = ""
-          if same_night(page):
+                  print("github.io{0} fetch fail".format(path), e)
+                  continue
+              if same_night(page):
+                  live.append(path)
+              else:
+                  print("skip github.io{0} (not same-night)".format(path))
+          if live:
               try:
-                  ping(gio_host, "/")
+                  ping(gio_host, live)
               except Exception as e:
-                  print("github.io/ fail", e)
+                  print("github.io IndexNow fail", e)
           else:
-              print("skip github.io/ (not same-night)")
+              print("skip github.io (no same-night paths)")
           PY
