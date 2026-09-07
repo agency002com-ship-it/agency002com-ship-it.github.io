@@ -10,7 +10,7 @@ from __future__ import annotations
 
 import sys
 
-NEW = 'src="https://agency002com-ship-it.github.io/ftp-drop/nav-night.js?v=20260907o"'
+NEW = 'src="https://agency002com-ship-it.github.io/ftp-drop/nav-night.js?v=20260907r"'
 OLDS = (
     'src="/assets/nav.js?v=2"',
     'src="/assets/nav.js?v=4"',

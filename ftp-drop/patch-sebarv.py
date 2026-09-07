@@ -14,7 +14,7 @@ OLD_HINT = "Use this form on sebarv.com. I answer within one working day."
 NEW_HINT = "Use this form on sebarv.com. A €120 page goes live the same night you pay."
 OLD_JS = "Got it. I will reply within one working day."
 NEW_JS = "Got it. Live tonight after this brief."
-NEW_NAV = 'src="https://agency002com-ship-it.github.io/ftp-drop/nav-night.js?v=20260907o"'
+NEW_NAV = 'src="https://agency002com-ship-it.github.io/ftp-drop/nav-night.js?v=20260907r"'
 OLD_NAVS = ('src="/assets/nav.js?v=2"', 'src="/assets/nav.js?v=4"')
 
 

@@ -19,7 +19,7 @@ OLD_FETCH = "fetch('/brief-submit.php', {"
 NEW_FETCH = "fetch('https://tonight.agency002.com/brief-submit.php', {"
 OLD_JS = "Got it. We will reply within one working day."
 NEW_JS = "Got it. Live tonight after this brief."
-NEW_NAV = 'src="https://agency002com-ship-it.github.io/ftp-drop/nav-night.js?v=20260907q"'
+NEW_NAV = 'src="https://agency002com-ship-it.github.io/ftp-drop/nav-night.js?v=20260907r"'
 OLD_NAVS = ('src="/assets/nav.js?v=2"', 'src="/assets/nav.js?v=4"')
 
 
