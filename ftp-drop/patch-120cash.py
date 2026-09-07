@@ -6,7 +6,11 @@ import sys
 
 OLD_FETCH = "fetch('/brief-submit.php', {"
 NEW_FETCH = "fetch('https://tonight.agency002.com/brief-submit.php', {"
-NEW_NAV = 'src="https://agency002com-ship-it.github.io/ftp-drop/nav-night.js?v=20260907n"'
+OLD_HINT = "Only after payment. We answer within one working day."
+NEW_HINT = "Pay €120. The page goes live tonight. Not a working day."
+OLD_JS = "Got it. We will reply within one working day."
+NEW_JS = "Got it. Live tonight after this brief."
+NEW_NAV = 'src="https://agency002com-ship-it.github.io/ftp-drop/nav-night.js?v=20260907o"'
 OLD_NAVS = ('src="/assets/nav.js?v=2"', 'src="/assets/nav.js?v=4"')
 
 
@@ -27,6 +31,10 @@ def patch(html: str) -> str:
                 "fetch needle not unique (n=%s); skip 120.cash rewrite" % out.count(OLD_FETCH)
             )
         out = out.replace(OLD_FETCH, NEW_FETCH)
+    if out.count(OLD_HINT) == 1:
+        out = out.replace(OLD_HINT, NEW_HINT)
+    if out.count(OLD_JS) == 1:
+        out = out.replace(OLD_JS, NEW_JS)
     out = rewrite_nav_src(out)
     if "keychain.gr/pay.html?plan=cash_120" not in out:
         raise SystemExit("120.cash patch would drop cash_120 pay; skip")
