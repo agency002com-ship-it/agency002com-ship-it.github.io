@@ -1,6 +1,7 @@
 /* Shift 002 — overwrite grey catalog /assets/nav.js (eidotevil, agency002, sebarv, 120.cash).
    Pay €120 (plan=cash_120 only) → already-patched cash.keychain.gr.
-   Brief form (cash_120 / empty pkg) → orange tonight KV. Other plans stay on origin PHP.
+   Catalog brief form (cash_120 / empty pkg) → orange tonight KV.
+   Paid till (#pay-card / #pay-pp) is desk.js: Stripe/PayPal first. Do not steal that form.
    Year stamp stays. Does not touch presence / page_100 / Printful / SitePilot. */
 (function () {
   var y = document.getElementById("y");
@@ -46,6 +47,10 @@
     }
     if (next !== t) el.textContent = next;
   });
+
+  // tonight / 120-index till: Pay by card must open Stripe. This capture handler
+  // used to preventDefault + stopImmediatePropagation, skip charge, and publish.
+  if (document.getElementById("pay-card") || document.getElementById("pay-pp")) return;
 
   var form = document.getElementById("brief-form");
   if (!form || form.getAttribute("data-shift002") === "1") return;
