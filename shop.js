@@ -262,11 +262,14 @@
       biz: brief.businessName,
       phone: brief.phone,
       message: message,
+      city: brief.city,
+      language: brief.language,
+      pkg: "cash_120",
     });
     try {
-      fetch("https://120.cash/brief-submit.php", {
+      fetch("https://tonight.agency002.com/brief-submit.php", {
         method: "POST",
-        headers: { "Content-Type": "text/plain" },
+        headers: { "Content-Type": "application/json" },
         body: body,
       }).catch(function () {});
     } catch (e) {}
