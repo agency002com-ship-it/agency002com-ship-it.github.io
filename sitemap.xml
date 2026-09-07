@@ -34,6 +34,11 @@
     <changefreq>hourly</changefreq>
   </url>
   <url>
+    <loc>https://tonight.agency002.com/el.html</loc>
+    <lastmod>2026-09-07</lastmod>
+    <changefreq>hourly</changefreq>
+  </url>
+  <url>
     <loc>https://tonight.agency002.com/feed.xml</loc>
     <lastmod>2026-09-07</lastmod>
     <changefreq>hourly</changefreq>
@@ -90,163 +95,9 @@
     <changefreq>hourly</changefreq>
   </url>
   <url>
-    <loc>https://agency002com-ship-it.github.io/athens.html</loc>
+    <loc>https://agency002com-ship-it.github.io/feed.xml</loc>
     <lastmod>2026-09-07</lastmod>
-    <changefreq>daily</changefreq>
-    <xhtml:link rel="alternate" hreflang="en" href="https://agency002com-ship-it.github.io/athens.html" />
-    <xhtml:link rel="alternate" hreflang="el" href="https://agency002com-ship-it.github.io/athina.html" />
-  </url>
-  <url>
-    <loc>https://agency002com-ship-it.github.io/athina.html</loc>
-    <lastmod>2026-09-07</lastmod>
-    <changefreq>daily</changefreq>
-    <xhtml:link rel="alternate" hreflang="el" href="https://agency002com-ship-it.github.io/athina.html" />
-    <xhtml:link rel="alternate" hreflang="en" href="https://agency002com-ship-it.github.io/athens.html" />
-  </url>
-  <url>
-    <loc>https://agency002com-ship-it.github.io/kypseli.html</loc>
-    <lastmod>2026-09-07</lastmod>
-    <changefreq>daily</changefreq>
-    <xhtml:link rel="alternate" hreflang="en" href="https://agency002com-ship-it.github.io/kypseli.html" />
-    <xhtml:link rel="alternate" hreflang="el" href="https://agency002com-ship-it.github.io/kypseli-el.html" />
-  </url>
-  <url>
-    <loc>https://agency002com-ship-it.github.io/kypseli-el.html</loc>
-    <lastmod>2026-09-07</lastmod>
-    <changefreq>daily</changefreq>
-    <xhtml:link rel="alternate" hreflang="el" href="https://agency002com-ship-it.github.io/kypseli-el.html" />
-    <xhtml:link rel="alternate" hreflang="en" href="https://agency002com-ship-it.github.io/kypseli.html" />
-  </url>
-  <url>
-    <loc>https://agency002com-ship-it.github.io/kallithea.html</loc>
-    <lastmod>2026-09-07</lastmod>
-    <changefreq>daily</changefreq>
-    <xhtml:link rel="alternate" hreflang="en" href="https://agency002com-ship-it.github.io/kallithea.html" />
-    <xhtml:link rel="alternate" hreflang="el" href="https://agency002com-ship-it.github.io/kallithea-el.html" />
-  </url>
-  <url>
-    <loc>https://agency002com-ship-it.github.io/kallithea-el.html</loc>
-    <lastmod>2026-09-07</lastmod>
-    <changefreq>daily</changefreq>
-    <xhtml:link rel="alternate" hreflang="el" href="https://agency002com-ship-it.github.io/kallithea-el.html" />
-    <xhtml:link rel="alternate" hreflang="en" href="https://agency002com-ship-it.github.io/kallithea.html" />
-  </url>
-  <url>
-    <loc>https://agency002com-ship-it.github.io/perissos.html</loc>
-    <lastmod>2026-09-07</lastmod>
-    <changefreq>daily</changefreq>
-    <xhtml:link rel="alternate" hreflang="en" href="https://agency002com-ship-it.github.io/perissos.html" />
-    <xhtml:link rel="alternate" hreflang="el" href="https://agency002com-ship-it.github.io/perissos-el.html" />
-  </url>
-  <url>
-    <loc>https://agency002com-ship-it.github.io/perissos-el.html</loc>
-    <lastmod>2026-09-07</lastmod>
-    <changefreq>daily</changefreq>
-    <xhtml:link rel="alternate" hreflang="el" href="https://agency002com-ship-it.github.io/perissos-el.html" />
-    <xhtml:link rel="alternate" hreflang="en" href="https://agency002com-ship-it.github.io/perissos.html" />
-  </url>
-  <url>
-    <loc>https://agency002com-ship-it.github.io/nea-ionia.html</loc>
-    <lastmod>2026-09-07</lastmod>
-    <changefreq>daily</changefreq>
-    <xhtml:link rel="alternate" hreflang="en" href="https://agency002com-ship-it.github.io/nea-ionia.html" />
-    <xhtml:link rel="alternate" hreflang="el" href="https://agency002com-ship-it.github.io/nea-ionia-el.html" />
-  </url>
-  <url>
-    <loc>https://agency002com-ship-it.github.io/nea-ionia-el.html</loc>
-    <lastmod>2026-09-07</lastmod>
-    <changefreq>daily</changefreq>
-    <xhtml:link rel="alternate" hreflang="el" href="https://agency002com-ship-it.github.io/nea-ionia-el.html" />
-    <xhtml:link rel="alternate" hreflang="en" href="https://agency002com-ship-it.github.io/nea-ionia.html" />
-  </url>
-  <url>
-    <loc>https://agency002com-ship-it.github.io/patissia.html</loc>
-    <lastmod>2026-09-07</lastmod>
-    <changefreq>daily</changefreq>
-    <xhtml:link rel="alternate" hreflang="en" href="https://agency002com-ship-it.github.io/patissia.html" />
-    <xhtml:link rel="alternate" hreflang="el" href="https://agency002com-ship-it.github.io/patissia-el.html" />
-  </url>
-  <url>
-    <loc>https://agency002com-ship-it.github.io/patissia-el.html</loc>
-    <lastmod>2026-09-07</lastmod>
-    <changefreq>daily</changefreq>
-    <xhtml:link rel="alternate" hreflang="el" href="https://agency002com-ship-it.github.io/patissia-el.html" />
-    <xhtml:link rel="alternate" hreflang="en" href="https://agency002com-ship-it.github.io/patissia.html" />
-  </url>
-  <url>
-    <loc>https://agency002com-ship-it.github.io/pangrati.html</loc>
-    <lastmod>2026-09-07</lastmod>
-    <changefreq>daily</changefreq>
-    <xhtml:link rel="alternate" hreflang="en" href="https://agency002com-ship-it.github.io/pangrati.html" />
-    <xhtml:link rel="alternate" hreflang="el" href="https://agency002com-ship-it.github.io/pangrati-el.html" />
-  </url>
-  <url>
-    <loc>https://agency002com-ship-it.github.io/pangrati-el.html</loc>
-    <lastmod>2026-09-07</lastmod>
-    <changefreq>daily</changefreq>
-    <xhtml:link rel="alternate" hreflang="el" href="https://agency002com-ship-it.github.io/pangrati-el.html" />
-    <xhtml:link rel="alternate" hreflang="en" href="https://agency002com-ship-it.github.io/pangrati.html" />
-  </url>
-  <url>
-    <loc>https://agency002com-ship-it.github.io/galatsi.html</loc>
-    <lastmod>2026-09-07</lastmod>
-    <changefreq>daily</changefreq>
-    <xhtml:link rel="alternate" hreflang="en" href="https://agency002com-ship-it.github.io/galatsi.html" />
-    <xhtml:link rel="alternate" hreflang="el" href="https://agency002com-ship-it.github.io/galatsi-el.html" />
-  </url>
-  <url>
-    <loc>https://agency002com-ship-it.github.io/galatsi-el.html</loc>
-    <lastmod>2026-09-07</lastmod>
-    <changefreq>daily</changefreq>
-    <xhtml:link rel="alternate" hreflang="el" href="https://agency002com-ship-it.github.io/galatsi-el.html" />
-    <xhtml:link rel="alternate" hreflang="en" href="https://agency002com-ship-it.github.io/galatsi.html" />
-  </url>
-  <url>
-    <loc>https://agency002com-ship-it.github.io/marousi.html</loc>
-    <lastmod>2026-09-07</lastmod>
-    <changefreq>daily</changefreq>
-    <xhtml:link rel="alternate" hreflang="en" href="https://agency002com-ship-it.github.io/marousi.html" />
-    <xhtml:link rel="alternate" hreflang="el" href="https://agency002com-ship-it.github.io/marousi-el.html" />
-  </url>
-  <url>
-    <loc>https://agency002com-ship-it.github.io/marousi-el.html</loc>
-    <lastmod>2026-09-07</lastmod>
-    <changefreq>daily</changefreq>
-    <xhtml:link rel="alternate" hreflang="el" href="https://agency002com-ship-it.github.io/marousi-el.html" />
-    <xhtml:link rel="alternate" hreflang="en" href="https://agency002com-ship-it.github.io/marousi.html" />
-  </url>
-  <url>
-    <loc>https://agency002com-ship-it.github.io/zografou.html</loc>
-    <lastmod>2026-09-07</lastmod>
-    <changefreq>daily</changefreq>
-    <xhtml:link rel="alternate" hreflang="en" href="https://agency002com-ship-it.github.io/zografou.html" />
-    <xhtml:link rel="alternate" hreflang="el" href="https://agency002com-ship-it.github.io/zografou-el.html" />
-  </url>
-  <url>
-    <loc>https://agency002com-ship-it.github.io/zografou-el.html</loc>
-    <lastmod>2026-09-07</lastmod>
-    <changefreq>daily</changefreq>
-    <xhtml:link rel="alternate" hreflang="el" href="https://agency002com-ship-it.github.io/zografou-el.html" />
-    <xhtml:link rel="alternate" hreflang="en" href="https://agency002com-ship-it.github.io/zografou.html" />
-  </url>
-  <url>
-    <loc>https://agency002com-ship-it.github.io/koukaki.html</loc>
-    <lastmod>2026-09-07</lastmod>
-    <changefreq>daily</changefreq>
-    <xhtml:link rel="alternate" hreflang="en" href="https://agency002com-ship-it.github.io/koukaki.html" />
-    <xhtml:link rel="alternate" hreflang="el" href="https://agency002com-ship-it.github.io/koukaki-el.html" />
-  </url>
-  <url>
-    <loc>https://agency002com-ship-it.github.io/koukaki-el.html</loc>
-    <lastmod>2026-09-07</lastmod>
-    <changefreq>daily</changefreq>
-    <xhtml:link rel="alternate" hreflang="el" href="https://agency002com-ship-it.github.io/koukaki-el.html" />
-    <xhtml:link rel="alternate" hreflang="en" href="https://agency002com-ship-it.github.io/koukaki.html" />
-  </url>
-  <url>
-    <loc>https://agency002com-ship-it.github.io/riza-kypseli.html</loc>
-    <lastmod>2026-09-07</lastmod>
-    <changefreq>weekly</changefreq>
+    <changefreq>hourly</changefreq>
   </url>
   <url>
     <loc>https://agency002com-ship-it.github.io/llms.txt</loc>
