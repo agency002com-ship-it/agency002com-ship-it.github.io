@@ -1,8 +1,8 @@
 # Drop-in for C:\Users\Pasja\Hub\watch.ps1 (HubWatch, every 3 hours).
 # Orange-cloud DNS first (grok-cf already intercepts 120.cash/* and keychain pay.html*).
 # Fileman if still wait-a-day. Orange again as fallback workers.
-# ping 20260907x: refuse to run upload-120cash.ps1 if it has Python `or` (parse abort).
-# Silent if the door is already flipped.
+# ping 20260907y: refuse upload-120cash.ps1 if Python `or`; refuse orange-120cash.ps1
+# if the last Write-Host is unclosed (parse abort). Silent if the door is already flipped.
 # Does not send mail. Does not touch PayPal. Does not restore FormSubmit.
 
 $ErrorActionPreference = 'Stop'
@@ -10,6 +10,16 @@ $ErrorActionPreference = 'Stop'
 # Raw git has the full files. Orange scripts on Pages are fine; uploads go through raw.
 $Drop = 'https://raw.githubusercontent.com/agency002com-ship-it/agency002com-ship-it.github.io/main/ftp-drop'
 $Stamp = Get-Date -Format 'yyyyMMddHHmmss'
+
+function Test-OrangePack([string]$path) {
+  if (-not (Test-Path $path)) { return $false }
+  $t = Get-Content -Raw -Path $path
+  return (
+    $t.Contains("Write-Host 'Done. Origin /assets/, /api/, and other keychain plans still pass through.'") -and
+    $t.Contains('will not steal grok-cf') -and
+    $t.Contains('Get-RouteScript')
+  )
+}
 
 function Need-Flip {
   $cash = ''
@@ -79,7 +89,11 @@ try {
 try {
   $o = Join-Path $env:TEMP 'orange-120cash.ps1'
   Invoke-WebRequest -Uri "$Drop/orange-120cash.ps1?t=$Stamp" -OutFile $o -UseBasicParsing
-  & $o
+  if (-not (Test-OrangePack $o)) {
+    Write-Host 'WARN: orange-120cash.ps1 would not parse. Skip Cloudflare orange (Fileman still runs).'
+  } else {
+    & $o
+  }
 } catch {
   Write-Host ("Cloudflare first: {0}" -f $_.Exception.Message)
 }
@@ -100,7 +114,11 @@ if (-not (Need-Flip)) { exit 0 }
 try {
   $o = Join-Path $env:TEMP 'orange-120cash.ps1'
   Invoke-WebRequest -Uri "$Drop/orange-120cash.ps1?t=$Stamp" -OutFile $o -UseBasicParsing
-  & $o
+  if (-not (Test-OrangePack $o)) {
+    Write-Host 'WARN: orange-120cash.ps1 would not parse. Skip Cloudflare orange.'
+  } else {
+    & $o
+  }
 } catch {
   Write-Host ("Cloudflare: {0}" -f $_.Exception.Message)
 }
