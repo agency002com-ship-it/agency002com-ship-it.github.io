@@ -25,7 +25,7 @@ if ! grep -q '#book' ftp-drop/120-index.html || grep -q 'one working day' ftp-dr
   exit 0
 fi
 # Grey LiteSpeed origin /pay.html is 404. Refuse a pack that Filemans relative CTAs.
-if grep -Eq 'href=["'\'']"/pay.html' ftp-drop/120-index.html; then
+if grep -Fq 'href="/pay.html' ftp-drop/120-index.html || grep -Fq "href='/pay.html" ftp-drop/120-index.html; then
   echo "relative /pay.html 404s on grey origin. Refusing Fileman."
   exit 0
 fi
