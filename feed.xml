@@ -5,7 +5,7 @@
     <link>https://tonight.agency002.com/</link>
     <description>Pay €120. The local page is live the same night. Not a working day.</description>
     <language>en</language>
-    <lastBuildDate>Mon, 07 Sep 2026 20:30:00 GMT</lastBuildDate>
+    <lastBuildDate>Mon, 07 Sep 2026 22:55:00 GMT</lastBuildDate>
     <item>
       <title>tonight.agency002.com — €120 live page tonight</title>
       <link>https://tonight.agency002.com/</link>
@@ -13,10 +13,22 @@
       <description>The public till. Brief, pay by card or PayPal, live URL on the return.</description>
     </item>
     <item>
+      <title>tonight.120.cash — same €120 till</title>
+      <link>https://tonight.120.cash/</link>
+      <guid>https://tonight.120.cash/</guid>
+      <description>Same-night €120 page. Pay on pay.120.cash. Live URL on the return.</description>
+    </item>
+    <item>
       <title>Pay €120 tonight — card or PayPal</title>
       <link>https://pay.120.cash/pay.html?plan=cash_120</link>
       <guid>https://pay.120.cash/pay.html?plan=cash_120</guid>
       <description>Orange till. Live URL on the return with Stripe session_id.</description>
+    </item>
+    <item>
+      <title>cash.120.cash — live page host</title>
+      <link>https://cash.120.cash/</link>
+      <guid>https://cash.120.cash/</guid>
+      <description>Same €120 rail. The live URL after pay opens here.</description>
     </item>
     <item>
       <title>120.cash same night</title>
