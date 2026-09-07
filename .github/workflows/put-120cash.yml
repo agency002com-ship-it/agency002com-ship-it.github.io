@@ -2,7 +2,7 @@
 # and indexed catalog €120 cards (eidotevil / agency002 / sebarv) to tonight.agency002.com/#book.
 # Secrets (optional): CLOUDFLARE_API_TOKEN, CPANEL_TOKEN,
 # CPANEL_HOST (defaults to 192.250.229.162), CPANEL_USER (defaults to agency00), CPANEL_DIR
-# ping 2026-09-07T05:45Z: parse-guard orange-120cash.ps1 closed Write-Host + grok-cf reclaim.
+# ping 2026-09-07T05:48Z: restore full Fileman job after parse-guard-only truncate.
 # Unique HTML needle src="/assets/nav.js?v=2" also points at github.io night nav.
 # Empty secrets → exit 0 (laptop still runs install-hub-hook.ps1).
 # Does not replace Workers grok / grok-cf. Does not rewrite other keychain plans
@@ -41,3 +41,301 @@ jobs:
               raise SystemExit("orange-120cash.ps1 missing grok-cf reclaim")
           print("upload-120cash.ps1 + orange-120cash.ps1 parse guard OK")
           PY
+      - name: Probe live doors
+        id: door
+        run: |
+          set -euo pipefail
+          page="$(curl -fsSL https://120.cash/ || true)"
+          if echo "$page" | grep -q '#book' && ! echo "$page" | grep -q 'one working day'; then
+            echo "120.cash already same-night."
+            echo "cash=yes" >> "$GITHUB_OUTPUT"
+          else
+            echo "120.cash still wait-a-day."
+            echo "cash=no" >> "$GITHUB_OUTPUT"
+          fi
+          pay="$(curl -fsSL https://keychain.gr/pay.html || true)"
+          if echo "$pay" | grep -q 'github.io/paid.html' && ! echo "$pay" | grep -Fq "a('https://120.cash/#brief'"; then
+            echo "keychain cash_120 already night bounce."
+            echo "pay=yes" >> "$GITHUB_OUTPUT"
+          else
+            echo "keychain cash_120 still 120.cash/#brief."
+            echo "pay=no" >> "$GITHUB_OUTPUT"
+          fi
+          eido="$(curl -fsSL https://eidotevil.com/ || true)"
+          if echo "$eido" | grep -Fq 'tonight.agency002.com/#book'; then
+            echo "eidotevil.com €120 card already same-night."
+            echo "eido=yes" >> "$GITHUB_OUTPUT"
+          else
+            echo "eidotevil.com €120 card still keychain wait-a-day."
+            echo "eido=no" >> "$GITHUB_OUTPUT"
+          fi
+          agency="$(curl -fsSL -A 'Mozilla/5.0' https://agency002.com/ || true)"
+          if echo "$agency" | grep -Fq 'tonight.agency002.com' || echo "$agency" | grep -Fq 'cash.agency002.com/#book' || echo "$agency" | grep -Fq 'now.agency002.com/#book'; then
+            echo "agency002.com €120 card already same-night."
+            echo "agency=yes" >> "$GITHUB_OUTPUT"
+          else
+            echo "agency002.com €120 card still keychain wait-a-day."
+            echo "agency=no" >> "$GITHUB_OUTPUT"
+          fi
+          seb="$(curl -fsSL https://sebarv.com/ || true)"
+          if echo "$seb" | grep -Fq 'tonight.agency002.com/#book'; then
+            echo "sebarv.com €120 card already same-night."
+            echo "seb=yes" >> "$GITHUB_OUTPUT"
+          else
+            echo "sebarv.com €120 card still keychain wait-a-day."
+            echo "seb=no" >> "$GITHUB_OUTPUT"
+          fi
+          cash_js="$(curl -fsSL https://120.cash/assets/nav.js || true)"
+          if echo "$page" | grep -Fq 'ftp-drop/nav-night.js' || echo "$cash_js" | grep -Fq 'cash.keychain.gr'; then
+            echo "120.cash nav.js already night."
+            echo "cash_nav=yes" >> "$GITHUB_OUTPUT"
+          else
+            echo "120.cash nav.js still year-stamp."
+            echo "cash_nav=no" >> "$GITHUB_OUTPUT"
+          fi
+          eido_js="$(curl -fsSL https://eidotevil.com/assets/nav.js || true)"
+          if echo "$eido" | grep -Fq 'ftp-drop/nav-night.js' || echo "$eido_js" | grep -Fq 'cash.keychain.gr'; then
+            echo "eidotevil.com nav.js already night."
+            echo "eido_nav=yes" >> "$GITHUB_OUTPUT"
+          else
+            echo "eidotevil.com nav.js still year-stamp."
+            echo "eido_nav=no" >> "$GITHUB_OUTPUT"
+          fi
+          agency_js="$(curl -fsSL https://agency002.com/assets/nav.js || true)"
+          if echo "$agency" | grep -Fq 'ftp-drop/nav-night.js' || echo "$agency_js" | grep -Fq 'cash.keychain.gr'; then
+            echo "agency002.com nav.js already night."
+            echo "agency_nav=yes" >> "$GITHUB_OUTPUT"
+          else
+            echo "agency002.com nav.js still year-stamp."
+            echo "agency_nav=no" >> "$GITHUB_OUTPUT"
+          fi
+          seb_js="$(curl -fsSL https://sebarv.com/assets/nav.js || true)"
+          if echo "$seb" | grep -Fq 'ftp-drop/nav-night.js' || echo "$seb_js" | grep -Fq 'cash.keychain.gr'; then
+            echo "sebarv.com nav.js already night."
+            echo "seb_nav=yes" >> "$GITHUB_OUTPUT"
+          else
+            echo "sebarv.com nav.js still year-stamp."
+            echo "seb_nav=no" >> "$GITHUB_OUTPUT"
+          fi
+      - name: Cloudflare orange-cloud
+        if: ${{ steps.door.outputs.cash != 'yes' || steps.door.outputs.pay != 'yes' || steps.door.outputs.eido != 'yes' || steps.door.outputs.agency != 'yes' || steps.door.outputs.seb != 'yes' || steps.door.outputs.cash_nav != 'yes' || steps.door.outputs.eido_nav != 'yes' || steps.door.outputs.agency_nav != 'yes' || steps.door.outputs.seb_nav != 'yes' }}
+        continue-on-error: true
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+        run: |
+          set -euo pipefail
+          chmod +x ftp-drop/orange-120cash.sh
+          ftp-drop/orange-120cash.sh
+          # DNS-Write 403 must not skip Fileman below.
+      - name: Fileman save catalog nav.js first
+        if: ${{ steps.door.outputs.cash_nav != 'yes' || steps.door.outputs.eido_nav != 'yes' || steps.door.outputs.agency_nav != 'yes' || steps.door.outputs.seb_nav != 'yes' }}
+        env:
+          CPANEL_HOST: ${{ secrets.CPANEL_HOST }}
+          CPANEL_USER: ${{ secrets.CPANEL_USER }}
+          CPANEL_TOKEN: ${{ secrets.CPANEL_TOKEN }}
+          CPANEL_DIR: ${{ secrets.CPANEL_DIR }}
+        run: |
+          set -euo pipefail
+          chmod +x ftp-drop/fileman-save.sh
+          if [ -z "${CPANEL_TOKEN:-}" ]; then
+            echo "No CPANEL_TOKEN secret. Skip catalog nav.js Fileman."
+            exit 0
+          fi
+          NAV_BYTES="$(wc -c < ftp-drop/nav-night.js | tr -d ' ')"
+          if [ "${NAV_BYTES:-0}" -lt 500 ] || ! grep -Fq 'cash.keychain.gr' ftp-drop/nav-night.js; then
+            echo "nav-night.js is not the night rewrite (bytes=${NAV_BYTES}). Refusing to overwrite catalog /assets/nav.js with a year stamp."
+            exit 0
+          fi
+          USER="${CPANEL_USER:-agency00}"
+          DIR="${CPANEL_DIR:-/home/${USER}/domains/120.cash/public_html}"
+          for ASSETS in \
+            "${DIR}/assets" \
+            "/home/${USER}/public_html/120.cash/assets" \
+            "/home/${USER}/domains/120.cash/public_html/assets" \
+            "/home/${USER}/eidotevil.com/assets" \
+            "/home/${USER}/public_html/eidotevil.com/assets" \
+            "/home/${USER}/domains/eidotevil.com/public_html/assets" \
+            "/home/${USER}/public_html/assets" \
+            "/home/${USER}/agency002.com/assets" \
+            "/home/${USER}/public_html/agency002.com/assets" \
+            "/home/${USER}/sebarv.com/assets" \
+            "/home/${USER}/public_html/sebarv.com/assets" \
+            "/home/${USER}/domains/sebarv.com/public_html/assets"
+          do
+            ftp-drop/fileman-save.sh "$ASSETS" nav.js ftp-drop/nav-night.js
+          done
+      - name: Fileman point unique nav.js src at github.io
+        if: ${{ steps.door.outputs.cash_nav != 'yes' || steps.door.outputs.eido_nav != 'yes' || steps.door.outputs.agency_nav != 'yes' || steps.door.outputs.seb_nav != 'yes' }}
+        env:
+          CPANEL_HOST: ${{ secrets.CPANEL_HOST }}
+          CPANEL_USER: ${{ secrets.CPANEL_USER }}
+          CPANEL_TOKEN: ${{ secrets.CPANEL_TOKEN }}
+          CPANEL_DIR: ${{ secrets.CPANEL_DIR }}
+        run: |
+          set -euo pipefail
+          chmod +x ftp-drop/fileman-save.sh
+          if [ -z "${CPANEL_TOKEN:-}" ]; then
+            echo "No CPANEL_TOKEN secret. Skip nav src Fileman."
+            exit 0
+          fi
+          USER="${CPANEL_USER:-agency00}"
+          DIR="${CPANEL_DIR:-/home/${USER}/domains/120.cash/public_html}"
+          patch_nav() {
+            local url="$1"
+            local guard="$2"
+            shift 2
+            if ! curl -fsSL -A 'Mozilla/5.0' "$url" | python3 ftp-drop/patch-nav-src.py "$guard" > /tmp/navsrc.html; then
+              echo "nav src needle not unique or already night on $url. Skip."
+              return 0
+            fi
+            local d
+            for d in "$@"; do
+              ftp-drop/fileman-save.sh "$d" index.html /tmp/navsrc.html
+            done
+          }
+          patch_nav https://eidotevil.com/ page_100 \
+            "/home/${USER}/eidotevil.com" "/home/${USER}/public_html/eidotevil.com" "/home/${USER}/domains/eidotevil.com/public_html"
+          patch_nav https://agency002.com/ eidotevil.com \
+            "/home/${USER}/public_html" "/home/${USER}/agency002.com" "/home/${USER}/public_html/agency002.com"
+          patch_nav https://sebarv.com/ 'pay.html?plan=sitepilot' \
+            "/home/${USER}/sebarv.com" "/home/${USER}/public_html/sebarv.com" "/home/${USER}/domains/sebarv.com/public_html"
+          # 120.cash index.html is 120-index.html (#book desk), not a nav-src patch of wait-a-day.
+      - name: Fileman save 120.cash nav.js then index.html
+        if: steps.door.outputs.cash != 'yes'
+        env:
+          CPANEL_HOST: ${{ secrets.CPANEL_HOST }}
+          CPANEL_USER: ${{ secrets.CPANEL_USER }}
+          CPANEL_TOKEN: ${{ secrets.CPANEL_TOKEN }}
+          CPANEL_DIR: ${{ secrets.CPANEL_DIR }}
+        run: |
+          set -euo pipefail
+          chmod +x ftp-drop/fileman-120cash.sh
+          ftp-drop/fileman-120cash.sh
+      - name: Fileman patch keychain cash_120
+        if: steps.door.outputs.pay != 'yes'
+        env:
+          CPANEL_HOST: ${{ secrets.CPANEL_HOST }}
+          CPANEL_USER: ${{ secrets.CPANEL_USER }}
+          CPANEL_TOKEN: ${{ secrets.CPANEL_TOKEN }}
+        run: |
+          set -euo pipefail
+          if [ -z "${CPANEL_TOKEN:-}" ]; then
+            echo "No CPANEL_TOKEN secret. Skip keychain Fileman."
+            exit 0
+          fi
+          USER="${CPANEL_USER:-agency00}"
+          if ! curl -fsSL https://keychain.gr/pay.html | python3 ftp-drop/patch-keychain.py > /tmp/pay.html; then
+            echo "Needles not unique or other plans would drop. Skip origin write."
+            exit 0
+          fi
+          chmod +x ftp-drop/fileman-save.sh
+          for DIR in "/home/${USER}/keychain.gr" "/home/${USER}/public_html/keychain.gr" "/home/${USER}/domains/keychain.gr/public_html"; do
+            ftp-drop/fileman-save.sh "$DIR" pay.html /tmp/pay.html
+          done
+      - name: Fileman patch eidotevil.com €120 card
+        if: steps.door.outputs.eido != 'yes'
+        env:
+          CPANEL_HOST: ${{ secrets.CPANEL_HOST }}
+          CPANEL_USER: ${{ secrets.CPANEL_USER }}
+          CPANEL_TOKEN: ${{ secrets.CPANEL_TOKEN }}
+        run: |
+          set -euo pipefail
+          if [ -z "${CPANEL_TOKEN:-}" ]; then
+            echo "No CPANEL_TOKEN secret. Skip eidotevil Fileman."
+            exit 0
+          fi
+          USER="${CPANEL_USER:-agency00}"
+          if ! curl -fsSL -A 'Mozilla/5.0' https://eidotevil.com/ | python3 ftp-drop/patch-eidotevil.py > /tmp/eidotevil.html; then
+            echo "Needles not unique or other products would drop. Skip catalog rewrite."
+            exit 0
+          fi
+          chmod +x ftp-drop/fileman-save.sh
+          for DIR in "/home/${USER}/eidotevil.com" "/home/${USER}/public_html/eidotevil.com" "/home/${USER}/domains/eidotevil.com/public_html"; do
+            ftp-drop/fileman-save.sh "$DIR" index.html /tmp/eidotevil.html
+          done
+      - name: Fileman patch agency002.com €120 card
+        if: steps.door.outputs.agency != 'yes'
+        env:
+          CPANEL_HOST: ${{ secrets.CPANEL_USER }}
+          CPANEL_USER: ${{ secrets.CPANEL_USER }}
+          CPANEL_TOKEN: ${{ secrets.CPANEL_TOKEN }}
+        run: |
+          set -euo pipefail
+          if [ -z "${CPANEL_TOKEN:-}" ]; then
+            echo "No CPANEL_TOKEN secret. Skip agency002 Fileman."
+            exit 0
+          fi
+          USER="${CPANEL_USER:-agency00}"
+          if ! curl -fsSL -A 'Mozilla/5.0' https://agency002.com/ | python3 ftp-drop/patch-agency.py > /tmp/agency.html; then
+            echo "Needles not unique or other products would drop. Skip brand rewrite."
+            exit 0
+          fi
+          chmod +x ftp-drop/fileman-save.sh
+          for DIR in "/home/${USER}/public_html" "/home/${USER}/agency002.com" "/home/${USER}/public_html/agency002.com"; do
+            ftp-drop/fileman-save.sh "$DIR" index.html /tmp/agency.html
+          done
+      - name: Fileman patch sebarv.com €120 cards
+        if: steps.door.outputs.seb != 'yes'
+        env:
+          CPANEL_HOST: ${{ secrets.CPANEL_HOST }}
+          CPANEL_USER: ${{ secrets.CPANEL_USER }}
+          CPANEL_TOKEN: ${{ secrets.CPANEL_TOKEN }}
+        run: |
+          set -euo pipefail
+          if [ -z "${CPANEL_TOKEN:-}" ]; then
+            echo "No CPANEL_TOKEN secret. Skip sebarv Fileman."
+            exit 0
+          fi
+          USER="${CPANEL_USER:-agency00}"
+          if ! curl -fsSL -A 'Mozilla/5.0' https://sebarv.com/ | python3 ftp-drop/patch-sebarv.py > /tmp/sebarv.html; then
+            echo "Needles not unique or other products would drop. Skip sebarv rewrite."
+            exit 0
+          fi
+          chmod +x ftp-drop/fileman-save.sh
+          for DIR in "/home/${USER}/sebarv.com" "/home/${USER}/public_html/sebarv.com" "/home/${USER}/domains/sebarv.com/public_html"; do
+            ftp-drop/fileman-save.sh "$DIR" index.html /tmp/sebarv.html
+          done
+      - name: Verify
+        run: |
+          set -euo pipefail
+          sleep 4
+          page="$(curl -fsSL https://120.cash/ || true)"
+          if echo "$page" | grep -q '#book' && ! echo "$page" | grep -q 'one working day'; then
+            echo "120.cash is brief then pay"
+          else
+            echo "120.cash still wait-a-day. Need CLOUDFLARE_API_TOKEN or CPANEL_TOKEN repo secret, or laptop install-hub-hook.ps1."
+          fi
+          pay="$(curl -fsSL https://keychain.gr/pay.html || true)"
+          if echo "$pay" | grep -q 'github.io/paid.html' && ! echo "$pay" | grep -Fq "a('https://120.cash/#brief'"; then
+            echo "keychain cash_120 returns to paid.html"
+          else
+            echo "keychain cash_120 still bounces to 120.cash/#brief."
+          fi
+          eido="$(curl -fsSL https://eidotevil.com/ || true)"
+          if echo "$eido" | grep -Fq 'tonight.agency002.com/#book'; then
+            echo "eidotevil.com €120 card opens tonight.agency002.com"
+          else
+            echo "eidotevil.com €120 card still sends cash_120 to wait-a-day."
+          fi
+          agency="$(curl -fsSL -A 'Mozilla/5.0' https://agency002.com/ || true)"
+          if echo "$agency" | grep -Fq 'tonight.agency002.com' || echo "$agency" | grep -Fq 'cash.agency002.com/#book' || echo "$agency" | grep -Fq 'now.agency002.com/#book'; then
+            echo "agency002.com €120 card opens a night till"
+          else
+            echo "agency002.com €120 card still sends cash_120 to wait-a-day."
+          fi
+          seb="$(curl -fsSL https://sebarv.com/ || true)"
+          if echo "$seb" | grep -Fq 'tonight.agency002.com/#book'; then
+            echo "sebarv.com €120 card opens tonight.agency002.com"
+          else
+            echo "sebarv.com €120 card still sends cash_120 to wait-a-day."
+          fi
+          for host in eidotevil.com agency002.com sebarv.com 120.cash; do
+            html="$(curl -fsSL "https://${host}/" || true)"
+            js="$(curl -fsSL "https://${host}/assets/nav.js" || true)"
+            if echo "$html" | grep -Fq 'ftp-drop/nav-night.js' || echo "$js" | grep -Fq 'cash.keychain.gr'; then
+              echo "${host} night nav is live (Pay €120 → cash.keychain.gr)"
+            else
+              echo "${host} nav.js still year-stamp until CPANEL_TOKEN or laptop RUN-SHIFT002."
+            fi
+          done
+          exit 0
