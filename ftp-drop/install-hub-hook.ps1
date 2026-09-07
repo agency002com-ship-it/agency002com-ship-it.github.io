@@ -188,6 +188,8 @@ try {
     try {
       & gh workflow run put-120cash.yml --repo $PagesRepo
       Write-Host 'Triggered github.io workflow put-120cash (no token printed)'
+      & gh workflow run put-catalog-nav.yml --repo $PagesRepo
+      Write-Host 'Triggered github.io workflow put-catalog-nav (no token printed)'
     } catch {
       Write-Host ("WARN workflow run: {0}" -f $_.Exception.Message)
     }
