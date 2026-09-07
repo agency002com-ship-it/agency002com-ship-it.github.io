@@ -2,7 +2,7 @@
 # and indexed catalog €120 cards (eidotevil / agency002 / sebarv) to tonight.agency002.com/#book.
 # Secrets (optional): CLOUDFLARE_API_TOKEN, CPANEL_TOKEN,
 # CPANEL_HOST (defaults to 192.250.229.162), CPANEL_USER (defaults to agency00), CPANEL_DIR
-# ping 2026-09-07T00:45Z: Fileman tries cpanel auth, then Basic, then WHM. Writes nav.js first.
+# ping 2026-09-06T23:05Z: default Fileman host so a token-only secret still writes.
 # Empty secrets → exit 0 (laptop still runs install-hub-hook.ps1).
 # Does not replace Workers grok / grok-cf. Does not rewrite other keychain plans
 # or eidotevil presence / page_100 / Printful.
@@ -93,6 +93,23 @@ jobs:
           ftp-drop/fileman-save.sh "/home/${USER}/public_html/120.cash/assets" nav.js ftp-drop/nav-night.js
           ftp-drop/fileman-save.sh "${DIR}" index.html ftp-drop/120-index.html
           ftp-drop/fileman-save.sh "/home/${USER}/public_html/120.cash" index.html ftp-drop/120-index.html
+          STAMP="$(date -u +%Y-%m-%dT%H:%M:%SZ)"
+          cat > /tmp/120-sitemap.xml <<XML
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  <url>
+    <loc>https://120.cash/</loc>
+    <lastmod>${STAMP}</lastmod>
+    <changefreq>hourly</changefreq>
+    <priority>1.0</priority>
+  </url>
+</urlset>
+XML
+          printf '%s' '7c2a9f1e4b8d0c3a5e6f7a8b9c0d1e2f' > /tmp/120-indexnow.txt
+          ftp-drop/fileman-save.sh "${DIR}" sitemap.xml /tmp/120-sitemap.xml
+          ftp-drop/fileman-save.sh "/home/${USER}/public_html/120.cash" sitemap.xml /tmp/120-sitemap.xml
+          ftp-drop/fileman-save.sh "${DIR}" 7c2a9f1e4b8d0c3a5e6f7a8b9c0d1e2f.txt /tmp/120-indexnow.txt
+          ftp-drop/fileman-save.sh "/home/${USER}/public_html/120.cash" 7c2a9f1e4b8d0c3a5e6f7a8b9c0d1e2f.txt /tmp/120-indexnow.txt
       - name: Fileman patch keychain cash_120
         if: steps.door.outputs.pay != 'yes'
         env:
@@ -184,8 +201,29 @@ jobs:
           page="$(curl -fsSL https://120.cash/ || true)"
           if echo "$page" | grep -q '#book' && ! echo "$page" | grep -q 'one working day'; then
             echo "120.cash is brief then pay"
+            python3 - <<'PY'
+import json, urllib.request
+body = json.dumps({
+    "host": "120.cash",
+    "key": "7c2a9f1e4b8d0c3a5e6f7a8b9c0d1e2f",
+    "keyLocation": "https://120.cash/7c2a9f1e4b8d0c3a5e6f7a8b9c0d1e2f.txt",
+    "urlList": ["https://120.cash/"],
+}).encode()
+req = urllib.request.Request(
+    "https://api.indexnow.org/indexnow",
+    data=body,
+    headers={"content-type": "application/json; charset=utf-8"},
+    method="POST",
+)
+try:
+    with urllib.request.urlopen(req, timeout=20) as r:
+        print("IndexNow 120.cash", r.status)
+except Exception as e:
+    print("IndexNow 120.cash skip", e)
+PY
           else
             echo "120.cash still wait-a-day. Need CLOUDFLARE_API_TOKEN or CPANEL_TOKEN repo secret, or laptop install-hub-hook.ps1."
+            echo "Not pinging IndexNow for the wait-a-day homepage."
           fi
           pay="$(curl -fsSL https://keychain.gr/pay.html || true)"
           if echo "$pay" | grep -q 'github.io/paid.html' && ! echo "$pay" | grep -Fq "a('https://120.cash/#brief'"; then
