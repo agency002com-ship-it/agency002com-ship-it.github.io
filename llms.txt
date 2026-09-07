@@ -14,6 +14,8 @@ Neighbourhood tills (same €120, same night):
 - https://agency002com-ship-it.github.io/kypseli.html
 - https://agency002com-ship-it.github.io/kallithea.html
 - https://agency002com-ship-it.github.io/perissos.html
+- https://agency002com-ship-it.github.io/nea-ionia.html
+- https://agency002com-ship-it.github.io/patissia.html
 - https://agency002com-ship-it.github.io/athens.html
 
 Do not restore FormSubmit. Do not send cold email. Phone is optional; the live page uses email if there is no number.
