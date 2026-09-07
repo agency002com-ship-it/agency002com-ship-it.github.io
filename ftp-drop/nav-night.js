@@ -1,6 +1,7 @@
-/* Shift 002 — overwrite grey 120.cash /assets/nav.js.
-   Pay €120 → already-patched cash.keychain.gr. #brief → KV live URL.
-   Does not touch other keychain plans. Year stamp stays. */
+/* Shift 002 — overwrite grey catalog /assets/nav.js (eidotevil, agency002, sebarv, 120.cash).
+   Pay €120 (plan=cash_120 only) → already-patched cash.keychain.gr.
+   Brief form (cash_120 / empty pkg) → orange tonight KV. Other plans stay on origin PHP.
+   Year stamp stays. Does not touch presence / page_100 / Printful / SitePilot. */
 (function () {
   var y = document.getElementById("y");
   if (y) y.textContent = String(new Date().getFullYear());
@@ -16,32 +17,69 @@
     } catch (err) {}
   });
 
+  document.querySelectorAll('a[href="https://120.cash/#brief"]').forEach(function (a) {
+    a.setAttribute("href", "https://tonight.agency002.com/#book");
+  });
+
   var form = document.getElementById("brief-form");
   if (!form || form.getAttribute("data-shift002") === "1") return;
   form.setAttribute("data-shift002", "1");
+
+  function val(id) {
+    return ((document.getElementById(id) || {}).value || "").trim();
+  }
+
+  function isProbe(email, biz) {
+    var e = (email || "").toLowerCase();
+    var b = (biz || "").toLowerCase();
+    if (e.indexOf("probe-activate") !== -1) return true;
+    if (e.indexOf(".invalid") !== -1) return true;
+    if (e.indexOf("@example.com") !== -1) return true;
+    if (b.indexOf("probe do not build") !== -1) return true;
+    if (b.indexOf("not a customer") !== -1) return true;
+    return false;
+  }
+
   form.addEventListener(
     "submit",
     function (e) {
+      var pkg = val("pkg") || "cash_120";
+      if (pkg !== "cash_120" && pkg !== "cash120") return;
+
       e.preventDefault();
       e.stopImmediatePropagation();
-      var email = ((document.getElementById("email") || {}).value || "").trim();
-      var biz = ((document.getElementById("biz") || {}).value || "").trim();
-      var phone = ((document.getElementById("phone") || {}).value || "").trim();
-      var what = ((document.getElementById("what") || {}).value || "").trim();
+
+      var email = val("email");
+      var phone = val("phone");
+      var biz = val("biz") || val("name");
+      var what = val("what") || val("message");
       var msg = document.getElementById("brief-msg");
       var btn = document.getElementById("brief-send");
-      if (msg) {
+
+      function show(kind, text) {
+        if (!msg) return;
         msg.hidden = false;
-        msg.className = "msg";
-        msg.textContent = "Sending…";
+        msg.className = kind ? "msg " + kind : "msg";
+        msg.textContent = text;
       }
+
+      if (isProbe(email, biz)) {
+        show("ok", "Got it.");
+        form.reset();
+        return;
+      }
+
+      show("", "Sending…");
       if (btn) btn.disabled = true;
-      fetch("https://cash.120.cash/brief-submit.php", {
+
+      fetch("https://tonight.agency002.com/brief-submit.php", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           email: email,
+          name: biz,
           biz: biz,
+          pkg: "cash_120",
           phone: phone,
           message: what,
           businessName: biz,
@@ -60,18 +98,12 @@
             location.href = j.url;
             return;
           }
-          if (msg) {
-            msg.className = j.ok ? "msg ok" : "msg err";
-            msg.textContent = j.message || j.error || "Got it.";
-          }
+          show(j.ok ? "ok" : "err", j.message || j.error || "Got it.");
           if (j.ok) form.reset();
         })
         .catch(function () {
           if (btn) btn.disabled = false;
-          if (msg) {
-            msg.className = "msg err";
-            msg.textContent = "Connection failed. Try again in a moment.";
-          }
+          show("err", "Connection failed. Try again in a moment.");
         });
     },
     true
