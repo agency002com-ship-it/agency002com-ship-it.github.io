@@ -113,6 +113,8 @@ if (Test-Path $ftp) {
     'patch-agency.py',
     'patch-eidotevil.py',
     'patch-sebarv.py',
+    'patch-120cash.py',
+    'patch-nav-src.py',
     'hub-hook.ps1',
     'write-nav.ps1',
     'nav-night.js',
@@ -238,7 +240,7 @@ if (Test-NeedFlip) {
   }
 }
 
-Write-Host 'Writing 120.cash /assets/nav.js (tiny Fileman).'
+Write-Host 'Writing catalog /assets/nav.js (tiny Fileman; cash_120 only).'
 $ntmp = Join-Path $env:TEMP 'write-nav.ps1'
 try {
   Invoke-WebRequest -Uri "$Drop/write-nav.ps1" -OutFile $ntmp -UseBasicParsing
