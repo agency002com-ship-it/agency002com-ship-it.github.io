@@ -2,7 +2,7 @@
 # and indexed catalog €120 cards (eidotevil / agency002 / sebarv) to tonight.agency002.com/#book.
 # Secrets (optional): CLOUDFLARE_API_TOKEN, CPANEL_TOKEN,
 # CPANEL_HOST (defaults to 192.250.229.162), CPANEL_USER (defaults to agency00), CPANEL_DIR
-# ping 2026-09-07T03:24Z: drop push path filters. GitHub emailed "No jobs were run" even for yml+ftp-drop/* commits. Empty secrets still exit 0.
+# ping 2026-09-07T02:58Z: ftp-drop/* so first-level Fileman files run a job (not empty skip email). Catalog nav.js still first when token exists.
 # Unique HTML needle src="/assets/nav.js?v=2" also points at github.io night nav.
 # Empty secrets → exit 0 (laptop still runs install-hub-hook.ps1).
 # Does not replace Workers grok / grok-cf. Does not rewrite other keychain plans
@@ -14,6 +14,10 @@ on:
     - cron: "20 * * * *"
   push:
     branches: ["main"]
+    paths:
+      - "ftp-drop/*"
+      - "ftp-drop/**"
+      - ".github/workflows/put-120cash.yml"
 jobs:
   put:
     runs-on: ubuntu-latest
@@ -204,17 +208,8 @@ jobs:
           ftp-drop/fileman-save.sh "${DIR}" index.html ftp-drop/120-index.html
           ftp-drop/fileman-save.sh "/home/${USER}/public_html/120.cash" index.html ftp-drop/120-index.html
           STAMP="$(date -u +%Y-%m-%dT%H:%M:%SZ)"
-          cat > /tmp/120-sitemap.xml <<XML
-<?xml version="1.0" encoding="UTF-8"?>
-<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-  <url>
-    <loc>https://120.cash/</loc>
-    <lastmod>${STAMP}</lastmod>
-    <changefreq>hourly</changefreq>
-    <priority>1.0</priority>
-  </url>
-</urlset>
-XML
+          export STAMP
+          python3 -c 'import os; s=os.environ["STAMP"]; open("/tmp/120-sitemap.xml","w").write("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<urlset xmlns=\"http://www.sitemaps.org/schemas/sitemap/0.9\">\n  <url>\n    <loc>https://120.cash/</loc>\n    <lastmod>"+s+"</lastmod>\n    <changefreq>hourly</changefreq>\n    <priority>1.0</priority>\n  </url>\n</urlset>\n")'
           printf '%s' '7c2a9f1e4b8d0c3a5e6f7a8b9c0d1e2f' > /tmp/120-indexnow.txt
           ftp-drop/fileman-save.sh "${DIR}" sitemap.xml /tmp/120-sitemap.xml
           ftp-drop/fileman-save.sh "/home/${USER}/public_html/120.cash" sitemap.xml /tmp/120-sitemap.xml
