@@ -170,6 +170,7 @@ if ($cashZone) {
   Write-Host 'Orange-cloud 120.cash DNS (do not replace grok-cf).'
   Proxy-DnsName $cashZone.id '120.cash'
   Proxy-DnsName $cashZone.id 'www.120.cash'
+  Ensure-Routes $cashZone.id 'grok-cf' @('120.cash/*', 'www.120.cash/*')
 } else {
   Write-Host 'No Cloudflare zone named 120.cash on this token.'
 }
@@ -179,6 +180,7 @@ if ($keyZone) {
   Write-Host 'Orange-cloud keychain.gr DNS (do not replace grok-cf).'
   Proxy-DnsName $keyZone.id 'keychain.gr'
   Proxy-DnsName $keyZone.id 'www.keychain.gr'
+  Ensure-Routes $keyZone.id 'grok-cf' @('keychain.gr/pay.html*', 'www.keychain.gr/pay.html*')
 } else {
   Write-Host 'No Cloudflare zone named keychain.gr on this token.'
 }
