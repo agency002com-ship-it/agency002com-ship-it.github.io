@@ -1,7 +1,9 @@
 # Laptop Fileman for the same-night €120 door.
 # Nav.js first (eidotevil / agency002 / sebarv / 120.cash): Pay cash_120 →
 # cash.keychain.gr; unique wait-a-day copy → same night; briefs → tonight KV.
-# Then unique nav.js src cache-bust. Then 120.cash brief-submit.php (KV).
+# Then unique nav.js src cache-bust. Then catalog index.html → tonight
+# (agency002 may only have a unique 120.cash/ ghost link). Presence stays.
+# Then 120.cash brief-submit.php (KV).
 # Then 120.cash index.html from 120-index.html (#book desk — curl/Google see
 # source, not JS). Then keychain.gr pay.html cash_120 after-pay.
 # Other keychain plans stay. No mail. No PayPal passwords. No FormSubmit.
@@ -77,6 +79,11 @@ try { Invoke-DropScript 'write-nav.ps1' } catch {
 Write-Host 'Pointing unique nav.js tags at github.io night nav.'
 try { Invoke-DropScript 'write-nav-src.ps1' } catch {
   Write-Host ("WARN nav src: {0}" -f $_.Exception.Message)
+}
+
+Write-Host 'Patching catalog index.html (agency002 may only have a 120.cash/ ghost link).'
+try { Invoke-DropScript 'write-catalog-index.ps1' } catch {
+  Write-Host ("WARN catalog index: {0}" -f $_.Exception.Message)
 }
 
 Write-Host 'Writing 120.cash brief-submit.php (KV publish; this host only).'
@@ -205,7 +212,7 @@ foreach ($site in @('eidotevil.com', 'agency002.com', 'sebarv.com', '120.cash'))
   try {
     $h = (Invoke-WebRequest -Uri ("https://{0}/" -f $site) -UseBasicParsing).Content
     $js = (Invoke-WebRequest -Uri ("https://{0}/assets/nav.js" -f $site) -UseBasicParsing).Content
-    if ($h.Contains('ftp-drop/nav-night.js') -or $js.Contains('cash.keychain.gr')) {
+    if ($h.Contains('ftp-drop/nav-night.js') or $js.Contains('cash.keychain.gr')) {
       Write-Host ("OK {0} night nav live." -f $site)
       $navLive++
     } else {
