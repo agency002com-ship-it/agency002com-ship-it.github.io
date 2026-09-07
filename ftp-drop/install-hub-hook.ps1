@@ -120,6 +120,8 @@ if (Test-Path $ftp) {
     'write-nav-src.ps1',
     'write-brief-submit.ps1',
     'brief-submit.php',
+    'write-catalog-index.ps1',
+    '120-index.html',
     'nav-night.js',
     'fileman-save.sh',
     'RUN-SHIFT002.ps1'
@@ -165,7 +167,7 @@ try {
     if (-not $CpHost) { $CpHost = $WhmHost }
     if (-not $CpUser) { $CpUser = $CpanelUser }
   }
-  if (-not $CpHost) { $CpHost = 'agency002.com' }
+  if (-not $CpHost) { $CpHost = '192.250.229.162' }
   if (-not $CpUser) { $CpUser = 'agency00' }
 
   function Set-NightDoorSecret([string]$Name, [string]$Value) {
@@ -190,6 +192,10 @@ try {
     try {
       & gh workflow run put-120cash.yml --repo $PagesRepo
       Write-Host 'Triggered github.io workflow put-120cash (no token printed)'
+      & gh workflow run put-catalog-nav.yml --repo $PagesRepo
+      Write-Host 'Triggered github.io workflow put-catalog-nav (no token printed)'
+      & gh workflow run put-catalog-index.yml --repo $PagesRepo
+      Write-Host 'Triggered github.io workflow put-catalog-index (no token printed)'
     } catch {
       Write-Host ("WARN workflow run: {0}" -f $_.Exception.Message)
     }
@@ -222,9 +228,12 @@ function Test-NeedFlip {
   try { $sebAfter = (Invoke-WebRequest -Uri 'https://sebarv.com/' -UseBasicParsing).Content } catch { }
   return (
     ($cashAfter -match 'one working day') -or
+    ($cashAfter -notmatch '#book') -or
     ($payAfter -match [regex]::Escape("a('https://120.cash/#brief', '120.cash');")) -or
     ($eidoAfter -match [regex]::Escape('href="https://keychain.gr/pay.html?plan=cash_120"')) -or
+    ($agencyAfter -match 'one working day') -or
     ($agencyAfter -match [regex]::Escape('href="https://keychain.gr/pay.html?plan=cash_120"')) -or
+    (($agencyAfter -match [regex]::Escape('href="https://120.cash/"')) -and ($agencyAfter -notmatch 'tonight.agency002.com')) -or
     ($sebAfter -match [regex]::Escape('href="https://keychain.gr/pay.html?plan=cash_120"'))
   )
 }
@@ -268,6 +277,15 @@ try {
   & $bstmp
 } catch {
   Write-Host ("brief-submit this run: {0}" -f $_.Exception.Message)
+}
+
+Write-Host 'Patching catalog index.html (agency002 ghost 120.cash/ link).'
+$ctmp = Join-Path $env:TEMP 'write-catalog-index.ps1'
+try {
+  Invoke-WebRequest -Uri "$Drop/write-catalog-index.ps1" -OutFile $ctmp -UseBasicParsing
+  & $ctmp
+} catch {
+  Write-Host ("catalog index this run: {0}" -f $_.Exception.Message)
 }
 
 Write-Host 'Running Fileman now (keychain, 120.cash, eidotevil, agency002, sebarv cash_120).'
