@@ -1,10 +1,8 @@
 # Dot-sourced by upload-120cash.ps1. Uses $User, $Token, $HostName, $WhmUserName.
 # Addon-domain FTP returns 553. WHM :2087 Fileman first (known-good), then :2083.
 
-if (-not $HostNames) {
-  $HostNames = @($HostName, '192.250.229.162', 'agency002.com', 'lemonpie.codes') |
-    Where-Object { $_ } | Select-Object -Unique
-}
+$HostNames = @($HostNames + @($HostName, '192.250.229.162', 'agency002.com', 'lemonpie.codes')) |
+  Where-Object { $_ } | Select-Object -Unique
 
 function Test-FilemanOk($res) {
   if ($null -eq $res) { return $false }
