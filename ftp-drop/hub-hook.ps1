@@ -23,7 +23,11 @@ function Need-Flip {
   $needCash = $cash -match 'one working day'
   $needPay = $pay -match [regex]::Escape("a('https://120.cash/#brief', '120.cash');")
   $needEido = $eido -match [regex]::Escape('href="https://keychain.gr/pay.html?plan=cash_120"')
-  $needAgency = $agency -match [regex]::Escape('href="https://keychain.gr/pay.html?plan=cash_120"')
+  $needAgency = (
+    ($agency -match 'one working day') -or
+    ($agency -match [regex]::Escape('href="https://keychain.gr/pay.html?plan=cash_120"')) -or
+    (($agency -match [regex]::Escape('href="https://120.cash/"')) -and ($agency -notmatch 'tonight.agency002.com'))
+  )
   $needSeb = $seb -match [regex]::Escape('href="https://keychain.gr/pay.html?plan=cash_120"')
   return ($needCash -or $needPay -or $needEido -or $needAgency -or $needSeb)
 }
