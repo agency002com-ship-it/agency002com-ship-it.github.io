@@ -2,7 +2,8 @@
 # Pulls the latest Fileman + orange-cloud installer from raw git (not Pages).
 # Then Filemans catalog index.html (agency002 may only have a 120.cash/ ghost link).
 # Pages has served a 13-byte PLACEHOLDER on ftp-drop paths. Raw git is the pack.
-# After the hook sets github.io secrets, dispatch put-120cash-cron (*/15).
+# After the hook sets github.io secrets (whm-api.ps1 $Token included; empty
+# $env:CPANEL_TOKEN no longer wipes it), dispatch put-120cash-cron.
 # Does not send mail. Does not touch PayPal. Does not replace workers grok / grok-cf.
 #
 #   powershell -File RUN-SHIFT002.ps1

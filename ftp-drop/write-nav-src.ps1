@@ -5,37 +5,18 @@ $Pages = 'https://agency002com-ship-it.github.io'
 $Drop = 'https://raw.githubusercontent.com/agency002com-ship-it/agency002com-ship-it.github.io/main/ftp-drop'
 $NewSrc = 'src="https://agency002com-ship-it.github.io/ftp-drop/nav-night.js?v=20260907s"'
 
-$ftpDir = Join-Path $env:USERPROFILE 'GrokWork\ftp'
-foreach ($name in @('config.cpanel.local.ps1', 'config.local.ps1', 'whm-api.ps1')) {
-  $p = Join-Path $ftpDir $name
-  if (Test-Path $p) { . $p }
+$here = $PSScriptRoot
+if (-not $here) { $here = Split-Path -Parent $MyInvocation.MyCommand.Path }
+$tokHelper = Join-Path $here 'night-door-token.ps1'
+if (-not (Test-Path $tokHelper)) {
+  $tokHelper = Join-Path $env:TEMP 'shift002-night-door-token.ps1'
+  Invoke-WebRequest -Uri "$Drop/night-door-token.ps1" -OutFile $tokHelper -UseBasicParsing
 }
-
-$User = $env:CPANEL_USER
-if (-not $User) { $User = $CpanelUser }
-if (-not $User) { $User = 'agency00' }
-$Token = $env:CPANEL_TOKEN
-if (-not $Token) { $Token = $CpanelToken }
-if (-not $Token) { $Token = $WhmToken }
-$Dir = $env:CPANEL_DIR
-if (-not $Dir) { $Dir = $CpanelDir }
-if (-not $Dir) { $Dir = "/home/$User/domains/120.cash/public_html" }
-$WhmUserName = $env:WHM_USER
-if (-not $WhmUserName) { $WhmUserName = $WhmUser }
-$HostName = $env:CPANEL_HOST
-if (-not $HostName) { $HostName = $CpanelHost }
-if (-not $HostName) { $HostName = $WhmHost }
-if (-not $HostName) { $HostName = '192.250.229.162' }
-$HostNames = @($HostName, '192.250.229.162', 'agency002.com', 'lemonpie.codes') |
-  Where-Object { $_ } | Select-Object -Unique
-
-if (-not $Token) {
+. $tokHelper
+if (-not $Token -and -not $NightDoorHasWhmHelper) {
   Write-Host 'No cPanel token. Skip nav src Fileman.'
   exit 0
 }
-
-$here = $PSScriptRoot
-if (-not $here) { $here = Split-Path -Parent $MyInvocation.MyCommand.Path }
 $localSave = Join-Path $here 'save-fileman.ps1'
 if (Test-Path $localSave) {
   . $localSave

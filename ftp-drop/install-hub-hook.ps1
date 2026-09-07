@@ -143,6 +143,7 @@ if (Test-Path $ftp) {
     'fileman-120cash.sh',
     'dispatch-cron.ps1',
     'arm-secrets.ps1',
+    'night-door-token.ps1',
     'RUN-SHIFT002.ps1'
   )) {
     try {
@@ -172,22 +173,42 @@ try {
     if (-not $CfTok) { $CfTok = $ApiToken }
   }
   $CpTok = $env:CPANEL_TOKEN
+  if (-not $CpTok) { $CpTok = $env:CPANEL_API_TOKEN }
+  if (-not $CpTok) { $CpTok = $env:WHM_API_TOKEN }
+  if (-not $CpTok) { $CpTok = $env:WHM_TOKEN }
   $CpHost = $env:CPANEL_HOST
   $CpUser = $env:CPANEL_USER
+  $Token = $null
+  $sourcedToken = $null
   foreach ($cfg in @(
     (Join-Path $ftp 'config.cpanel.local.ps1'),
-    (Join-Path $ftp 'config.local.ps1')
+    (Join-Path $ftp 'config.local.ps1'),
+    (Join-Path $ftp 'config.whm.local.ps1'),
+    (Join-Path $ftp 'whm-api.ps1')
   )) {
     if (-not (Test-Path $cfg)) { continue }
     . $cfg
+    if ($Token) { $sourcedToken = $Token }
     if (-not $CpTok) { $CpTok = $CpanelToken }
     if (-not $CpTok) { $CpTok = $WhmToken }
+    if (-not $CpTok) { $CpTok = $CpanelApiToken }
+    if (-not $CpTok) { $CpTok = $WhmApiToken }
+    if (-not $CpTok) { $CpTok = $WHM_API_TOKEN }
     if (-not $CpHost) { $CpHost = $CpanelHost }
     if (-not $CpHost) { $CpHost = $WhmHost }
     if (-not $CpUser) { $CpUser = $CpanelUser }
   }
+  if (-not $CpTok) { $CpTok = $sourcedToken }
   if (-not $CpHost) { $CpHost = '192.250.229.162' }
   if (-not $CpUser) { $CpUser = 'agency00' }
+  if (-not $CpTok) {
+    $hasWhm = [bool](Get-Command Invoke-WhmCpanel -ErrorAction SilentlyContinue)
+    if ($hasWhm) {
+      Write-Host 'WARN: Invoke-WhmCpanel is loaded so this laptop can Fileman, but no readable token for gh secret set. Hourly Actions stay skipped until $CpanelToken is in config.cpanel.local.ps1 or $env:CPANEL_TOKEN is set. Value not printed.'
+    } else {
+      Write-Host 'WARN: no readable cPanel/WHM token for gh secret set (sourced whm-api.ps1 if present). Fileman scripts still try.'
+    }
+  }
 
   function Set-NightDoorSecret([string]$Name, [string]$Value) {
     if (-not $Value) { return }
