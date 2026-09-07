@@ -1,9 +1,29 @@
 # Dot-sourced by upload-120cash.ps1. Uses $User, $Token, $HostName, $WhmUserName.
-# Addon-domain FTP returns 553. Try cPanel :2083, then WHM :2087 passthrough.
+# Addon-domain FTP returns 553. WHM :2087 Fileman first (known-good), then :2083.
 
 if (-not $HostNames) {
-  $HostNames = @($HostName, 'agency002.com', 'lemonpie.codes') |
+  $HostNames = @($HostName, '192.250.229.162', 'agency002.com', 'lemonpie.codes') |
     Where-Object { $_ } | Select-Object -Unique
+}
+
+function Test-FilemanOk($res) {
+  if ($null -eq $res) { return $false }
+  if ($res -is [string]) {
+    try { $res = $res | ConvertFrom-Json } catch { return $false }
+  }
+  if ($null -ne $res.status) {
+    return ([int]$res.status -eq 1)
+  }
+  $ev = $null
+  if ($res.cpanelresult -and $res.cpanelresult.event) {
+    $ev = $res.cpanelresult.event.result
+  }
+  if ($null -ne $ev) { return ([int]$ev -eq 1) }
+  $meta = $null
+  if ($res.metadata) { $meta = $res.metadata.result }
+  if ($null -ne $meta) { return ([int]$meta -eq 1) }
+  if ($res.errors) { return $false }
+  return $true
 }
 
 function Save-Fileman([string]$directory, [string]$file, [string]$content) {
@@ -33,21 +53,7 @@ function Save-Fileman([string]$directory, [string]$file, [string]$content) {
     }
   }
 
-  foreach ($h in $HostNames) {
-    $pair = '{0}:{1}' -f $User, $Token
-    $basic = 'Basic ' + [Convert]::ToBase64String([Text.Encoding]::ASCII.GetBytes($pair))
-    try {
-      $uri = ('https://{0}:2083/execute/Fileman/save_file_content' -f $h)
-      Invoke-RestMethod -Method Post -Uri $uri -Headers @{ Authorization = $basic } -Body $body2083 -SkipCertificateCheck
-      return
-    } catch { $errors += "2083/$h basic: $($_.Exception.Message)" }
-    try {
-      $uri = ('https://{0}:2083/execute/Fileman/save_file_content' -f $h)
-      Invoke-RestMethod -Method Post -Uri $uri -Headers @{ Authorization = ('cpanel {0}:{1}' -f $User, $Token) } -Body $body2083 -SkipCertificateCheck
-      return
-    } catch { $errors += "2083/$h cpanel: $($_.Exception.Message)" }
-  }
-
+  # Known-good path: WHM :2087 Fileman::save_file_content (addon FTP is 553).
   $whmUsers = @($WhmUserName, $User, 'root') | Where-Object { $_ } | Select-Object -Unique
   foreach ($h in $HostNames) {
     foreach ($wu in $whmUsers) {
@@ -63,10 +69,37 @@ function Save-Fileman([string]$directory, [string]$file, [string]$content) {
           content                  = $content
           charset                  = 'utf-8'
         }
-        Invoke-RestMethod -Method Post -Uri $uri -Headers @{ Authorization = ('WHM {0}:{1}' -f $wu, $Token) } -Body $body -SkipCertificateCheck
-        return
+        $res = Invoke-RestMethod -Method Post -Uri $uri -Headers @{ Authorization = ('WHM {0}:{1}' -f $wu, $Token) } -Body $body -SkipCertificateCheck
+        if (Test-FilemanOk $res) {
+          Write-Host ("Fileman :2087 WHM {0} {1}/{2}" -f $wu, $directory, $file)
+          return
+        }
+        $errors += "2087/$h/$wu: HTTP ok but status not 1"
       } catch { $errors += "2087/$h/$wu: $($_.Exception.Message)" }
     }
+  }
+
+  foreach ($h in $HostNames) {
+    $pair = '{0}:{1}' -f $User, $Token
+    $basic = 'Basic ' + [Convert]::ToBase64String([Text.Encoding]::ASCII.GetBytes($pair))
+    try {
+      $uri = ('https://{0}:2083/execute/Fileman/save_file_content' -f $h)
+      $res = Invoke-RestMethod -Method Post -Uri $uri -Headers @{ Authorization = $basic } -Body $body2083 -SkipCertificateCheck
+      if (Test-FilemanOk $res) {
+        Write-Host ("Fileman :2083 basic {0}/{1}" -f $directory, $file)
+        return
+      }
+      $errors += "2083/$h basic: HTTP ok but status not 1"
+    } catch { $errors += "2083/$h basic: $($_.Exception.Message)" }
+    try {
+      $uri = ('https://{0}:2083/execute/Fileman/save_file_content' -f $h)
+      $res = Invoke-RestMethod -Method Post -Uri $uri -Headers @{ Authorization = ('cpanel {0}:{1}' -f $User, $Token) } -Body $body2083 -SkipCertificateCheck
+      if (Test-FilemanOk $res) {
+        Write-Host ("Fileman :2083 cpanel {0}/{1}" -f $directory, $file)
+        return
+      }
+      $errors += "2083/$h cpanel: HTTP ok but status not 1"
+    } catch { $errors += "2083/$h cpanel: $($_.Exception.Message)" }
   }
 
   throw ('Fileman failed. ' + ($errors -join ' | '))
