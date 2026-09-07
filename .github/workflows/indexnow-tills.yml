@@ -1,6 +1,7 @@
 # Ping IndexNow for doors that already sell same-night.
 # One host per POST (mixed-host 422). No secrets.
 # Do not submit https://120.cash/ while it still says one working day.
+# ping 2026-09-07T22:47Z: CONVERTING sitemap/llms/feed on tonight.120.cash + cash/pay tills
 # ping 2026-09-07T22:16Z: converting paths only — no neighbourhood github.io IndexNow.
 # ping 2026-09-07T21:48Z: pay.120.cash checkout + converting 120cash.html/apopse.html (no neighbourhood add).
 # ping 2026-09-07T14:42Z: llms.txt with Greek neighbourhood tills
@@ -88,11 +89,11 @@ jobs:
                   print(host, "skip (not same-night)")
                   continue
               CONVERTING = {
-                  "tonight.agency002.com": ["/", "/120cash.html", "/apopse.html", "/tonight.html", "/el.html", "/pay.html?plan=cash_120"],
-                  "pay.120.cash": ["/", "/pay.html?plan=cash_120", "/120cash.html", "/apopse.html", "/tonight.html", "/el.html", "/sitemap.xml"],
-                  "cash.120.cash": ["/", "/120cash.html", "/apopse.html", "/tonight.html", "/el.html", "/pay.html?plan=cash_120"],
+                  "tonight.agency002.com": ["/", "/120cash.html", "/apopse.html", "/tonight.html", "/el.html", "/pay.html?plan=cash_120", "/sitemap.xml", "/llms.txt", "/feed.xml"],
+                  "pay.120.cash": ["/", "/pay.html?plan=cash_120", "/120cash.html", "/apopse.html", "/tonight.html", "/el.html", "/sitemap.xml", "/llms.txt", "/feed.xml"],
+                  "cash.120.cash": ["/", "/120cash.html", "/apopse.html", "/tonight.html", "/el.html", "/pay.html?plan=cash_120", "/sitemap.xml", "/llms.txt", "/feed.xml"],
                   "cash.keychain.gr": ["/", "/pay.html?plan=cash_120"],
-                  "tonight.120.cash": ["/", "/120cash.html", "/apopse.html", "/tonight.html", "/el.html", "/pay.html?plan=cash_120"],
+                  "tonight.120.cash": ["/", "/120cash.html", "/apopse.html", "/tonight.html", "/el.html", "/pay.html?plan=cash_120", "/sitemap.xml", "/llms.txt", "/feed.xml"],
               }
               paths = CONVERTING.get(host, ["/"])
               try:
