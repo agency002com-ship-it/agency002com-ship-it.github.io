@@ -9,6 +9,21 @@
     <xhtml:link rel="alternate" hreflang="el" href="https://tonight.agency002.com/?el=1" />
   </url>
   <url>
+    <loc>https://tonight.agency002.com/pay.html?plan=cash_120</loc>
+    <lastmod>2026-09-07</lastmod>
+    <changefreq>hourly</changefreq>
+  </url>
+  <url>
+    <loc>https://tonight.agency002.com/feed.xml</loc>
+    <lastmod>2026-09-07</lastmod>
+    <changefreq>hourly</changefreq>
+  </url>
+  <url>
+    <loc>https://tonight.agency002.com/llms.txt</loc>
+    <lastmod>2026-09-07</lastmod>
+    <changefreq>daily</changefreq>
+  </url>
+  <url>
     <loc>https://cash.120.cash/</loc>
     <lastmod>2026-09-07</lastmod>
     <changefreq>hourly</changefreq>
