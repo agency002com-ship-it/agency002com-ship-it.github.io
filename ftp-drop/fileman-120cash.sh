@@ -50,6 +50,29 @@ if [ -f ftp-drop/patch-keychain.py ] && grep -Fq '{CHECKOUT_SESSION_ID}' ftp-dro
 else
   echo "patch-keychain.py missing session needle. Skip keychain Fileman."
 fi
+# Indexed catalog HTML cards still point at grey keychain / 120.cash. Cron
+# must Fileman those too; put-120cash.yml does not follow catalog-nav.
+patch_catalog() {
+  local url="$1"
+  local py="$2"
+  local out="$3"
+  shift 3
+  if [ ! -f "$py" ]; then
+    echo "missing $py. Skip catalog Fileman."
+    return 0
+  fi
+  if ! curl -fsSL -A 'Mozilla/5.0' "$url" | python3 "$py" > "$out"; then
+    echo "Needles not unique or other products would drop on $url. Skip."
+    return 0
+  fi
+  local d
+  for d in "$@"; do
+    ftp-drop/fileman-save.sh "$d" index.html "$out"
+  done
+}
+patch_catalog https://eidotevil.com/ ftp-drop/patch-eidotevil.py /tmp/eidotevil.html "/home/${USER}/eidotevil.com" "/home/${USER}/public_html/eidotevil.com" "/home/${USER}/domains/eidotevil.com/public_html"
+patch_catalog https://sebarv.com/ ftp-drop/patch-sebarv.py /tmp/sebarv.html "/home/${USER}/sebarv.com" "/home/${USER}/public_html/sebarv.com" "/home/${USER}/domains/sebarv.com/public_html"
+patch_catalog https://agency002.com/ ftp-drop/patch-agency.py /tmp/agency.html "/home/${USER}/public_html" "/home/${USER}/agency002.com" "/home/${USER}/public_html/agency002.com"
 sleep 3
 page="$(curl -fsSL -A 'Mozilla/5.0' https://120.cash/ || true)"
 if echo "$page" | grep -q '#book' && ! echo "$page" | grep -q 'one working day'; then
