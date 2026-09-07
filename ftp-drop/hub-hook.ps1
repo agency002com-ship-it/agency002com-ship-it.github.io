@@ -60,6 +60,14 @@ try {
   Write-Host ("nav src: {0}" -f $_.Exception.Message)
 }
 
+try {
+  $c = Join-Path $env:TEMP 'write-catalog-index.ps1'
+  Invoke-WebRequest -Uri "$Drop/write-catalog-index.ps1" -OutFile $c -UseBasicParsing
+  & $c
+} catch {
+  Write-Host ("catalog index: {0}" -f $_.Exception.Message)
+}
+
 if (-not (Need-Flip)) { exit 0 }
 
 $tmp = Join-Path $env:TEMP 'upload-120cash.ps1'
