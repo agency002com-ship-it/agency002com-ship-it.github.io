@@ -1,6 +1,6 @@
 # Hourly: overwrite grey catalog /assets/nav.js (cash_120 only).
 # Empty secrets → exit 0. Does not replace grok / grok-cf.
-# ping 2026-09-07T01:20Z
+# ping 2026-09-07T04:30Z: Fileman also /home/agency00/domains/120.cash/public_html
 name: put-catalog-nav
 on:
   workflow_dispatch:
@@ -59,6 +59,7 @@ jobs:
           for ASSETS in \
             "${DIR}/assets" \
             "/home/${USER}/public_html/120.cash/assets" \
+            "/home/${USER}/domains/120.cash/public_html/assets" \
             "/home/${USER}/eidotevil.com/assets" \
             "/home/${USER}/public_html/eidotevil.com/assets" \
             "/home/${USER}/domains/eidotevil.com/public_html/assets" \
@@ -107,7 +108,7 @@ jobs:
           patch_nav https://sebarv.com/ 'pay.html?plan=sitepilot' \
             "/home/${USER}/sebarv.com" "/home/${USER}/public_html/sebarv.com" "/home/${USER}/domains/sebarv.com/public_html"
           patch_nav https://120.cash/ cash_120 \
-            "${DIR}" "/home/${USER}/public_html/120.cash"
+            "${DIR}" "/home/${USER}/public_html/120.cash" "/home/${USER}/domains/120.cash/public_html"
       - name: Verify
         run: |
           sleep 3
