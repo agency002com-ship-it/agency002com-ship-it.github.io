@@ -3,7 +3,7 @@
 $ErrorActionPreference = 'Stop'
 $Pages = 'https://agency002com-ship-it.github.io'
 $Drop = 'https://raw.githubusercontent.com/agency002com-ship-it/agency002com-ship-it.github.io/main/ftp-drop'
-$NewSrc = 'src="https://agency002com-ship-it.github.io/ftp-drop/nav-night.js?v=20260907r"'
+$NewSrc = 'src="https://agency002com-ship-it.github.io/ftp-drop/nav-night.js?v=20260907s"'
 
 $ftpDir = Join-Path $env:USERPROFILE 'GrokWork\ftp'
 foreach ($name in @('config.cpanel.local.ps1', 'config.local.ps1', 'whm-api.ps1')) {
@@ -25,8 +25,8 @@ if (-not $WhmUserName) { $WhmUserName = $WhmUser }
 $HostName = $env:CPANEL_HOST
 if (-not $HostName) { $HostName = $CpanelHost }
 if (-not $HostName) { $HostName = $WhmHost }
-if (-not $HostName) { $HostName = 'agency002.com' }
-$HostNames = @($HostName, 'agency002.com', 'lemonpie.codes') |
+if (-not $HostName) { $HostName = '192.250.229.162' }
+$HostNames = @($HostName, '192.250.229.162', 'agency002.com', 'lemonpie.codes') |
   Where-Object { $_ } | Select-Object -Unique
 
 if (-not $Token) {

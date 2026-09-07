@@ -1,5 +1,5 @@
 # Tiny Fileman: overwrite grey /assets/nav.js on 120.cash and indexed catalogs.
-# ping 20260907r: first-level ftp-drop file so put-120cash can match after path-filter skip emails.
+# ping 20260907s: Fileman host defaults to WHM 192.250.229.162.
 # Pay €120 → cash.keychain.gr. cash_120 brief → tonight KV.
 # Does not rewrite other keychain plans. Does not send mail.
 $ErrorActionPreference = 'Stop'
@@ -14,7 +14,7 @@ foreach ($name in @('config.cpanel.local.ps1', 'config.local.ps1', 'whm-api.ps1'
 $HostName = $env:CPANEL_HOST
 if (-not $HostName) { $HostName = $CpanelHost }
 if (-not $HostName) { $HostName = $WhmHost }
-if (-not $HostName) { $HostName = 'agency002.com' }
+if (-not $HostName) { $HostName = '192.250.229.162' }
 $User = $env:CPANEL_USER
 if (-not $User) { $User = $CpanelUser }
 if (-not $User) { $User = 'agency00' }
@@ -26,7 +26,7 @@ if (-not $Dir) { $Dir = $CpanelDir }
 if (-not $Dir) { $Dir = "/home/$User/120.cash" }
 $WhmUserName = $env:WHM_USER
 if (-not $WhmUserName) { $WhmUserName = $WhmUser }
-$HostNames = @($HostName, 'agency002.com', 'lemonpie.codes') |
+$HostNames = @($HostName, '192.250.229.162', 'agency002.com', 'lemonpie.codes') |
   Where-Object { $_ } | Select-Object -Unique
 
 if (-not $Token) {
