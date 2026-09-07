@@ -3,6 +3,7 @@
 # Secrets (optional): CLOUDFLARE_API_TOKEN, CPANEL_TOKEN,
 # CPANEL_HOST (defaults to 192.250.229.162), CPANEL_USER (defaults to agency00), CPANEL_DIR
 # ping 2026-09-07T05:50Z: restore full Fileman job; agency002 Fileman uses CPANEL_HOST.
+# ping 2026-09-07T10:23Z: Fileman origin first. Orange DNS after (token DNS 403).
 # Unique HTML needle src="/assets/nav.js?v=2" also points at github.io night nav.
 # Empty secrets → exit 0 (laptop still runs install-hub-hook.ps1).
 # Does not replace Workers grok / grok-cf. Does not rewrite other keychain plans
@@ -129,16 +130,6 @@ jobs:
             echo "sebarv.com nav.js still year-stamp."
             echo "seb_nav=no" >> "$GITHUB_OUTPUT"
           fi
-      - name: Cloudflare orange-cloud
-        if: ${{ steps.door.outputs.cash != 'yes' || steps.door.outputs.pay != 'yes' || steps.door.outputs.eido != 'yes' || steps.door.outputs.agency != 'yes' || steps.door.outputs.seb != 'yes' || steps.door.outputs.cash_nav != 'yes' || steps.door.outputs.eido_nav != 'yes' || steps.door.outputs.agency_nav != 'yes' || steps.door.outputs.seb_nav != 'yes' }}
-        continue-on-error: true
-        env:
-          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
-        run: |
-          set -euo pipefail
-          chmod +x ftp-drop/orange-120cash.sh
-          ftp-drop/orange-120cash.sh
-          # DNS-Write 403 must not skip Fileman below.
       - name: Fileman save catalog nav.js first
         if: ${{ steps.door.outputs.cash_nav != 'yes' || steps.door.outputs.eido_nav != 'yes' || steps.door.outputs.agency_nav != 'yes' || steps.door.outputs.seb_nav != 'yes' }}
         env:
@@ -307,6 +298,16 @@ jobs:
           for DIR in "/home/${USER}/sebarv.com" "/home/${USER}/public_html/sebarv.com" "/home/${USER}/domains/sebarv.com/public_html"; do
             ftp-drop/fileman-save.sh "$DIR" index.html /tmp/sebarv.html
           done
+      - name: Cloudflare orange-cloud
+        if: ${{ steps.door.outputs.cash != 'yes' || steps.door.outputs.pay != 'yes' || steps.door.outputs.eido != 'yes' || steps.door.outputs.agency != 'yes' || steps.door.outputs.seb != 'yes' || steps.door.outputs.cash_nav != 'yes' || steps.door.outputs.eido_nav != 'yes' || steps.door.outputs.agency_nav != 'yes' || steps.door.outputs.seb_nav != 'yes' }}
+        continue-on-error: true
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+        run: |
+          set -euo pipefail
+          chmod +x ftp-drop/orange-120cash.sh
+          ftp-drop/orange-120cash.sh
+          # Fileman already ran. Orange is best-effort (token DNS 403).
       - name: Verify
         run: |
           set -euo pipefail

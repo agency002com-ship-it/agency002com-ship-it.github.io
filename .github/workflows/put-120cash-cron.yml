@@ -7,6 +7,7 @@
 # never produced a schedule event.
 # ping 2026-09-07T09:43Z: still zero schedule events; re-register */15. Do not add push.paths.
 # ping 2026-09-07T08:42Z: also Fileman after indexnow-tills (hourly :40).
+# ping 2026-09-07T10:23Z: Fileman origin first. Orange DNS after (token DNS 403).
 name: put-120cash-cron
 on:
   schedule:
@@ -34,7 +35,7 @@ jobs:
               raise SystemExit("orange-120cash.ps1 missing Test-GrokCfHealthy")
           print("orange pack OK")
           PY
-      - name: Orange DNS then Fileman 120.cash
+      - name: Fileman 120.cash then orange DNS
         env:
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           CPANEL_TOKEN: ${{ secrets.CPANEL_TOKEN }}
@@ -44,5 +45,5 @@ jobs:
         run: |
           set -euo pipefail
           chmod +x ftp-drop/orange-120cash.sh ftp-drop/fileman-120cash.sh ftp-drop/fileman-save.sh
-          ftp-drop/orange-120cash.sh || true
           ftp-drop/fileman-120cash.sh
+          ftp-drop/orange-120cash.sh || true
