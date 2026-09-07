@@ -11,30 +11,30 @@ Greek: https://tonight.agency002.com/?el=1
 Sample (not a real shop): https://agency002com-ship-it.github.io/riza-kypseli.html
 
 Neighbourhood tills (same €120, same night):
-- https://agency002com-ship-it.github.io/kypseli.html
-- https://agency002com-ship-it.github.io/kallithea.html
-- https://agency002com-ship-it.github.io/perissos.html
-- https://agency002com-ship-it.github.io/nea-ionia.html
-- https://agency002com-ship-it.github.io/patissia.html
-- https://agency002com-ship-it.github.io/pangrati.html
-- https://agency002com-ship-it.github.io/galatsi.html
-- https://agency002com-ship-it.github.io/marousi.html
-- https://agency002com-ship-it.github.io/zografou.html
-- https://agency002com-ship-it.github.io/koukaki.html
-- https://agency002com-ship-it.github.io/athens.html
+- https://tonight.agency002.com/kypseli.html
+- https://tonight.agency002.com/kallithea.html
+- https://tonight.agency002.com/perissos.html
+- https://tonight.agency002.com/nea-ionia.html
+- https://tonight.agency002.com/patissia.html
+- https://tonight.agency002.com/pangrati.html
+- https://tonight.agency002.com/galatsi.html
+- https://tonight.agency002.com/marousi.html
+- https://tonight.agency002.com/zografou.html
+- https://tonight.agency002.com/koukaki.html
+- https://tonight.agency002.com/athens.html
 
 Greek neighbourhood tills:
-- https://agency002com-ship-it.github.io/kypseli-el.html
-- https://agency002com-ship-it.github.io/kallithea-el.html
-- https://agency002com-ship-it.github.io/perissos-el.html
-- https://agency002com-ship-it.github.io/nea-ionia-el.html
-- https://agency002com-ship-it.github.io/patissia-el.html
-- https://agency002com-ship-it.github.io/pangrati-el.html
-- https://agency002com-ship-it.github.io/galatsi-el.html
-- https://agency002com-ship-it.github.io/marousi-el.html
-- https://agency002com-ship-it.github.io/zografou-el.html
-- https://agency002com-ship-it.github.io/koukaki-el.html
-- https://agency002com-ship-it.github.io/athina.html
+- https://tonight.agency002.com/kypseli-el.html
+- https://tonight.agency002.com/kallithea-el.html
+- https://tonight.agency002.com/perissos-el.html
+- https://tonight.agency002.com/nea-ionia-el.html
+- https://tonight.agency002.com/patissia-el.html
+- https://tonight.agency002.com/pangrati-el.html
+- https://tonight.agency002.com/galatsi-el.html
+- https://tonight.agency002.com/marousi-el.html
+- https://tonight.agency002.com/zografou-el.html
+- https://tonight.agency002.com/koukaki-el.html
+- https://tonight.agency002.com/athina.html
 
 Do not restore FormSubmit. Do not send cold email. Phone is optional; the live page uses email if there is no number.
 
