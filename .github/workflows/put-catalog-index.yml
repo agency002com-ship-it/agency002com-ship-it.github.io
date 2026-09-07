@@ -1,0 +1,61 @@
+# Fileman catalog index.html without Cloudflare orange-cloud.
+# put-120cash.yml can fail on DNS-Write 403 and skip these steps; this job
+# still writes if CPANEL_TOKEN is set. Empty secret → exit 0.
+# Does not replace grok / grok-cf. Presence / Printful / page_100 stay.
+name: put-catalog-index
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "25 * * * *"
+  push:
+    branches: ["main"]
+    paths:
+      - "ftp-drop/patch-agency.py"
+      - "ftp-drop/patch-eidotevil.py"
+      - "ftp-drop/patch-sebarv.py"
+      - "ftp-drop/write-catalog-index.ps1"
+      - ".github/workflows/put-catalog-index.yml"
+jobs:
+  put:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Fileman catalog index.html
+        env:
+          CPANEL_HOST: ${{ secrets.CPANEL_HOST }}
+          CPANEL_USER: ${{ secrets.CPANEL_USER }}
+          CPANEL_TOKEN: ${{ secrets.CPANEL_TOKEN }}
+        run: |
+          set -euo pipefail
+          if [ -z "${CPANEL_TOKEN:-}" ]; then
+            echo "No CPANEL_TOKEN secret. Skip."
+            exit 0
+          fi
+          chmod +x ftp-drop/fileman-save.sh
+          USER="${CPANEL_USER:-agency00}"
+          UA='Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36'
+          patch_one() {
+            local host="$1" script="$2"
+            shift 2
+            local html
+            html="$(curl -fsSL -A "$UA" "https://${host}/" || true)"
+            if echo "$html" | grep -Fq 'tonight.agency002.com'; then
+              echo "${host} already points at the night till."
+              return 0
+            fi
+            if ! printf '%s' "$html" | python3 "ftp-drop/${script}" > "/tmp/${host}.html"; then
+              echo "${host} needles not unique. Skip."
+              return 0
+            fi
+            local dir
+            for dir in "$@"; do
+              ftp-drop.fileman-save.sh "$dir" index.html "/tmp/${host}.html" || true
+            done
+          }
+          patch_one agency002.com patch-agency.py \
+            "/home/${USER}/public_html" "/home/${USER}/agency002.com" "/home/${USER}/public_html/agency002.com"
+          patch_one eidotevil.com patch-eidotevil.py \
+            "/home/${USER}/eidotevil.com" "/home/${USER}/public_html/eidotevil.com" "/home/${USER}/domains/eidotevil.com/public_html"
+          patch_one sebarv.com patch-sebarv.py \
+            "/home/${USER}/sebarv.com" "/home/${USER}/public_html/sebarv.com" "/home/${USER}/domains/sebarv.com/public_html"
+          exit 0
