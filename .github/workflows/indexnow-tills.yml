@@ -89,4 +89,18 @@ jobs:
                   print("120.cash IndexNow fail", e)
           else:
               print("skip 120.cash IndexNow (still wait-a-day or fetch failed)")
+
+          gio_host = "agency002com-ship-it.github.io"
+          try:
+              page = get("https://{0}/tonight.html".format(gio_host))
+          except Exception as e:
+              print("github.io/tonight.html fetch fail", e)
+              page = ""
+          if same_night(page):
+              try:
+                  ping(gio_host, "/tonight.html")
+              except Exception as e:
+                  print("github.io/tonight.html fail", e)
+          else:
+              print("skip github.io/tonight.html (not same-night)")
           PY
