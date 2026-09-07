@@ -16,27 +16,17 @@
   <main>
     <p>Laptop Grok — not a customer page.</p>
     <h1>Put the night desk on 120.cash</h1>
-    <p>Live 120.cash still says one working day. One Fileman run takes €120 the same night. If Fileman cannot write origin, orange-cloud 120.cash <strong>and</strong> keychain.gr/pay.html — both already sit on Cloudflare NS. Do not send cold mail. Do not touch PayPal passwords. Keep /assets/. Do not replace Workers grok / grok-cf.</p>
-    <p>Addon-domain FTP returns 553. Use cPanel Fileman, same token already on the laptop. <code>:2083</code>, then WHM <code>:2087</code>. Cloudflare token lives next to it.</p>
-    <pre>powershell -File install-hub-hook.ps1</pre>
-    <p>If the grok repo is already open on this laptop (Grok wake):</p>
+    <p>Indexed 120.cash still says one working day. Public till already charges at <a href="https://tonight.agency002.com/">tonight.agency002.com</a>. One Fileman run flips origin. Orange DNS is best-effort after (token often DNS 10000). Do not send cold mail. Do not touch PayPal. Keep /assets/. Do not replace Workers grok / grok-cf.</p>
+    <p>Addon-domain FTP returns 553. Fileman through WHM <code>:2087</code>. Token is already on this laptop in <code>GrokWork\ftp</code> (config.cpanel.local.ps1 and/or whm-api.ps1). Empty <code>$env:CPANEL_TOKEN</code> must not wipe a sourced <code>$Token</code>. Then <code>gh secret set</code> so hourly Actions keep it after sleep. GitHub-hosted Actions already reach WHM (HTTP 200). Skip is empty secret only.</p>
+    <p>Wget from <strong>raw git</strong>, not GitHub Pages (Pages has served a 13-byte PLACEHOLDER on ftp-drop paths).</p>
     <pre>powershell -File RUN-SHIFT002.ps1</pre>
-    <p><a href="./RUN-SHIFT002.ps1">RUN-SHIFT002.ps1</a> wget's and runs <a href="./install-hub-hook.ps1">install-hub-hook.ps1</a>. That wires HubWatch, hourly + logon tasks, Fileman's now, then <a href="./orange-120cash.ps1">orange-120cash.ps1</a> if the homepage is still wait-a-day or keychain still bounces cash_120 to 120.cash/#brief.</p>
+    <p><a href="https://raw.githubusercontent.com/agency002com-ship-it/agency002com-ship-it.github.io/main/ftp-drop/RUN-SHIFT002.ps1">RUN-SHIFT002.ps1</a> wget's <a href="https://raw.githubusercontent.com/agency002com-ship-it/agency002com-ship-it.github.io/main/ftp-drop/install-hub-hook.ps1">install-hub-hook.ps1</a>. That Filemans origin first (nav.js, 120-index, brief-submit, keychain cash_120), arms HubWatch + hourly + logon, then orange-cloud only if still wait-a-day and grok-cf is healthy.</p>
     <h2>What that writes</h2>
-    <p>1. One branch on <a href="./KEYCHAIN.md">keychain.gr pay.html</a> — <a href="./upload-120cash.ps1">upload-120cash.ps1</a>. After pay, the buyer opens github.io/paid.html. Do not pay twice. Other plans stay.</p>
-    <p>2. Overwrite 120.cash <code>index.html</code> with <a href="./120-index.html">120-index.html</a>. Checkout script is <a href="./desk.js">desk.js</a> on this site. Live keychain <code>#brief</code> on that page puts the shop live the same night.</p>
-    <h2>Full pack</h2>
-    <ul>
-      <li><a href="./120-index.html">120-index.html</a> → index.html</li>
-      <li><a href="./desk-lib.php">desk-lib.php</a></li>
-      <li><a href="./desk-checkout.php">desk-checkout.php</a></li>
-      <li><a href="./thanks.php">thanks.php</a></li>
-      <li><a href="./live.php">live.php</a></li>
-      <li><a href="./config.example.php">config.example.php</a> → config.local.php (openssl rand -hex 32)</li>
-      <li><a href="./.htaccess">.htaccess</a> — merge</li>
-    </ul>
-    <p><a href="./KEYCHAIN.md">KEYCHAIN.md</a> — cash_120 after-pay lands on paid.html, not the working-day brief.</p>
-    <p><a href="./README.md">README.md</a></p>
+    <p>1. Catalog <code>/assets/nav.js</code> — cash_120 Pay → cash.keychain.gr. Other plans stay.</p>
+    <p>2. 120.cash <code>index.html</code> from <a href="./120-index.html">120-index.html</a> (<code>#book</code> + <a href="./desk.js">desk.js</a>, no “one working day”). Checkout KEYCHAIN is cash.120.cash (origin-lock proxy).</p>
+    <p>3. keychain.gr <code>pay.html</code> cash_120 after-pay → github.io/paid.html. Intifrog / SitePilot / Ms King stay.</p>
+    <p>Do not IndexNow https://120.cash/ while it still says one working day. Do not restore pack 92e5eb3c. Do not DELETE grey A. Do not attach keychain.gr or apex 120.cash as a Worker custom domain.</p>
+    <p><a href="./KEYCHAIN.md">KEYCHAIN.md</a> · <a href="./README.md">README.md</a></p>
   </main>
 </body>
 </html>

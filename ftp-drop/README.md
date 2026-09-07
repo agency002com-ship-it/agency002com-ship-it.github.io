@@ -2,21 +2,24 @@
 
 Do not send cold mail. Do not touch PayPal passwords. Do not restore FormSubmit.
 
-Live 120.cash still says one working day and posts unpaid briefs.
-The overnight door already works at https://agency002com-ship-it.github.io
-This drop is the same product on the indexed domain, same till.
+Live 120.cash still says one working day. The overnight door already
+charges at https://tonight.agency002.com/ and
+https://agency002com-ship-it.github.io
+This drop puts the same product on the indexed domain.
 
 Addon-domain **FTP returns 553**. Do not fight lftp. Use cPanel Fileman
-(same path as `GrokWork\ftp\`). If Fileman cannot write the homepage, orange-cloud
-it: `orange-120cash.ps1` uses `config.cloudflare.local.ps1` and does **not**
-replace the hello-world `grok` / `grok-cf` workers. Same script orange-clouds
-`keychain.gr/pay.html` (also on Cloudflare NS) so `cash_120` returns to paid.html
-without waiting on origin Fileman.
+(`GrokWork\ftp\config.cpanel.local.ps1` and/or `whm-api.ps1`). Empty
+`$env:CPANEL_TOKEN` must not wipe a sourced `$Token`. Then `gh secret set`
+so GitHub-hosted Actions keep Fileman after sleep. They already reach WHM
+`:2087` (HTTP 200). Skip is empty secret only.
 
-One run wires HubWatch, hourly + logon tasks, Fileman, then Cloudflare:
+Orange DNS is **after** Fileman, best-effort. The grok-cf Builds / laptop
+`cfat_` token often DNS PATCH 10000. Do not replace Workers `grok` / `grok-cf`.
+
+One command (wget **raw git**, not Pages):
 
 ```
-powershell -File install-hub-hook.ps1
+powershell -File RUN-SHIFT002.ps1
 ```
 
 https://raw.githubusercontent.com/agency002com-ship-it/agency002com-ship-it.github.io/main/ftp-drop/install-hub-hook.ps1
@@ -27,10 +30,12 @@ That:
 2. Registers hourly `Shift002NightDoor` and logon `Shift002NightDoorLogon`.
 3. Drops `Desktop\PUT-NIGHT-DOOR.bat`, `Desktop\RUN-SHIFT002.ps1`, and a Startup copy. Copies scripts next to
    the cPanel token. Writes `GrokModes\DO-TONIGHT.txt`.
-4. Orange-clouds DNS first so existing grok-cf routes on `120.cash/*` and
-   `keychain.gr/pay.html*` start receiving traffic. Fallback Workers only if
-   live HTML is still wait-a-day.
-5. Runs `upload-120cash.ps1` — **WHM `:2087` passthrough** if `:2083` fails.
+4. Filemans origin first (WHM `:2087`): catalog nav.js, 120-index.html, brief-submit.php, keychain cash_120.
+5. Orange-clouds DNS only if still wait-a-day and `Test-GrokCfHealthy`.
+
+Do not IndexNow `https://120.cash/` while it still says one working day.
+Do not restore pack 92e5eb3c. Keep Intifrog / SitePilot / Ms King.
+
 
 `upload-120cash.ps1` (nav.js first, then 120.cash index, then keychain after-pay):
 
