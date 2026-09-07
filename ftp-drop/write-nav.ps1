@@ -2,7 +2,6 @@
 # Pay €120 → cash.keychain.gr. cash_120 brief → tonight KV.
 # Does not rewrite other keychain plans. Does not send mail.
 $ErrorActionPreference = 'Stop'
-$Pages = 'https://agency002com-ship-it.github.io'
 $Drop = 'https://raw.githubusercontent.com/agency002com-ship-it/agency002com-ship-it.github.io/main/ftp-drop'
 
 $ftpDir = Join-Path $env:USERPROFILE 'GrokWork\ftp'
@@ -50,7 +49,8 @@ $localNav = Join-Path $here 'nav-night.js'
 if (Test-Path $localNav) {
   Copy-Item $localNav $navTmp -Force
 } else {
-  Invoke-WebRequest -Uri "$Pages/ftp-drop/nav-night.js" -OutFile $navTmp -UseBasicParsing
+  # Raw git, not Pages: github.io has served a 13-byte PLACEHOLDER for this path.
+  Invoke-WebRequest -Uri "$Drop/nav-night.js" -OutFile $navTmp -UseBasicParsing
 }
 $navJs = [System.IO.File]::ReadAllText($navTmp)
 
