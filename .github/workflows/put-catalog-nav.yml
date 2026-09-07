@@ -1,5 +1,6 @@
 # Hourly: overwrite grey catalog /assets/nav.js (cash_120 only).
 # Empty secrets → exit 0. Does not replace grok / grok-cf.
+# ping 2026-09-07T17:00Z: 17:00 laptop window — Fileman now if CPANEL_TOKEN or WHM aliases were set after 16:26 skip.
 # ping 2026-09-07T16:14Z: late 16:00–16:20 window — Fileman now if CPANEL_TOKEN was set after 16:12 skip.
 # ping 2026-09-07T16:12Z: overnight door — Fileman now if CPANEL_TOKEN appeared after 16:04 skip.
 # ping 2026-09-07T16:02Z: 16:00–16:20 laptop window — Fileman now if CPANEL_TOKEN was set after 15:28 skip.
@@ -57,10 +58,15 @@ jobs:
           CPANEL_HOST: ${{ secrets.CPANEL_HOST }}
           CPANEL_USER: ${{ secrets.CPANEL_USER }}
           CPANEL_TOKEN: ${{ secrets.CPANEL_TOKEN }}
+          CPANEL_API_TOKEN: ${{ secrets.CPANEL_API_TOKEN }}
+          WHM_API_TOKEN: ${{ secrets.WHM_API_TOKEN }}
+          WHM_TOKEN: ${{ secrets.WHM_TOKEN }}
           CPANEL_DIR: ${{ secrets.CPANEL_DIR }}
         run: |
           set -euo pipefail
           chmod +x ftp-drop/fileman-save.sh
+          CPANEL_TOKEN="${CPANEL_TOKEN:-${CPANEL_API_TOKEN:-${WHM_API_TOKEN:-${WHM_TOKEN:-}}}}"
+          export CPANEL_TOKEN
           if [ -z "${CPANEL_TOKEN:-}" ]; then
             echo "No CPANEL_TOKEN. Skip. Laptop RUN-SHIFT002 still writes nav.js."
             exit 0
@@ -94,10 +100,15 @@ jobs:
           CPANEL_HOST: ${{ secrets.CPANEL_HOST }}
           CPANEL_USER: ${{ secrets.CPANEL_USER }}
           CPANEL_TOKEN: ${{ secrets.CPANEL_TOKEN }}
+          CPANEL_API_TOKEN: ${{ secrets.CPANEL_API_TOKEN }}
+          WHM_API_TOKEN: ${{ secrets.WHM_API_TOKEN }}
+          WHM_TOKEN: ${{ secrets.WHM_TOKEN }}
           CPANEL_DIR: ${{ secrets.CPANEL_DIR }}
         run: |
           set -euo pipefail
           chmod +x ftp-drop/fileman-save.sh
+          CPANEL_TOKEN="${CPANEL_TOKEN:-${CPANEL_API_TOKEN:-${WHM_API_TOKEN:-${WHM_TOKEN:-}}}}"
+          export CPANEL_TOKEN
           if [ -z "${CPANEL_TOKEN:-}" ]; then
             echo "No CPANEL_TOKEN. Skip nav src."
             exit 0
