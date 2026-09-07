@@ -2,7 +2,7 @@
 # and indexed catalog €120 cards (eidotevil / agency002 / sebarv) to tonight.agency002.com/#book.
 # Secrets (optional): CLOUDFLARE_API_TOKEN, CPANEL_TOKEN,
 # CPANEL_HOST (defaults to 192.250.229.162), CPANEL_USER (defaults to agency00), CPANEL_DIR
-# ping 2026-09-07T02:58Z: ftp-drop/* so first-level Fileman files run a job (not empty skip email). Catalog nav.js still first when token exists.
+# ping 2026-09-07T04:30Z: Fileman also /home/agency00/domains/120.cash/public_html (live addon docroot).
 # Unique HTML needle src="/assets/nav.js?v=2" also points at github.io night nav.
 # Empty secrets → exit 0 (laptop still runs install-hub-hook.ps1).
 # Does not replace Workers grok / grok-cf. Does not rewrite other keychain plans
@@ -133,6 +133,7 @@ jobs:
           for ASSETS in \
             "${DIR}/assets" \
             "/home/${USER}/public_html/120.cash/assets" \
+            "/home/${USER}/domains/120.cash/public_html/assets" \
             "/home/${USER}/eidotevil.com/assets" \
             "/home/${USER}/public_html/eidotevil.com/assets" \
             "/home/${USER}/domains/eidotevil.com/public_html/assets" \
@@ -181,7 +182,7 @@ jobs:
           patch_nav https://sebarv.com/ 'pay.html?plan=sitepilot' \
             "/home/${USER}/sebarv.com" "/home/${USER}/public_html/sebarv.com" "/home/${USER}/domains/sebarv.com/public_html"
           patch_nav https://120.cash/ cash_120 \
-            "${DIR}" "/home/${USER}/public_html/120.cash"
+            "${DIR}" "/home/${USER}/public_html/120.cash" "/home/${USER}/domains/120.cash/public_html"
       - name: Fileman save 120.cash nav.js then index.html
         if: steps.door.outputs.cash != 'yes'
         env:
@@ -191,30 +192,8 @@ jobs:
           CPANEL_DIR: ${{ secrets.CPANEL_DIR }}
         run: |
           set -euo pipefail
-          chmod +x ftp-drop/fileman-save.sh
-          if [ -z "${CPANEL_TOKEN:-}" ]; then
-            echo "No CPANEL_TOKEN secret. Skip Fileman."
-            exit 0
-          fi
-          NAV_BYTES="$(wc -c < ftp-drop/nav-night.js | tr -d ' ')"
-          if [ "${NAV_BYTES:-0}" -lt 500 ] || ! grep -Fq 'cash.keychain.gr' ftp-drop/nav-night.js; then
-            echo "nav-night.js is not the night rewrite (bytes=${NAV_BYTES}). Refusing to overwrite 120.cash /assets/nav.js with a year stamp."
-            exit 0
-          fi
-          USER="${CPANEL_USER:-agency00}"
-          DIR="${CPANEL_DIR:-/home/${USER}/120.cash}"
-          ftp-drop/fileman-save.sh "${DIR}/assets" nav.js ftp-drop/nav-night.js
-          ftp-drop/fileman-save.sh "/home/${USER}/public_html/120.cash/assets" nav.js ftp-drop/nav-night.js
-          ftp-drop/fileman-save.sh "${DIR}" index.html ftp-drop/120-index.html
-          ftp-drop/fileman-save.sh "/home/${USER}/public_html/120.cash" index.html ftp-drop/120-index.html
-          STAMP="$(date -u +%Y-%m-%dT%H:%M:%SZ)"
-          export STAMP
-          python3 -c 'import os; s=os.environ["STAMP"]; open("/tmp/120-sitemap.xml","w").write("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<urlset xmlns=\"http://www.sitemaps.org/schemas/sitemap/0.9\">\n  <url>\n    <loc>https://120.cash/</loc>\n    <lastmod>"+s+"</lastmod>\n    <changefreq>hourly</changefreq>\n    <priority>1.0</priority>\n  </url>\n</urlset>\n")'
-          printf '%s' '7c2a9f1e4b8d0c3a5e6f7a8b9c0d1e2f' > /tmp/120-indexnow.txt
-          ftp-drop/fileman-save.sh "${DIR}" sitemap.xml /tmp/120-sitemap.xml
-          ftp-drop/fileman-save.sh "/home/${USER}/public_html/120.cash" sitemap.xml /tmp/120-sitemap.xml
-          ftp-drop/fileman-save.sh "${DIR}" 7c2a9f1e4b8d0c3a5e6f7a8b9c0d1e2f.txt /tmp/120-indexnow.txt
-          ftp-drop/fileman-save.sh "/home/${USER}/public_html/120.cash" 7c2a9f1e4b8d0c3a5e6f7a8b9c0d1e2f.txt /tmp/120-indexnow.txt
+          chmod +x ftp-drop/fileman-120cash.sh
+          ftp-drop/fileman-120cash.sh
       - name: Fileman patch keychain cash_120
         if: steps.door.outputs.pay != 'yes'
         env:
