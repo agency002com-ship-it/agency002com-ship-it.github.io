@@ -5,12 +5,18 @@
     <link>https://tonight.agency002.com/</link>
     <description>Pay €120. The local page is live the same night. Not a working day.</description>
     <language>en</language>
-    <lastBuildDate>Mon, 07 Sep 2026 16:48:00 GMT</lastBuildDate>
+    <lastBuildDate>Mon, 07 Sep 2026 17:09:00 GMT</lastBuildDate>
     <item>
       <title>tonight.agency002.com — €120 live page tonight</title>
       <link>https://tonight.agency002.com/</link>
       <guid>https://tonight.agency002.com/</guid>
       <description>The public till. Brief, pay by card or PayPal, live URL on the return.</description>
+    </item>
+    <item>
+      <title>Pay €120 tonight — card or PayPal</title>
+      <link>https://tonight.agency002.com/pay.html?plan=cash_120</link>
+      <guid>https://tonight.agency002.com/pay.html?plan=cash_120</guid>
+      <description>Orange till. Live URL on the return with Stripe session_id.</description>
     </item>
     <item>
       <title>Perissos Greek till</title>
