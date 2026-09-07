@@ -22,7 +22,7 @@ foreach ($name in @('config.cpanel.local.ps1', 'config.local.ps1', 'whm-api.ps1'
 $HostName = $env:CPANEL_HOST
 if (-not $HostName) { $HostName = $CpanelHost }
 if (-not $HostName) { $HostName = $WhmHost }
-if (-not $HostName) { $HostName = 'agency002.com' }
+if (-not $HostName) { $HostName = '192.250.229.162' }
 $User = $env:CPANEL_USER
 if (-not $User) { $User = $CpanelUser }
 if (-not $User) { $User = 'agency00' }
@@ -34,7 +34,7 @@ if (-not $Dir) { $Dir = $CpanelDir }
 if (-not $Dir) { $Dir = "/home/$User/120.cash" }
 $WhmUserName = $env:WHM_USER
 if (-not $WhmUserName) { $WhmUserName = $WhmUser }
-$HostNames = @($HostName, 'agency002.com', 'lemonpie.codes') |
+$HostNames = @($HostName, '192.250.229.162', 'agency002.com', 'lemonpie.codes') |
   Where-Object { $_ } | Select-Object -Unique
 
 if (-not $Token) {
@@ -55,7 +55,8 @@ function Invoke-DropScript([string]$name) {
     return
   }
   $tmp = Join-Path $env:TEMP "shift002-$name"
-  Invoke-WebRequest -Uri "$Drop/$name" -OutFile $tmp -UseBasicParsing
+  $stamp = Get-Date -Format 'yyyyMMddHHmmss'
+  Invoke-WebRequest -Uri "$Drop/${name}?t=$stamp" -OutFile $tmp -UseBasicParsing
   & $tmp
 }
 
