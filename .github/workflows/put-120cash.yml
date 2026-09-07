@@ -41,6 +41,9 @@ jobs:
               raise SystemExit("orange-120cash.ps1 missing grok-cf reclaim")
           if "Test-GrokCfHealthy" not in o:
               raise SystemExit("orange-120cash.ps1 missing grok-cf health check before orange DNS")
+          k = Path("ftp-drop/patch-keychain.py").read_text()
+          if "{CHECKOUT_SESSION_ID}" not in k:
+              raise SystemExit("patch-keychain.py missing {CHECKOUT_SESSION_ID} — after-pay would skip Fileman")
           print("upload-120cash.ps1 + orange-120cash.ps1 parse guard OK")
           PY
       - name: Probe live doors
@@ -56,7 +59,7 @@ jobs:
             echo "cash=no" >> "$GITHUB_OUTPUT"
           fi
           pay="$(curl -fsSL https://keychain.gr/pay.html || true)"
-          if echo "$pay" | grep -q 'github.io/paid.html' && ! echo "$pay" | grep -Fq "a('https://120.cash/#brief'"; then
+          if echo "$pay" | grep -q 'github.io/paid.html' && echo "$pay" | grep -Fq '{CHECKOUT_SESSION_ID}' && ! echo "$pay" | grep -Fq "a('https://120.cash/#brief'"; then
             echo "keychain cash_120 already night bounce."
             echo "pay=yes" >> "$GITHUB_OUTPUT"
           else
@@ -308,7 +311,7 @@ jobs:
             echo "120.cash still wait-a-day. Need CLOUDFLARE_API_TOKEN or CPANEL_TOKEN repo secret, or laptop install-hub-hook.ps1."
           fi
           pay="$(curl -fsSL https://keychain.gr/pay.html || true)"
-          if echo "$pay" | grep -q 'github.io/paid.html' && ! echo "$pay" | grep -Fq "a('https://120.cash/#brief'"; then
+          if echo "$pay" | grep -q 'github.io/paid.html' && echo "$pay" | grep -Fq '{CHECKOUT_SESSION_ID}' && ! echo "$pay" | grep -Fq "a('https://120.cash/#brief'"; then
             echo "keychain cash_120 returns to paid.html"
           else
             echo "keychain cash_120 still bounces to 120.cash/#brief."
