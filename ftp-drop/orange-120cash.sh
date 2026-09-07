@@ -42,17 +42,55 @@ ensure_routes() {
   routes="$(curl -sS "${AUTH[@]}" "https://api.cloudflare.com/client/v4/zones/${zone_id}/workers/routes" || true)"
   local pattern
   for pattern in "$@"; do
-    local have
-    have="$(python3 -c 'import json,sys; d=json.load(sys.stdin); print("yes" if any(r.get("pattern")==sys.argv[1] for r in (d.get("result") or [])) else "no")' "$pattern" <<<"$routes" 2>/dev/null || echo no)"
-    if [ "$have" = "yes" ]; then
-      echo "Route already present: $pattern"
+    local state rid old
+    read -r state rid old <<<"$(python3 -c 'import json,sys
+d=json.loads(sys.stdin.read() or "{}")
+pat, want = sys.argv[1], sys.argv[2]
+for r in d.get("result") or []:
+    if r.get("pattern")==pat:
+        got = r.get("script") or ""
+        if got==want:
+            print("same - -")
+        else:
+            print("other", r.get("id") or "-", got.replace(" ","") or "-")
+        break
+else:
+    print("missing - -")
+' "$pattern" "$script" <<<"$routes" 2>/dev/null || echo "missing - -")"
+    if [ "$state" = "same" ]; then
+      echo "Route already present: $pattern -> $script"
+      continue
+    fi
+    if [ "$state" = "other" ]; then
+      if [ "$script" = "grok-cf" ] && [ -n "$rid" ] && [ "$rid" != "-" ]; then
+        curl -sS -X PUT "${AUTH[@]}" "https://api.cloudflare.com/client/v4/zones/${zone_id}/workers/routes/${rid}" \
+          --data "{\"pattern\":\"${pattern}\",\"script\":\"grok-cf\"}" >/dev/null \
+          && echo "Reclaimed route $pattern -> grok-cf (was $old)" \
+          || echo "WARN reclaim $pattern failed"
+      else
+        echo "Skip attaching $script to $pattern (already $old; will not steal grok-cf)"
+      fi
       continue
     fi
     curl -sS -X POST "${AUTH[@]}" "https://api.cloudflare.com/client/v4/zones/${zone_id}/workers/routes" \
       --data "{\"pattern\":\"${pattern}\",\"script\":\"${script}\"}" >/dev/null \
-      && echo "Added route $pattern" \
+      && echo "Added route $pattern -> $script" \
       || echo "WARN route $pattern failed"
   done
+}
+
+route_script() {
+  local zone_id="$1" pattern="$2"
+  local routes
+  routes="$(curl -sS "${AUTH[@]}" "https://api.cloudflare.com/client/v4/zones/${zone_id}/workers/routes" || true)"
+  python3 -c 'import json,sys
+d=json.loads(sys.stdin.read() or "{}")
+pat=sys.argv[1]
+for r in d.get("result") or []:
+    if r.get("pattern")==pat:
+        print(r.get("script") or "")
+        break
+' "$pattern" <<<"$routes" 2>/dev/null || true
 }
 
 proxy_names() {
@@ -191,22 +229,38 @@ sleep 5
 if cash_night; then
   echo "https://120.cash/ is brief then pay (grok-cf / orange DNS)."
 else
-  echo "120.cash still wait-a-day after DNS. Fallback Worker shift002-120cash (origin IP, not grok-cf)."
-  if [ -n "${zone_id:-}" ] && [ -n "${account_id:-}" ]; then
-    upload_worker "$account_id" "shift002-120cash" "$here/orange-worker.js" || echo "WARN 120.cash worker upload failed"
-    ensure_routes "$zone_id" "shift002-120cash" '120.cash/*' 'www.120.cash/*' || true
-    proxy_names "$zone_id" "120.cash" "www.120.cash" || true
+  cash_owner="$(route_script "${zone_id:-}" "120.cash/*")"
+  if [ "$cash_owner" = "grok-cf" ]; then
+    echo "grok-cf already owns 120.cash/*. Remaining unlock is orange DNS. Not attaching shift002-120cash."
+    if [ -n "${zone_id:-}" ]; then
+      proxy_names "$zone_id" "120.cash" "www.120.cash" || true
+    fi
+  else
+    echo "120.cash still wait-a-day after DNS. Fallback Worker shift002-120cash (origin IP, not grok-cf)."
+    if [ -n "${zone_id:-}" ] && [ -n "${account_id:-}" ]; then
+      upload_worker "$account_id" "shift002-120cash" "$here/orange-worker.js" || echo "WARN 120.cash worker upload failed"
+      ensure_routes "$zone_id" "shift002-120cash" '120.cash/*' 'www.120.cash/*' || true
+      proxy_names "$zone_id" "120.cash" "www.120.cash" || true
+    fi
   fi
 fi
 
 if pay_night; then
   echo "keychain cash_120 already returns to paid.html."
 else
-  echo "keychain still old bounce after DNS. Fallback Worker shift002-keychain."
-  if [ -n "${kzone:-}" ] && [ -n "${kaccount:-}" ]; then
-    upload_worker "$kaccount" "shift002-keychain" "$here/orange-keychain-worker.js" || echo "WARN keychain worker upload failed"
-    ensure_routes "$kzone" "shift002-keychain" 'keychain.gr/pay.html*' 'www.keychain.gr/pay.html*' || true
-    proxy_names "$kzone" "keychain.gr" "www.keychain.gr" || true
+  pay_owner="$(route_script "${kzone:-}" "keychain.gr/pay.html*")"
+  if [ "$pay_owner" = "grok-cf" ]; then
+    echo "grok-cf already owns keychain.gr/pay.html*. Remaining unlock is orange DNS. Not attaching shift002-keychain."
+    if [ -n "${kzone:-}" ]; then
+      proxy_names "$kzone" "keychain.gr" "www.keychain.gr" || true
+    fi
+  else
+    echo "keychain still old bounce after DNS. Fallback Worker shift002-keychain."
+    if [ -n "${kzone:-}" ] && [ -n "${kaccount:-}" ]; then
+      upload_worker "$kaccount" "shift002-keychain" "$here/orange-keychain-worker.js" || echo "WARN keychain worker upload failed"
+      ensure_routes "$kzone" "shift002-keychain" 'keychain.gr/pay.html*' 'www.keychain.gr/pay.html*' || true
+      proxy_names "$kzone" "keychain.gr" "www.keychain.gr" || true
+    fi
   fi
 fi
 

@@ -77,17 +77,33 @@ function Publish-Worker([string]$AccountId, [string]$ScriptName, [string]$JsPath
 
 function Ensure-Routes([string]$ZoneId, [string]$ScriptName, [string[]]$Want) {
   $routes = CfGet "/zones/$ZoneId/workers/routes"
-  $have = @($routes.result | ForEach-Object { $_.pattern })
   foreach ($pattern in $Want) {
-    if ($have -contains $pattern) {
-      Write-Host "Route already present: $pattern"
+    $existing = @($routes.result | Where-Object { $_.pattern -eq $pattern }) | Select-Object -First 1
+    if ($existing) {
+      if ($existing.script -eq $ScriptName) {
+        Write-Host ("Route already present: {0} -> {1}" -f $pattern, $ScriptName)
+        continue
+      }
+      if ($ScriptName -eq 'grok-cf') {
+        try {
+          CfJson 'PUT' "/zones/$ZoneId/workers/routes/$($existing.id)" @{
+            pattern = $pattern
+            script  = 'grok-cf'
+          }
+          Write-Host ("Reclaimed route {0} -> grok-cf (was {1})" -f $pattern, $existing.script)
+        } catch {
+          Write-Host ("WARN reclaim {0}: {1}" -f $pattern, $_.Exception.Message)
+        }
+        continue
+      }
+      Write-Host ("Skip attaching {0} to {1} (already {2}; will not steal grok-cf)" -f $ScriptName, $pattern, $existing.script)
       continue
     }
     try {
       CfJson 'POST' "/zones/$ZoneId/workers/routes" @{ pattern = $pattern; script = $ScriptName }
       Write-Host "Added route $pattern -> $ScriptName"
     } catch {
-      Write-Host ("WARN route ${pattern}: {0}" -f $_.Exception.Message)
+      Write-Host ("WARN route {0}: {1}" -f $pattern, $_.Exception.Message)
     }
   }
 }
@@ -221,23 +237,43 @@ $payOk = Test-PayNight
 if ($cashOk) { Write-Host 'https://120.cash/ is brief then pay (grok-cf / orange DNS).' }
 if ($payOk) { Write-Host 'https://keychain.gr/pay.html cash_120 returns to paid.html.' }
 
-# 2. Fallback workers only if DNS orange did not flip the live HTML.
+# 2. Fallback workers only if grok-cf does not already own the route.
+# Grey DNS with grok-cf attached is not a reason to steal 120.cash/* .
 # orange-worker.js talks to origin IP so /assets/ does not loop.
+function Get-RouteScript([string]$ZoneId, [string]$Pattern) {
+  try {
+    $routes = CfGet "/zones/$ZoneId/workers/routes"
+    $hit = @($routes.result | Where-Object { $_.pattern -eq $Pattern }) | Select-Object -First 1
+    if ($hit) { return [string]$hit.script }
+  } catch { }
+  return ''
+}
+
 if (-not $cashOk -and $cashZone) {
-  Write-Host '120.cash still wait-a-day after DNS. Fallback Worker shift002-120cash (origin IP, not grok-cf).'
-  $js = Get-DropFile 'orange-worker.js'
-  if (Publish-Worker $cashZone.account.id 'shift002-120cash' $js) {
-    Ensure-Routes $cashZone.id 'shift002-120cash' @('120.cash/*', 'www.120.cash/*')
+  $cashOwner = Get-RouteScript $cashZone.id '120.cash/*'
+  if ($cashOwner -eq 'grok-cf') {
+    Write-Host 'grok-cf already owns 120.cash/*. Remaining unlock is orange DNS. Not attaching shift002-120cash.'
+  } else {
+    Write-Host '120.cash still wait-a-day after DNS. Fallback Worker shift002-120cash (origin IP, not grok-cf).'
+    $js = Get-DropFile 'orange-worker.js'
+    if (Publish-Worker $cashZone.account.id 'shift002-120cash' $js) {
+      Ensure-Routes $cashZone.id 'shift002-120cash' @('120.cash/*', 'www.120.cash/*')
+    }
   }
   Proxy-DnsName $cashZone.id '120.cash'
   Proxy-DnsName $cashZone.id 'www.120.cash'
 }
 
 if (-not $payOk -and $keyZone) {
-  Write-Host 'keychain still old cash_120 bounce after DNS. Fallback Worker shift002-keychain.'
-  $kcJs = Get-DropFile 'orange-keychain-worker.js'
-  if (Publish-Worker $keyZone.account.id 'shift002-keychain' $kcJs) {
-    Ensure-Routes $keyZone.id 'shift002-keychain' @('keychain.gr/pay.html*', 'www.keychain.gr/pay.html*')
+  $payOwner = Get-RouteScript $keyZone.id 'keychain.gr/pay.html*'
+  if ($payOwner -eq 'grok-cf') {
+    Write-Host 'grok-cf already owns keychain.gr/pay.html*. Remaining unlock is orange DNS. Not attaching shift002-keychain.'
+  } else {
+    Write-Host 'keychain still old cash_120 bounce after DNS. Fallback Worker shift002-keychain.'
+    $kcJs = Get-DropFile 'orange-keychain-worker.js'
+    if (Publish-Worker $keyZone.account.id 'shift002-keychain' $kcJs) {
+      Ensure-Routes $keyZone.id 'shift002-keychain' @('keychain.gr/pay.html*', 'www.keychain.gr/pay.html*')
+    }
   }
   Proxy-DnsName $keyZone.id 'keychain.gr'
   Proxy-DnsName $keyZone.id 'www.keychain.gr'
@@ -254,4 +290,4 @@ if (Test-AgencyNight) { Write-Host 'https://agency002.com/ cash_120 now opens to
 else { Write-Host 'WARN: agency002.com still sends cash_120 to wait-a-day (need orange DNS or Fileman).' }
 if (Test-SebarvNight) { Write-Host 'https://sebarv.com/ cash_120 now opens tonight.agency002.com.' }
 else { Write-Host 'WARN: sebarv.com still sends cash_120 to wait-a-day (need orange DNS or Fileman).' }
-Write-Host 'Done. Origin /assets/, /api/, and other keychain plans still pass through.'
+Write-Host 'Done. Origin /assets/, /api/, and other keychain plans still pass through.
