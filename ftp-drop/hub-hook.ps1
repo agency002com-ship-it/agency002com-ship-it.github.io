@@ -1,7 +1,7 @@
 # Drop-in for C:\Users\Pasja\Hub\watch.ps1 (HubWatch, every 3 hours).
 # Orange-cloud DNS first (grok-cf already intercepts 120.cash/* and keychain pay.html*).
 # Fileman if still wait-a-day. Orange again as fallback workers.
-# ping 20260907u: cache-bust raw git so HubWatch gets addon-docroot upload-120cash.
+# ping 20260907v: HubWatch also Filemans catalog index.html (tonight till).
 # Silent if the door is already flipped.
 # Does not send mail. Does not touch PayPal. Does not restore FormSubmit.
 
@@ -30,13 +30,14 @@ function Need-Flip {
     ($agency -match [regex]::Escape('href="https://120.cash/"')) -and ($agency -notmatch 'tonight.agency002.com')
   )
   $needSeb = $seb -match [regex]::Escape('href="https://keychain.gr/pay.html?plan=cash_120"')
+  $needCatalog = ($eido -notmatch 'tonight.agency002.com') -or ($agency -notmatch 'tonight.agency002.com') -or ($seb -notmatch 'tonight.agency002.com')
   $needNav = $false
   foreach ($navHost in @('eidotevil.com', 'agency002.com', 'sebarv.com', '120.cash')) {
     $js = ''
     try { $js = (Invoke-WebRequest -Uri ("https://{0}/assets/nav.js" -f $navHost) -UseBasicParsing).Content } catch { }
     if ($js -notmatch 'cash\.keychain\.gr') { $needNav = $true }
   }
-  return ($needCash -or $needPay -or $needEido -or $needAgency -or $needSeb -or $needNav)
+  return ($needCash -or $needPay -or $needEido -or $needAgency -or $needSeb -or $needCatalog -or $needNav)
 }
 
 # Always Fileman 120.cash brief-submit.php (KV publish). Does not touch catalogs.
@@ -46,6 +47,15 @@ try {
   & $b
 } catch {
   Write-Host ("brief-submit.php: {0}" -f $_.Exception.Message)
+}
+
+# Always Fileman catalog index.html (presence/printful stay). Skip if already tonight.
+try {
+  $idx = Join-Path $env:TEMP 'write-catalog-index.ps1'
+  Invoke-WebRequest -Uri "$Drop/write-catalog-index.ps1?t=$Stamp" -OutFile $idx -UseBasicParsing
+  & $idx
+} catch {
+  Write-Host ("catalog index: {0}" -f $_.Exception.Message)
 }
 
 if (-not (Need-Flip)) { exit 0 }
