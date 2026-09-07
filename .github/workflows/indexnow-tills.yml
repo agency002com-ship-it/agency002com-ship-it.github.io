@@ -1,6 +1,7 @@
 # Ping IndexNow for doors that already sell same-night.
 # One host per POST (mixed-host 422). No secrets.
 # Do not submit https://120.cash/ while it still says one working day.
+# ping 2026-09-07T14:32Z: sitemap.xml + feed.xml with neighbourhood tills
 # ping 2026-09-07T09:53Z: grok-cf.eid-ot-evil.workers.dev + remaining orange tills
 # ping 2026-09-07T09:43Z: 09:40 schedule missing (last schedule 07:31); force chain
 # ping 2026-09-07T09:26Z: Marousi + Zografou + Koukaki github.io tills
@@ -142,9 +143,16 @@ jobs:
                   live.append(path)
               else:
                   print("skip github.io{0} (not same-night)".format(path))
-          if live:
+          extras = []
+          for path in ("/sitemap.xml", "/feed.xml"):
               try:
-                  ping(gio_host, live)
+                  get("https://{0}{1}".format(gio_host, path))
+                  extras.append(path)
+              except Exception as e:
+                  print("github.io{0} fetch fail".format(path), e)
+          if live or extras:
+              try:
+                  ping(gio_host, live + extras)
               except Exception as e:
                   print("github.io IndexNow fail", e)
           else:
