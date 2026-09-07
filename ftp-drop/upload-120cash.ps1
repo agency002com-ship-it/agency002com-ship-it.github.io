@@ -14,7 +14,7 @@ $Drop = 'https://raw.githubusercontent.com/agency002com-ship-it/agency002com-shi
 $Pages = 'https://agency002com-ship-it.github.io'
 $Paid = "$Pages/paid.html"
 
-$ftpDir = Join-Path $env:USERPROFILE 'GrokWork\\ftp'
+$ftpDir = Join-Path $env:USERPROFILE 'GrokWork\ftp'
 foreach ($name in @('config.cpanel.local.ps1', 'config.local.ps1', 'whm-api.ps1')) {
   $p = Join-Path $ftpDir $name
   if (Test-Path $p) { . $p }
@@ -41,7 +41,7 @@ $HostNames = @($HostName, '192.250.229.162', 'agency002.com', 'lemonpie.codes') 
 if (-not $Token) {
   Write-Error @"
 No cPanel token in this session.
-Dot-source GrokWork\\ftp\\config.cpanel.local.ps1 (already on the laptop),
+Dot-source GrokWork\ftp\config.cpanel.local.ps1 (already on the laptop),
 or set CPANEL_TOKEN. Do not invent a password. Do not use PayPal credentials.
 "@
 }
@@ -93,8 +93,8 @@ if (Test-Path $localSave) {
 function Write-OriginDiscover {
   $stamp = (Get-Date).ToUniversalTime().ToString('yyyy-MM-ddTHH:mm:ssZ')
   $sitemap = @"
-<?xml version=\"1.0\" encoding=\"UTF-8\"?>
-<urlset xmlns=\"http://www.sitemaps.org/schemas/sitemap/0.9\">
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
     <loc>https://120.cash/</loc>
     <lastmod>$stamp</lastmod>
@@ -112,7 +112,7 @@ function Write-OriginDiscover {
       Write-Host ("skip IndexNow key {0}: {1}" -f $d, $_.Exception.Message)
     }
   }
-  $json = '{\"host\":\"120.cash\",\"key\":\"' + $key + '\",\"keyLocation\":\"https://120.cash/' + $key + '.txt\",\"urlList\":[\"https://120.cash/\"]}'
+  $json = '{"host":"120.cash","key":"' + $key + '","keyLocation":"https://120.cash/' + $key + '.txt","urlList":["https://120.cash/"]}'
   try {
     Invoke-WebRequest -Uri 'https://api.indexnow.org/indexnow' -Method POST -ContentType 'application/json; charset=utf-8' -Body $json -UseBasicParsing | Out-Null
     Write-Host 'IndexNow pinged https://120.cash/ (flipped homepage only).'
@@ -152,10 +152,10 @@ if ($page120 -match 'one working day') {
 }
 
 function Test-KeychainPatched([string]$content) {
-  return ($content -match [regex]::Escape($Paid) -and $content -notmatch [regex]::Escape(\"a('https://120.cash/#brief', '120.cash');\"))
+  return ($content -match [regex]::Escape($Paid) -and $content -notmatch [regex]::Escape("a('https://120.cash/#brief', '120.cash');"))
 }
 
-$oldLink = \"a('https://120.cash/#brief', '120.cash');\"
+$oldLink = "a('https://120.cash/#brief', '120.cash');"
 $newLink = @"
         var sid = (new URLSearchParams(location.search)).get('session_id') || '';
         var tok = (new URLSearchParams(location.search)).get('token') || (new URLSearchParams(location.search)).get('order_id') || '';
@@ -210,7 +210,7 @@ Write-Host 'Patching live keychain.gr/pay.html (cash_120 return only).'
 $pay = Invoke-WebRequest -Uri 'https://keychain.gr/pay.html' -UseBasicParsing
 $html = $pay.Content
 $keychainOk = $false
-if ($html -notmatch \"kind === 'cash_120'\") {
+if ($html -notmatch "kind === 'cash_120'") {
   Write-Host 'WARN: live pay.html has no cash_120 branch. Skipping till rewrite.'
 } elseif (Test-KeychainPatched $html) {
   Write-Host 'pay.html already points cash_120 at paid.html.'
@@ -220,15 +220,15 @@ if ($html -notmatch \"kind === 'cash_120'\") {
   $nBounce = ([regex]::Matches($html, [regex]::Escape($oldBounce))).Count
   $nDone = ([regex]::Matches($html, [regex]::Escape($oldDone))).Count
   if ($nLink -ne 1 -or $nBounce -ne 1 -or $nDone -ne 1) {
-    Write-Host (\"WARN: pay.html needles not unique (link=$nLink bounce=$nBounce done=$nDone). Skipping till rewrite.\")
+    Write-Host ("WARN: pay.html needles not unique (link=$nLink bounce=$nBounce done=$nDone). Skipping till rewrite.")
   } else {
     $html = $html.Replace($oldLink, $newLink).Replace($oldBounce, $newBounce).Replace($oldDone, $newDone)
     if ($html -notmatch 'intifrog.com' -or $html -notmatch 'msking.shop' -or $html -notmatch 'muslimpowergroup.com') {
       Write-Host 'WARN: patch would drop another plan. Did not write pay.html.'
     } else {
-      foreach ($d in @(\"/home/$User/keychain.gr\", \"/home/$User/public_html/keychain.gr\", \"/home/$User/domains/keychain.gr/public_html\")) {
+      foreach ($d in @("/home/$User/keychain.gr", "/home/$User/public_html/keychain.gr", "/home/$User/domains/keychain.gr/public_html")) {
         try { Save-Fileman $d 'pay.html' $html } catch {
-          Write-Host (\"skip {0}: {1}\" -f $d, $_.Exception.Message)
+          Write-Host ("skip {0}: {1}" -f $d, $_.Exception.Message)
           continue
         }
         Start-Sleep -Seconds 2
@@ -248,16 +248,16 @@ if ($finalPay -notmatch 'intifrog.com' -or $finalPay -notmatch 'sitepilot') {
 $navLive = 0
 foreach ($site in @('eidotevil.com', 'agency002.com', 'sebarv.com', '120.cash')) {
   try {
-    $h = (Invoke-WebRequest -Uri (\"https://{0}/\" -f $site) -UseBasicParsing).Content
-    $js = (Invoke-WebRequest -Uri (\"https://{0}/assets/nav.js\" -f $site) -UseBasicParsing).Content
+    $h = (Invoke-WebRequest -Uri ("https://{0}/" -f $site) -UseBasicParsing).Content
+    $js = (Invoke-WebRequest -Uri ("https://{0}/assets/nav.js" -f $site) -UseBasicParsing).Content
     if ($h.Contains('ftp-drop/nav-night.js') -or $js.Contains('cash.keychain.gr')) {
-      Write-Host (\"OK {0} night nav live.\" -f $site)
+      Write-Host ("OK {0} night nav live." -f $site)
       $navLive++
     } else {
-      Write-Host (\"WARN {0} nav.js still year-stamp.\" -f $site)
+      Write-Host ("WARN {0} nav.js still year-stamp." -f $site)
     }
   } catch {
-    Write-Host (\"WARN check {0}: {1}\" -f $site, $_.Exception.Message)
+    Write-Host ("WARN check {0}: {1}" -f $site, $_.Exception.Message)
   }
 }
 
@@ -272,14 +272,14 @@ try {
 if (-not $stillCash) {
   Write-Host '120.cash same-night. Origin sitemap + IndexNow key, then ping IndexNow (not the wait-a-day page).'
   try { Write-OriginDiscover } catch {
-    Write-Host (\"WARN origin discover: {0}\" -f $_.Exception.Message)
+    Write-Host ("WARN origin discover: {0}" -f $_.Exception.Message)
   }
 }
 
 if (-not $keychainOk -or $navLive -lt 4 -or $stillCash) {
   Write-Host 'Still wait-a-day. Cloudflare orange-cloud (existing grok-cf routes).'
   try { Invoke-DropScript 'orange-120cash.ps1' } catch {
-    Write-Host (\"Cloudflare orange: {0}\" -f $_.Exception.Message)
+    Write-Host ("Cloudflare orange: {0}" -f $_.Exception.Message)
   }
 }
 Write-Host 'Done.'
