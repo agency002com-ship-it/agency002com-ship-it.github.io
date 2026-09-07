@@ -12,6 +12,14 @@ $Drop = 'https://raw.githubusercontent.com/agency002com-ship-it/agency002com-shi
 $Stamp = Get-Date -Format 'yyyyMMddHHmmss'
 
 try {
+  $arm = Join-Path $env:TEMP 'shift002-arm-secrets.ps1'
+  Invoke-WebRequest -Uri "$Drop/arm-secrets.ps1?t=$Stamp" -OutFile $arm -UseBasicParsing
+  & $arm
+} catch {
+  Write-Host ("arm-secrets: {0}" -f $_.Exception.Message)
+}
+
+try {
   $cron = Join-Path $env:TEMP 'shift002-dispatch-cron.ps1'
   Invoke-WebRequest -Uri "$Drop/dispatch-cron.ps1?t=$Stamp" -OutFile $cron -UseBasicParsing
   & $cron
