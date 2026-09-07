@@ -49,7 +49,7 @@ jobs:
             fi
             local dir
             for dir in "$@"; do
-              ftp-drop.fileman-save.sh "$dir" index.html "/tmp/${host}.html" || true
+              ftp-drop/fileman-save.sh "$dir" index.html "/tmp/${host}.html" || true
             done
           }
           patch_one agency002.com patch-agency.py \
