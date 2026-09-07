@@ -16,6 +16,8 @@ OLD_HINT = "Form stays on eidotevil.com. We answer within one working day."
 NEW_HINT = "Form stays on eidotevil.com. A €120 page goes live the same night you pay."
 OLD_FETCH = "fetch('/brief-submit.php', {"
 NEW_FETCH = "fetch('https://tonight.agency002.com/brief-submit.php', {"
+NEW_NAV = 'src="https://agency002com-ship-it.github.io/ftp-drop/nav-night.js?v=20260907n"'
+OLD_NAVS = ('src="/assets/nav.js?v=2"', 'src="/assets/nav.js?v=4"')
 
 
 def already_ok(html: str) -> bool:
@@ -28,6 +30,15 @@ def rewrite_fetch(html: str) -> str:
     if html.count(OLD_FETCH) != 1:
         return html
     return html.replace(OLD_FETCH, NEW_FETCH)
+
+
+def rewrite_nav_src(html: str) -> str:
+    if NEW_NAV in html:
+        return html
+    for old in OLD_NAVS:
+        if html.count(old) == 1:
+            return html.replace(old, NEW_NAV, 1)
+    return html
 
 
 def patch(html: str) -> str:
@@ -43,6 +54,7 @@ def patch(html: str) -> str:
             raise SystemExit("cash_120 href not moved; skip")
     out = out.replace(OLD_LINE, NEW_LINE).replace(OLD_HINT, NEW_HINT)
     out = rewrite_fetch(out)
+    out = rewrite_nav_src(out)
     if "pay.html?plan=presence" not in out or "page_100" not in out or "printful" not in out.lower():
         raise SystemExit("patch would drop another product; skip")
     if not already_ok(out):
