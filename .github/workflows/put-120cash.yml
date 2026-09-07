@@ -5,6 +5,7 @@
 # ping 2026-09-07T05:50Z: restore full Fileman job; agency002 Fileman uses CPANEL_HOST.
 # ping 2026-09-07T10:23Z: Fileman origin first. Orange DNS after (token DNS 403).
 # Unique HTML needle src="/assets/nav.js?v=2" also points at github.io night nav.
+# ping 2026-09-07T17:08Z: 17:00 laptop window — Fileman now if CPANEL_TOKEN or WHM aliases were set after 17:04 skip.
 # Empty secrets → exit 0 (laptop still runs install-hub-hook.ps1).
 # Does not replace Workers grok / grok-cf. Does not rewrite other keychain plans
 # or eidotevil presence / page_100 / Printful.
@@ -136,10 +137,15 @@ jobs:
           CPANEL_HOST: ${{ secrets.CPANEL_HOST }}
           CPANEL_USER: ${{ secrets.CPANEL_USER }}
           CPANEL_TOKEN: ${{ secrets.CPANEL_TOKEN }}
+          CPANEL_API_TOKEN: ${{ secrets.CPANEL_API_TOKEN }}
+          WHM_API_TOKEN: ${{ secrets.WHM_API_TOKEN }}
+          WHM_TOKEN: ${{ secrets.WHM_TOKEN }}
           CPANEL_DIR: ${{ secrets.CPANEL_DIR }}
         run: |
           set -euo pipefail
           chmod +x ftp-drop/fileman-save.sh
+          CPANEL_TOKEN="${CPANEL_TOKEN:-${CPANEL_API_TOKEN:-${WHM_API_TOKEN:-${WHM_TOKEN:-}}}}"
+          export CPANEL_TOKEN
           if [ -z "${CPANEL_TOKEN:-}" ]; then
             echo "No CPANEL_TOKEN secret. Skip catalog nav.js Fileman."
             exit 0
@@ -173,10 +179,15 @@ jobs:
           CPANEL_HOST: ${{ secrets.CPANEL_HOST }}
           CPANEL_USER: ${{ secrets.CPANEL_USER }}
           CPANEL_TOKEN: ${{ secrets.CPANEL_TOKEN }}
+          CPANEL_API_TOKEN: ${{ secrets.CPANEL_API_TOKEN }}
+          WHM_API_TOKEN: ${{ secrets.WHM_API_TOKEN }}
+          WHM_TOKEN: ${{ secrets.WHM_TOKEN }}
           CPANEL_DIR: ${{ secrets.CPANEL_DIR }}
         run: |
           set -euo pipefail
           chmod +x ftp-drop/fileman-save.sh
+          CPANEL_TOKEN="${CPANEL_TOKEN:-${CPANEL_API_TOKEN:-${WHM_API_TOKEN:-${WHM_TOKEN:-}}}}"
+          export CPANEL_TOKEN
           if [ -z "${CPANEL_TOKEN:-}" ]; then
             echo "No CPANEL_TOKEN secret. Skip nav src Fileman."
             exit 0
@@ -209,6 +220,9 @@ jobs:
           CPANEL_HOST: ${{ secrets.CPANEL_HOST }}
           CPANEL_USER: ${{ secrets.CPANEL_USER }}
           CPANEL_TOKEN: ${{ secrets.CPANEL_TOKEN }}
+          CPANEL_API_TOKEN: ${{ secrets.CPANEL_API_TOKEN }}
+          WHM_API_TOKEN: ${{ secrets.WHM_API_TOKEN }}
+          WHM_TOKEN: ${{ secrets.WHM_TOKEN }}
           CPANEL_DIR: ${{ secrets.CPANEL_DIR }}
         run: |
           set -euo pipefail
@@ -220,8 +234,13 @@ jobs:
           CPANEL_HOST: ${{ secrets.CPANEL_HOST }}
           CPANEL_USER: ${{ secrets.CPANEL_USER }}
           CPANEL_TOKEN: ${{ secrets.CPANEL_TOKEN }}
+          CPANEL_API_TOKEN: ${{ secrets.CPANEL_API_TOKEN }}
+          WHM_API_TOKEN: ${{ secrets.WHM_API_TOKEN }}
+          WHM_TOKEN: ${{ secrets.WHM_TOKEN }}
         run: |
           set -euo pipefail
+          CPANEL_TOKEN="${CPANEL_TOKEN:-${CPANEL_API_TOKEN:-${WHM_API_TOKEN:-${WHM_TOKEN:-}}}}"
+          export CPANEL_TOKEN
           if [ -z "${CPANEL_TOKEN:-}" ]; then
             echo "No CPANEL_TOKEN secret. Skip keychain Fileman."
             exit 0
@@ -241,8 +260,13 @@ jobs:
           CPANEL_HOST: ${{ secrets.CPANEL_HOST }}
           CPANEL_USER: ${{ secrets.CPANEL_USER }}
           CPANEL_TOKEN: ${{ secrets.CPANEL_TOKEN }}
+          CPANEL_API_TOKEN: ${{ secrets.CPANEL_API_TOKEN }}
+          WHM_API_TOKEN: ${{ secrets.WHM_API_TOKEN }}
+          WHM_TOKEN: ${{ secrets.WHM_TOKEN }}
         run: |
           set -euo pipefail
+          CPANEL_TOKEN="${CPANEL_TOKEN:-${CPANEL_API_TOKEN:-${WHM_API_TOKEN:-${WHM_TOKEN:-}}}}"
+          export CPANEL_TOKEN
           if [ -z "${CPANEL_TOKEN:-}" ]; then
             echo "No CPANEL_TOKEN secret. Skip eidotevil Fileman."
             exit 0
@@ -262,8 +286,13 @@ jobs:
           CPANEL_HOST: ${{ secrets.CPANEL_HOST }}
           CPANEL_USER: ${{ secrets.CPANEL_USER }}
           CPANEL_TOKEN: ${{ secrets.CPANEL_TOKEN }}
+          CPANEL_API_TOKEN: ${{ secrets.CPANEL_API_TOKEN }}
+          WHM_API_TOKEN: ${{ secrets.WHM_API_TOKEN }}
+          WHM_TOKEN: ${{ secrets.WHM_TOKEN }}
         run: |
           set -euo pipefail
+          CPANEL_TOKEN="${CPANEL_TOKEN:-${CPANEL_API_TOKEN:-${WHM_API_TOKEN:-${WHM_TOKEN:-}}}}"
+          export CPANEL_TOKEN
           if [ -z "${CPANEL_TOKEN:-}" ]; then
             echo "No CPANEL_TOKEN secret. Skip agency002 Fileman."
             exit 0
@@ -283,8 +312,13 @@ jobs:
           CPANEL_HOST: ${{ secrets.CPANEL_HOST }}
           CPANEL_USER: ${{ secrets.CPANEL_USER }}
           CPANEL_TOKEN: ${{ secrets.CPANEL_TOKEN }}
+          CPANEL_API_TOKEN: ${{ secrets.CPANEL_API_TOKEN }}
+          WHM_API_TOKEN: ${{ secrets.WHM_API_TOKEN }}
+          WHM_TOKEN: ${{ secrets.WHM_TOKEN }}
         run: |
           set -euo pipefail
+          CPANEL_TOKEN="${CPANEL_TOKEN:-${CPANEL_API_TOKEN:-${WHM_API_TOKEN:-${WHM_TOKEN:-}}}}"
+          export CPANEL_TOKEN
           if [ -z "${CPANEL_TOKEN:-}" ]; then
             echo "No CPANEL_TOKEN secret. Skip sebarv Fileman."
             exit 0
