@@ -163,7 +163,7 @@ try {
     if (-not $CpHost) { $CpHost = $WhmHost }
     if (-not $CpUser) { $CpUser = $CpanelUser }
   }
-  if (-not $CpHost) { $CpHost = 'agency002.com' }
+  if (-not $CpHost) { $CpHost = '192.250.229.162' }
   if (-not $CpUser) { $CpUser = 'agency00' }
 
   function Set-NightDoorSecret([string]$Name, [string]$Value) {
