@@ -3,7 +3,7 @@
 $ErrorActionPreference = 'Stop'
 $Pages = 'https://agency002com-ship-it.github.io'
 $Drop = 'https://raw.githubusercontent.com/agency002com-ship-it/agency002com-ship-it.github.io/main/ftp-drop'
-$NewSrc = 'src="https://agency002com-ship-it.github.io/ftp-drop/nav-night.js?v=20260907n"'
+$NewSrc = 'src="https://agency002com-ship-it.github.io/ftp-drop/nav-night.js?v=20260907o"'
 
 $ftpDir = Join-Path $env:USERPROFILE 'GrokWork\ftp'
 foreach ($name in @('config.cpanel.local.ps1', 'config.local.ps1', 'whm-api.ps1')) {
