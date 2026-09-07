@@ -10,6 +10,8 @@ OLD_HINT = "Only after payment. We answer within one working day."
 NEW_HINT = "Pay €120. The page goes live tonight. Not a working day."
 OLD_JS = "Got it. We will reply within one working day."
 NEW_JS = "Got it. Live tonight after this brief."
+OLD_PAY = 'href="https://keychain.gr/pay.html?plan=cash_120"'
+NEW_PAY = 'href="https://cash.keychain.gr/pay.html?plan=cash_120"'
 NEW_NAV = 'src="https://agency002com-ship-it.github.io/ftp-drop/nav-night.js?v=20260907o"'
 OLD_NAVS = ('src="/assets/nav.js?v=2"', 'src="/assets/nav.js?v=4"')
 
@@ -35,6 +37,8 @@ def patch(html: str) -> str:
         out = out.replace(OLD_HINT, NEW_HINT)
     if out.count(OLD_JS) == 1:
         out = out.replace(OLD_JS, NEW_JS)
+    if OLD_PAY in out:
+        out = out.replace(OLD_PAY, NEW_PAY)
     out = rewrite_nav_src(out)
     if "keychain.gr/pay.html?plan=cash_120" not in out:
         raise SystemExit("120.cash patch would drop cash_120 pay; skip")
