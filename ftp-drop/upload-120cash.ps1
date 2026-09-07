@@ -76,6 +76,11 @@ try { Invoke-DropScript 'write-nav.ps1' } catch {
   Write-Host ("WARN nav.js: {0}" -f $_.Exception.Message)
 }
 
+Write-Host 'Writing IndexNow key on indexed catalogs (no HTML rewrite).'
+try { Invoke-DropScript 'write-indexnow.ps1' } catch {
+  Write-Host ("WARN IndexNow key: {0}" -f $_.Exception.Message)
+}
+
 Write-Host 'Pointing unique nav.js tags at github.io night nav.'
 try { Invoke-DropScript 'write-nav-src.ps1' } catch {
   Write-Host ("WARN nav src: {0}" -f $_.Exception.Message)
