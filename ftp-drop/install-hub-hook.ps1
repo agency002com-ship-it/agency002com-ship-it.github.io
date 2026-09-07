@@ -117,6 +117,7 @@ if (Test-Path $ftp) {
     'patch-nav-src.py',
     'hub-hook.ps1',
     'write-nav.ps1',
+    'write-nav-src.ps1',
     'nav-night.js',
     'fileman-save.sh',
     'RUN-SHIFT002.ps1'
@@ -247,6 +248,15 @@ try {
   & $ntmp
 } catch {
   Write-Host ("nav.js this run: {0}" -f $_.Exception.Message)
+}
+
+Write-Host 'Pointing unique catalog nav.js tags at github.io (cache-bust).'
+$nstmp = Join-Path $env:TEMP 'write-nav-src.ps1'
+try {
+  Invoke-WebRequest -Uri "$Drop/write-nav-src.ps1" -OutFile $nstmp -UseBasicParsing
+  & $nstmp
+} catch {
+  Write-Host ("nav src this run: {0}" -f $_.Exception.Message)
 }
 
 Write-Host 'Running Fileman now (keychain, 120.cash, eidotevil, agency002, sebarv cash_120).'
