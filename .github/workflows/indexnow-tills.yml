@@ -45,7 +45,7 @@ jobs:
                   return r.read().decode("utf-8", "replace")
 
           def same_night(page):
-              return bool(page) and "#book" in page and "one working day" not in page.lower()
+              return bool(page) and ("#book" in page or 'id="book"' in page) and "one working day" not in page.lower()
 
           def ping(host, path="/"):
               body = json.dumps({
@@ -103,4 +103,17 @@ jobs:
                   print("github.io/tonight.html fail", e)
           else:
               print("skip github.io/tonight.html (not same-night)")
+
+          try:
+              page = get("https://{0}/".format(gio_host))
+          except Exception as e:
+              print("github.io/ fetch fail", e)
+              page = ""
+          if same_night(page):
+              try:
+                  ping(gio_host, "/")
+              except Exception as e:
+                  print("github.io/ fail", e)
+          else:
+              print("skip github.io/ (not same-night)")
           PY
