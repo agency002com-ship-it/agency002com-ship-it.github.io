@@ -10,6 +10,8 @@ OLD_HOME = 'href="https://120.cash/"'
 NEW_HOME = 'href="https://tonight.agency002.com/"'
 OLD_FETCH = "fetch('/brief-submit.php', {"
 NEW_FETCH = "fetch('https://tonight.agency002.com/brief-submit.php', {"
+NEW_NAV = 'src="https://agency002com-ship-it.github.io/ftp-drop/nav-night.js?v=20260907n"'
+OLD_NAVS = ('src="/assets/nav.js?v=2"', 'src="/assets/nav.js?v=4"')
 
 
 def already_ok(html: str) -> bool:
@@ -24,6 +26,15 @@ def rewrite_fetch(html: str) -> str:
     return html.replace(OLD_FETCH, NEW_FETCH)
 
 
+def rewrite_nav_src(html: str) -> str:
+    if NEW_NAV in html:
+        return html
+    for old in OLD_NAVS:
+        if html.count(old) == 1:
+            return html.replace(old, NEW_NAV, 1)
+    return html
+
+
 def patch(html: str) -> str:
     out = html
     if not already_ok(out):
@@ -36,6 +47,7 @@ def patch(html: str) -> str:
         if NEW_PAY not in out or OLD_PAY in out:
             raise SystemExit("cash_120 href not moved; skip")
     out = rewrite_fetch(out)
+    out = rewrite_nav_src(out)
     if "pay.html?plan=presence" not in out or "printful" not in out.lower():
         raise SystemExit("patch would drop another product; skip")
     if "pay.html?plan=sitepilot" not in out:
