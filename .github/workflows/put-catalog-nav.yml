@@ -61,6 +61,11 @@ jobs:
             echo "No CPANEL_TOKEN. Skip. Laptop RUN-SHIFT002 still writes nav.js."
             exit 0
           fi
+          bytes=$(wc -c < ftp-drop/nav-night.js)
+          if [ "$bytes" -le 500 ] || ! grep -Fq 'cash.keychain.gr' ftp-drop/nav-night.js; then
+            echo "nav-night.js is not the night pack (bytes=$bytes). Refuse Fileman."
+            exit 0
+          fi
           USER="${CPANEL_USER:-agency00}"
           DIR="${CPANEL_DIR:-/home/${USER}/domains/120.cash/public_html}"
           for ASSETS in \
