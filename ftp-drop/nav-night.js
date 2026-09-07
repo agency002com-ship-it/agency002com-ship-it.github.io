@@ -1,6 +1,6 @@
 /* Shift 002 — overwrite grey catalog /assets/nav.js (eidotevil, agency002, sebarv, 120.cash).
-   Pay €120 (plan=cash_120 only) → already-patched cash.keychain.gr.
-   Catalog brief form (cash_120 / empty pkg) → orange tonight KV.
+   Pay €120 (plan=cash_120 only) → already-patched cash.keychain.gr (Stripe, then github.io/paid.html).
+   Do not publish unpaid briefs to KV. After-pay #brief-form stays on origin mail.
    Paid till (#pay-card / #pay-pp) is desk.js: Stripe/PayPal first. Do not steal that form.
    Year stamp stays. Does not touch presence / page_100 / Printful / SitePilot. */
 (function () {
@@ -36,8 +36,9 @@
     ["Use this form on sebarv.com. I answer within one working day.", "Use this form on sebarv.com. A €120 page goes live the same night you pay."],
     ["After pay: short brief on 120.cash", "After pay: same-night brief on tonight.agency002.com"],
     ["After pay: brief on 120.cash", "After pay: same-night brief on tonight.agency002.com"],
+    ["We answer within one working day.", "A €120 page goes live the same night you pay."],
   ];
-  document.querySelectorAll("p, li").forEach(function (el) {
+  document.querySelectorAll("p, li, h1, h2, .hint, .lead").forEach(function (el) {
     var t = el.textContent || "";
     var next = t;
     for (var i = 0; i < swaps.length; i++) {
@@ -48,95 +49,10 @@
     if (next !== t) el.textContent = next;
   });
 
-  // tonight / 120-index till: Pay by card must open Stripe. This capture handler
-  // used to preventDefault + stopImmediatePropagation, skip charge, and publish.
+  // tonight / 120-index till: Pay by card must open Stripe (desk.js).
   if (document.getElementById("pay-card") || document.getElementById("pay-pp")) return;
 
-  var form = document.getElementById("brief-form");
-  if (!form || form.getAttribute("data-shift002") === "1") return;
-  form.setAttribute("data-shift002", "1");
-
-  function val(id) {
-    return ((document.getElementById(id) || {}).value || "").trim();
-  }
-
-  function isProbe(email, biz) {
-    var e = (email || "").toLowerCase();
-    var b = (biz || "").toLowerCase();
-    if (e.indexOf("probe-activate") !== -1) return true;
-    if (e.indexOf(".invalid") !== -1) return true;
-    if (e.indexOf("@example.com") !== -1) return true;
-    if (b.indexOf("probe do not build") !== -1) return true;
-    if (b.indexOf("not a customer") !== -1) return true;
-    return false;
-  }
-
-  form.addEventListener(
-    "submit",
-    function (e) {
-      var pkg = val("pkg") || "cash_120";
-      if (pkg !== "cash_120" && pkg !== "cash120") return;
-
-      e.preventDefault();
-      e.stopImmediatePropagation();
-
-      var email = val("email");
-      var phone = val("phone");
-      var biz = val("biz") || val("name");
-      var what = val("what") || val("message");
-      var msg = document.getElementById("brief-msg");
-      var btn = document.getElementById("brief-send");
-
-      function show(kind, text) {
-        if (!msg) return;
-        msg.hidden = false;
-        msg.className = kind ? "msg " + kind : "msg";
-        msg.textContent = text;
-      }
-
-      if (isProbe(email, biz)) {
-        show("ok", "Got it.");
-        form.reset();
-        return;
-      }
-
-      show("", "Sending…");
-      if (btn) btn.disabled = true;
-
-      fetch("https://tonight.agency002.com/brief-submit.php", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          email: email,
-          name: biz,
-          biz: biz,
-          pkg: "cash_120",
-          phone: phone,
-          message: what,
-          businessName: biz,
-          whatYouDo: what,
-        }),
-      })
-        .then(function (r) {
-          return r.json().then(function (j) {
-            return { ok: r.ok, j: j };
-          });
-        })
-        .then(function (res) {
-          if (btn) btn.disabled = false;
-          var j = res.j || {};
-          if (j.url && /^https:\/\/cash\.120\.cash\/p\//.test(j.url)) {
-            location.href = j.url;
-            return;
-          }
-          show(j.ok ? "ok" : "err", j.message || j.error || "Got it.");
-          if (j.ok) form.reset();
-        })
-        .catch(function () {
-          if (btn) btn.disabled = false;
-          show("err", "Connection failed. Try again in a moment.");
-        });
-    },
-    true
-  );
+  // Wait-a-day 120.cash / catalogs: do not preventDefault the after-pay form.
+  // Origin mail + 15-min fulfill covers people who already paid. Charging here
+  // would double-charge. Free KV publish would skip the €120.
 })();
