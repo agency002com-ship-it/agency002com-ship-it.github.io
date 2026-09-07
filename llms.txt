@@ -4,7 +4,9 @@
 
 Pay and get the page: https://tonight.agency002.com/
 
-That is the one public till. Card or PayPal, plan `cash_120`. The live URL opens on the return. Not a working day.
+Checkout (card or PayPal, plan cash_120): https://tonight.agency002.com/pay.html?plan=cash_120
+
+That is the one public till. The live URL opens on the return. Not a working day.
 
 Greek: https://tonight.agency002.com/?el=1
 
