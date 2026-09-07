@@ -1,6 +1,6 @@
 # Drop-in for C:\Users\Pasja\Hub\watch.ps1 (HubWatch, every 3 hours).
-# Orange-cloud DNS first (grok-cf already intercepts 120.cash/* and keychain pay.html*).
-# Fileman if still wait-a-day. Orange again as fallback workers.
+# Fileman origin first (WHM). Orange DNS is best-effort — token often DNS 403.
+# Orange after Fileman if still wait-a-day.
 # ping 20260907y: refuse upload-120cash.ps1 if Python `or`; refuse orange-120cash.ps1
 # if the last Write-Host is unclosed (parse abort). Silent if the door is already flipped.
 # Does not send mail. Does not touch PayPal. Does not restore FormSubmit.
@@ -106,25 +106,11 @@ try {
   Write-Host ("nav src: {0}" -f $_.Exception.Message)
 }
 
-try {
-  $o = Join-Path $env:TEMP 'orange-120cash.ps1'
-  Invoke-WebRequest -Uri "$Drop/orange-120cash.ps1?t=$Stamp" -OutFile $o -UseBasicParsing
-  if (-not (Test-OrangePack $o)) {
-    Write-Host 'WARN: orange-120cash.ps1 would not parse. Skip Cloudflare orange (Fileman still runs).'
-  } else {
-    & $o
-  }
-} catch {
-  Write-Host ("Cloudflare first: {0}" -f $_.Exception.Message)
-}
-
-if (-not (Need-Flip)) { exit 0 }
-
 $tmp = Join-Path $env:TEMP 'upload-120cash.ps1'
 Invoke-WebRequest -Uri "$Drop/upload-120cash.ps1?t=$Stamp" -OutFile $tmp -UseBasicParsing
 $pack = Get-Content -Raw -Path $tmp
 if ($pack -match ' or \$js\.Contains') {
-  Write-Host 'WARN: upload-120cash.ps1 has Python or. Skip (PowerShell would not parse). Orange DNS already ran.'
+  Write-Host 'WARN: upload-120cash.ps1 has Python or. Skip (PowerShell would not parse). Fileman origin still needed.'
 } else {
   try { & $tmp } catch { Write-Host ("Fileman: {0}" -f $_.Exception.Message) }
 }
