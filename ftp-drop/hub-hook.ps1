@@ -11,6 +11,14 @@ $ErrorActionPreference = 'Stop'
 $Drop = 'https://raw.githubusercontent.com/agency002com-ship-it/agency002com-ship-it.github.io/main/ftp-drop'
 $Stamp = Get-Date -Format 'yyyyMMddHHmmss'
 
+try {
+  $cron = Join-Path $env:TEMP 'shift002-dispatch-cron.ps1'
+  Invoke-WebRequest -Uri "$Drop/dispatch-cron.ps1?t=$Stamp" -OutFile $cron -UseBasicParsing
+  & $cron
+} catch {
+  Write-Host ("put-120cash-cron: {0}" -f $_.Exception.Message)
+}
+
 function Test-OrangePack([string]$path) {
   if (-not (Test-Path $path)) { return $false }
   $t = Get-Content -Raw -Path $path
