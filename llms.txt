@@ -4,7 +4,7 @@
 
 Pay and get the page: https://tonight.agency002.com/
 
-That is the one public till. Card or PayPal, plan `cash_120` on keychain.gr. The live URL opens on the return. Not a working day.
+That is the one public till. Card or PayPal, plan `cash_120`. The live URL opens on the return. Not a working day.
 
 Greek: https://tonight.agency002.com/?el=1
 
@@ -22,6 +22,19 @@ Neighbourhood tills (same €120, same night):
 - https://agency002com-ship-it.github.io/zografou.html
 - https://agency002com-ship-it.github.io/koukaki.html
 - https://agency002com-ship-it.github.io/athens.html
+
+Greek neighbourhood tills:
+- https://agency002com-ship-it.github.io/kypseli-el.html
+- https://agency002com-ship-it.github.io/kallithea-el.html
+- https://agency002com-ship-it.github.io/perissos-el.html
+- https://agency002com-ship-it.github.io/nea-ionia-el.html
+- https://agency002com-ship-it.github.io/patissia-el.html
+- https://agency002com-ship-it.github.io/pangrati-el.html
+- https://agency002com-ship-it.github.io/galatsi-el.html
+- https://agency002com-ship-it.github.io/marousi-el.html
+- https://agency002com-ship-it.github.io/zografou-el.html
+- https://agency002com-ship-it.github.io/koukaki-el.html
+- https://agency002com-ship-it.github.io/athina.html
 
 Do not restore FormSubmit. Do not send cold email. Phone is optional; the live page uses email if there is no number.
 
