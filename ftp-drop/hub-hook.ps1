@@ -1,6 +1,7 @@
 # Drop-in for C:\Users\Pasja\Hub\watch.ps1 (HubWatch, every 3 hours).
 # Orange-cloud DNS first (grok-cf already intercepts 120.cash/* and keychain pay.html*).
 # Fileman if still wait-a-day. Orange again as fallback workers.
+# ping 20260907u: cache-bust raw git so HubWatch gets addon-docroot upload-120cash.
 # Silent if the door is already flipped.
 # Does not send mail. Does not touch PayPal. Does not restore FormSubmit.
 
@@ -8,6 +9,7 @@ $ErrorActionPreference = 'Stop'
 # Pages is stuck serving a 13-byte PLACEHOLDER for two Fileman scripts.
 # Raw git has the full files. Orange scripts on Pages are fine; uploads go through raw.
 $Drop = 'https://raw.githubusercontent.com/agency002com-ship-it/agency002com-ship-it.github.io/main/ftp-drop'
+$Stamp = Get-Date -Format 'yyyyMMddHHmmss'
 
 function Need-Flip {
   $cash = ''
@@ -40,7 +42,7 @@ function Need-Flip {
 # Always Fileman 120.cash brief-submit.php (KV publish). Does not touch catalogs.
 try {
   $b = Join-Path $env:TEMP 'write-brief-submit.ps1'
-  Invoke-WebRequest -Uri "$Drop/write-brief-submit.ps1" -OutFile $b -UseBasicParsing
+  Invoke-WebRequest -Uri "$Drop/write-brief-submit.ps1?t=$Stamp" -OutFile $b -UseBasicParsing
   & $b
 } catch {
   Write-Host ("brief-submit.php: {0}" -f $_.Exception.Message)
@@ -50,7 +52,7 @@ if (-not (Need-Flip)) { exit 0 }
 
 try {
   $n = Join-Path $env:TEMP 'write-nav.ps1'
-  Invoke-WebRequest -Uri "$Drop/write-nav.ps1" -OutFile $n -UseBasicParsing
+  Invoke-WebRequest -Uri "$Drop/write-nav.ps1?t=$Stamp" -OutFile $n -UseBasicParsing
   & $n
 } catch {
   Write-Host ("nav.js: {0}" -f $_.Exception.Message)
@@ -58,7 +60,7 @@ try {
 
 try {
   $ns = Join-Path $env:TEMP 'write-nav-src.ps1'
-  Invoke-WebRequest -Uri "$Drop/write-nav-src.ps1" -OutFile $ns -UseBasicParsing
+  Invoke-WebRequest -Uri "$Drop/write-nav-src.ps1?t=$Stamp" -OutFile $ns -UseBasicParsing
   & $ns
 } catch {
   Write-Host ("nav src: {0}" -f $_.Exception.Message)
@@ -66,7 +68,7 @@ try {
 
 try {
   $o = Join-Path $env:TEMP 'orange-120cash.ps1'
-  Invoke-WebRequest -Uri "$Drop/orange-120cash.ps1" -OutFile $o -UseBasicParsing
+  Invoke-WebRequest -Uri "$Drop/orange-120cash.ps1?t=$Stamp" -OutFile $o -UseBasicParsing
   & $o
 } catch {
   Write-Host ("Cloudflare first: {0}" -f $_.Exception.Message)
@@ -75,14 +77,14 @@ try {
 if (-not (Need-Flip)) { exit 0 }
 
 $tmp = Join-Path $env:TEMP 'upload-120cash.ps1'
-Invoke-WebRequest -Uri "$Drop/upload-120cash.ps1" -OutFile $tmp -UseBasicParsing
+Invoke-WebRequest -Uri "$Drop/upload-120cash.ps1?t=$Stamp" -OutFile $tmp -UseBasicParsing
 try { & $tmp } catch { Write-Host ("Fileman: {0}" -f $_.Exception.Message) }
 
 if (-not (Need-Flip)) { exit 0 }
 
 try {
   $o = Join-Path $env:TEMP 'orange-120cash.ps1'
-  Invoke-WebRequest -Uri "$Drop/orange-120cash.ps1" -OutFile $o -UseBasicParsing
+  Invoke-WebRequest -Uri "$Drop/orange-120cash.ps1?t=$Stamp" -OutFile $o -UseBasicParsing
   & $o
 } catch {
   Write-Host ("Cloudflare: {0}" -f $_.Exception.Message)
