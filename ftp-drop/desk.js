@@ -196,6 +196,8 @@
         try {
           var message = b.whatYouDo;
           if (b.city) message += '\nCity: ' + b.city;
+          var pay = sid || tok;
+          if (pay) message += '\nPayment id: ' + pay;
           fetch('https://tonight.agency002.com/brief-submit.php', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
@@ -206,7 +208,9 @@
               message: message,
               city: b.city,
               language: pageLang(),
-              pkg: 'cash_120'
+              pkg: 'cash_120',
+              session_id: pay,
+              paymentId: pay
             })
           }).catch(function () {});
         } catch (err) {}
