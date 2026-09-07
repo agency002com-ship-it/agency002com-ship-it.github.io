@@ -28,10 +28,16 @@ if grep -Fq 'cash.120.cash/api/publish' ftp-drop/brief-submit.php; then
     ftp-drop/fileman-save.sh "${ROOT}" brief-submit.php ftp-drop/brief-submit.php
   done
 fi
-STAMP="$(date -u +%Y-%m-%dT%H:%M:%SZ)"
-sed "s/LASTMOD/${STAMP}/" ftp-drop/120-sitemap.xml.tpl > /tmp/120-sitemap.xml
-printf '%s' '7c2a9f1e4b8d0c3a5e6f7a8b9c0d1e2f' > /tmp/120-indexnow.txt
-for ROOT in $ROOTS; do
-  ftp-drop/fileman-save.sh "${ROOT}" sitemap.xml /tmp/120-sitemap.xml
-  ftp-drop/fileman-save.sh "${ROOT}" 7c2a9f1e4b8d0c3a5e6f7a8b9c0d1e2f.txt /tmp/120-indexnow.txt
-done
+sleep 3
+page="$(curl -fsSL -A 'Mozilla/5.0' https://120.cash/ || true)"
+if echo "$page" | grep -q '#book' && ! echo "$page" | grep -q 'one working day'; then
+  STAMP="$(date -u +%Y-%m-%dT%H:%M:%SZ)"
+  sed "s/LASTMOD/${STAMP}/" ftp-drop/120-sitemap.xml.tpl > /tmp/120-sitemap.xml
+  printf '%s' '7c2a9f1e4b8d0c3a5e6f7a8b9c0d1e2f' > /tmp/120-indexnow.txt
+  for ROOT in $ROOTS; do
+    ftp-drop/fileman-save.sh "${ROOT}" sitemap.xml /tmp/120-sitemap.xml
+    ftp-drop/fileman-save.sh "${ROOT}" 7c2a9f1e4b8d0c3a5e6f7a8b9c0d1e2f.txt /tmp/120-indexnow.txt
+  done
+else
+  echo "Skip origin sitemap/IndexNow while 120.cash still wait-a-day."
+fi
