@@ -24,6 +24,15 @@ if ! grep -q '#book' ftp-drop/120-index.html || grep -q 'one working day' ftp-dr
   echo "120-index.html is not the same-night door. Refusing origin index.html write."
   exit 0
 fi
+# Grey LiteSpeed origin /pay.html is 404. Refuse a pack that Filemans relative CTAs.
+if grep -Eq 'href=["'\'']"/pay.html' ftp-drop/120-index.html; then
+  echo "relative /pay.html 404s on grey origin. Refusing Fileman."
+  exit 0
+fi
+if ! grep -Fq 'https://pay.120.cash/pay.html?plan=cash_120' ftp-drop/120-index.html; then
+  echo "Pay €120 CTAs must be absolute orange pay.120.cash. Refusing Fileman."
+  exit 0
+fi
 USER="${CPANEL_USER:-agency00}"
 DIR="${CPANEL_DIR:-/home/${USER}/domains/120.cash/public_html}"
 ROOTS="${DIR} /home/${USER}/120.cash /home/${USER}/public_html/120.cash /home/${USER}/domains/120.cash/public_html"
