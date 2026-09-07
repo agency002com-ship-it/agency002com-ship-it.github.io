@@ -290,4 +290,4 @@ if (Test-AgencyNight) { Write-Host 'https://agency002.com/ cash_120 now opens to
 else { Write-Host 'WARN: agency002.com still sends cash_120 to wait-a-day (need orange DNS or Fileman).' }
 if (Test-SebarvNight) { Write-Host 'https://sebarv.com/ cash_120 now opens tonight.agency002.com.' }
 else { Write-Host 'WARN: sebarv.com still sends cash_120 to wait-a-day (need orange DNS or Fileman).' }
-Write-Host 'Done. Origin /assets/, /api/, and other keychain plans still pass through.
+Write-Host 'Done. Origin /assets/, /api/, and other keychain plans still pass through.'
