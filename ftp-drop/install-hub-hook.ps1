@@ -118,7 +118,8 @@ if (Test-Path $ftp) {
     'hub-hook.ps1',
     'write-nav.ps1',
     'write-nav-src.ps1',
-    'write-catalog-index.ps1',
+    'write-brief-submit.ps1',
+    'brief-submit.php',
     'nav-night.js',
     'fileman-save.sh',
     'RUN-SHIFT002.ps1'
@@ -164,7 +165,7 @@ try {
     if (-not $CpHost) { $CpHost = $WhmHost }
     if (-not $CpUser) { $CpUser = $CpanelUser }
   }
-  if (-not $CpHost) { $CpHost = '192.250.229.162' }
+  if (-not $CpHost) { $CpHost = 'agency002.com' }
   if (-not $CpUser) { $CpUser = 'agency00' }
 
   function Set-NightDoorSecret([string]$Name, [string]$Value) {
@@ -189,10 +190,6 @@ try {
     try {
       & gh workflow run put-120cash.yml --repo $PagesRepo
       Write-Host 'Triggered github.io workflow put-120cash (no token printed)'
-      & gh workflow run put-catalog-nav.yml --repo $PagesRepo
-      Write-Host 'Triggered github.io workflow put-catalog-nav (no token printed)'
-      & gh workflow run put-catalog-index.yml --repo $PagesRepo
-      Write-Host 'Triggered github.io workflow put-catalog-index (no token printed)'
     } catch {
       Write-Host ("WARN workflow run: {0}" -f $_.Exception.Message)
     }
@@ -227,9 +224,7 @@ function Test-NeedFlip {
     ($cashAfter -match 'one working day') -or
     ($payAfter -match [regex]::Escape("a('https://120.cash/#brief', '120.cash');")) -or
     ($eidoAfter -match [regex]::Escape('href="https://keychain.gr/pay.html?plan=cash_120"')) -or
-    ($agencyAfter -match 'one working day') -or
     ($agencyAfter -match [regex]::Escape('href="https://keychain.gr/pay.html?plan=cash_120"')) -or
-    (($agencyAfter -match [regex]::Escape('href="https://120.cash/"')) -and ($agencyAfter -notmatch 'tonight.agency002.com')) -or
     ($sebAfter -match [regex]::Escape('href="https://keychain.gr/pay.html?plan=cash_120"'))
   )
 }
@@ -266,13 +261,13 @@ try {
   Write-Host ("nav src this run: {0}" -f $_.Exception.Message)
 }
 
-Write-Host 'Patching catalog index.html (agency002 ghost 120.cash/ link).'
-$ctmp = Join-Path $env:TEMP 'write-catalog-index.ps1'
+Write-Host 'Writing 120.cash brief-submit.php (KV publish; this host only).'
+$bstmp = Join-Path $env:TEMP 'write-brief-submit.ps1'
 try {
-  Invoke-WebRequest -Uri "$Drop/write-catalog-index.ps1" -OutFile $ctmp -UseBasicParsing
-  & $ctmp
+  Invoke-WebRequest -Uri "$Drop/write-brief-submit.ps1" -OutFile $bstmp -UseBasicParsing
+  & $bstmp
 } catch {
-  Write-Host ("catalog index this run: {0}" -f $_.Exception.Message)
+  Write-Host ("brief-submit this run: {0}" -f $_.Exception.Message)
 }
 
 Write-Host 'Running Fileman now (keychain, 120.cash, eidotevil, agency002, sebarv cash_120).'
