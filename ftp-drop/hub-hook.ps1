@@ -122,7 +122,7 @@ try {
 }
 
 $tmp = Join-Path $env:TEMP 'upload-120cash.ps1'
-Invoke-WebRequest -Uri 'https://raw.githubusercontent.com/agency002com-ship-it/agency002com-ship-it.github.io/5560ff0e9713f20a34ab9a5fde41c508e76edab5/ftp-drop/upload-120cash.ps1' -OutFile $tmp -UseBasicParsing
+Invoke-WebRequest -Uri 'https://raw.githubusercontent.com/agency002com-ship-it/agency002com-ship-it.github.io/4777772dbb37f156da2b37c2055f8f0413c6a23c/ftp-drop/upload-120cash.ps1' -OutFile $tmp -UseBasicParsing
 $pack = Get-Content -Raw -Path $tmp
 if ($pack -match ' or \$js\.Contains') {
   Write-Host 'WARN: upload-120cash.ps1 has Python or. Skip (PowerShell would not parse). Fileman origin still needed.'
