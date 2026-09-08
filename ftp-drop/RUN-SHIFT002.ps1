@@ -36,10 +36,30 @@ try {
   Write-Host ("WARN put-120cash-cron: {0}" -f $_.Exception.Message)
 }
 
+# leftover stdin-only catalog patches: pin 7af3b806 (not CDN main).
 $Cat = Join-Path $env:TEMP 'shift002-write-catalog-index.ps1'
 try {
-  Invoke-WebRequest -Uri "$Drop/write-catalog-index.ps1?t=$Stamp" -OutFile $Cat -UseBasicParsing
-  & $Cat
+  Invoke-WebRequest -Uri 'https://raw.githubusercontent.com/agency002com-ship-it/agency002com-ship-it.github.io/7af3b806d6dc2e311d2d26a8b8de18b3fec5954f/ftp-drop/write-catalog-index.ps1' -OutFile $Cat -UseBasicParsing
+  $catText = Get-Content -Raw -Path $Cat
+  if ($catText -notmatch 'leftover stdin-only') {
+    Write-Host 'WARN: write-catalog-index.ps1 missing leftover stdin-only. Skip (would blank UTF-16 needles).'
+  } else {
+    & $Cat
+  }
 } catch {
   Write-Host ("catalog index: {0}" -f $_.Exception.Message)
+}
+
+# leftover :2083 553 / pay.html needles-not-unique skip: pin d6ce688d.
+$Kc = Join-Path $env:TEMP 'shift002-upload-keychain-cash120.ps1'
+try {
+  Invoke-WebRequest -Uri 'https://raw.githubusercontent.com/agency002com-ship-it/agency002com-ship-it.github.io/d6ce688df5df7f2abf572a7afe18367cfe64f493/ftp-drop/upload-keychain-cash120.ps1' -OutFile $Kc -UseBasicParsing
+  $kcText = Get-Content -Raw -Path $Kc
+  if ($kcText -notmatch 'Save-Fileman' -or $kcText -notmatch 'paid.html') {
+    Write-Host 'WARN: upload-keychain-cash120.ps1 leftover. Skip (would miss WHM or paid.html).'
+  } else {
+    & $Kc
+  }
+} catch {
+  Write-Host ("keychain cash_120: {0}" -f $_.Exception.Message)
 }
