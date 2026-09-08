@@ -1,5 +1,6 @@
 # Hourly: overwrite grey catalog /assets/nav.js (cash_120 only).
 # Empty secrets → exit 0. Does not replace grok / grok-cf.
+# ping 2026-09-08T03:12Z: 03:12 mid-window — 03:00-03:20 OPEN; last Fileman 03:11 5s skip — Fileman now if RUN-SHIFT002 set CPANEL_TOKEN.
 # ping 2026-09-08T03:09Z: goal continuation — 03:00-03:20 OPEN; last Fileman 03:05 4s skip — Fileman now if RUN-SHIFT002 set CPANEL_TOKEN.
 # ping 2026-09-08T03:00Z: odd-hour door — 03:00-03:20 OPEN; last Fileman 02:20 7s skip — Fileman now if RUN-SHIFT002 set CPANEL_TOKEN.
 # ping 2026-09-08T02:18Z: 02:18 closing window — 02:00-02:20 OPEN; last Fileman 02:17 6s skip — Fileman now if RUN-SHIFT002 set CPANEL_TOKEN.
