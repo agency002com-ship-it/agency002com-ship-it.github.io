@@ -1,44 +1,35 @@
 # Tiny Fileman: IndexNow key on indexed catalogs + keychain.gr.
 # Does not rewrite index.html / nav.js / pay.html. Does not send mail.
-# Lets Google recrawl the unique eidotevil cash_120 door after this file exists.
+# Does not Fileman wait-a-day 120.cash. Does not ping IndexNow.
+# leftover empty $env:CPANEL_TOKEN must not wipe a sourced WHM $Token.
+# leftover silent save-fileman.ps1 must wget helper-proof a460b294.
+# ping 20260908d: leftover IndexNow key Fileman must reach WHM :2087.
 $ErrorActionPreference = 'Stop'
 $Drop = 'https://raw.githubusercontent.com/agency002com-ship-it/agency002com-ship-it.github.io/main/ftp-drop'
 
-$ftpDir = Join-Path $env:USERPROFILE 'GrokWork\ftp'
-foreach ($name in @('config.cpanel.local.ps1', 'config.local.ps1', 'whm-api.ps1')) {
-  $p = Join-Path $ftpDir $name
-  if (Test-Path $p) { . $p }
+$here = $PSScriptRoot
+if (-not $here) { $here = Split-Path -Parent $MyInvocation.MyCommand.Path }
+$tokHelper = Join-Path $here 'night-door-token.ps1'
+if (-not (Test-Path $tokHelper)) {
+  $tokHelper = Join-Path $env:TEMP 'shift002-night-door-token.ps1'
+  Invoke-WebRequest -Uri "$Drop/night-door-token.ps1" -OutFile $tokHelper -UseBasicParsing
 }
-
-$HostName = $env:CPANEL_HOST
-if (-not $HostName) { $HostName = $CpanelHost }
-if (-not $HostName) { $HostName = $WhmHost }
-if (-not $HostName) { $HostName = '192.250.229.162' }
-$User = $env:CPANEL_USER
-if (-not $User) { $User = $CpanelUser }
-if (-not $User) { $User = 'agency00' }
-$Token = $env:CPANEL_TOKEN
-if (-not $Token) { $Token = $CpanelToken }
-if (-not $Token) { $Token = $WhmToken }
-$WhmUserName = $env:WHM_USER
-if (-not $WhmUserName) { $WhmUserName = $WhmUser }
-$HostNames = @($HostName, '192.250.229.162', 'agency002.com', 'lemonpie.codes') |
-  Where-Object { $_ } | Select-Object -Unique
-
-if (-not $Token) {
+. $tokHelper
+if (-not $Token -and -not $NightDoorHasWhmHelper) {
   Write-Host 'No cPanel token. Skip IndexNow key Fileman.'
   exit 0
 }
 
-$here = $PSScriptRoot
-if (-not $here) { $here = Split-Path -Parent $MyInvocation.MyCommand.Path }
 $localSave = Join-Path $here 'save-fileman.ps1'
-if (Test-Path $localSave) {
-  . $localSave
-} else {
+$saveText = ''
+if (Test-Path $localSave) { $saveText = Get-Content -Raw -Path $localSave }
+if ($saveText -notmatch 'ran but status not 1') {
+  Write-Host 'save-fileman.ps1 missing helper-proof. Fetching WHM-first pack a460b294.'
   $save = Join-Path $env:TEMP 'shift002-save-fileman.ps1'
-  Invoke-WebRequest -Uri "$Drop/save-fileman.ps1" -OutFile $save -UseBasicParsing
+  Invoke-WebRequest -Uri 'https://raw.githubusercontent.com/agency002com-ship-it/agency002com-ship-it.github.io/a460b294250a5530aa76f97a09c5e1714fd9540c/ftp-drop/save-fileman.ps1' -OutFile $save -UseBasicParsing
   . $save
+} else {
+  . $localSave
 }
 
 $key = '7c2a9f1e4b8d0c3a5e6f7a8b9c0d1e2f'
