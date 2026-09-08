@@ -32,6 +32,12 @@
     var empty = document.getElementById("empty");
     if (empty) empty.remove();
     NightDesk.renderShop(document.body, brief);
+    // Hash URL is the fallback. Promote to the durable till when KV answers.
+    NightDesk.publishPage(brief).then(function (href) {
+      if (/^https:\/\/cash\.120\.cash\/p\/[a-z0-9-]+$/.test(String(href || ""))) {
+        location.replace(href);
+      }
+    });
   })();
   </script>
 </body>
