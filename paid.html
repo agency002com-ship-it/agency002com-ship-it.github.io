@@ -1,11 +1,11 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>You paid — leave the brief</title>
-  <meta name="description" content="You already paid €120. Leave name, what you do, and a number. The page goes live. Do not pay again." />
-  <style>
+\u003c!DOCTYPE html>
+\u003chtml lang="en">
+\u003chead>
+  \u003cmeta charset="utf-8" />
+  \u003cmeta name="viewport" content="width=device-width, initial-scale=1" />
+  \u003ctitle>You paid — leave the brief\u003c/title>
+  \u003cmeta name="description" content="You already paid €120. Leave name, what you do, and a number. The page goes live. Do not pay again." />
+  \u003cstyle>
     body { margin: 0; background: #0c0d0b; color: #ece7db; font-family: Georgia, serif; }
     main { max-width: 40rem; margin: 0 auto; padding: 3rem 1.25rem 5rem; }
     p.kicker { letter-spacing: .2em; text-transform: uppercase; font-size: .75rem; color: #c4a46a; }
@@ -20,32 +20,32 @@
     .msg { min-height: 1.4rem; color: #c4a46a; }
     .msg.err { color: #e8a0a0; }
     button:disabled { opacity: .6; cursor: wait; }
-  </style>
-</head>
-<body>
-  <main>
-    <p class="kicker">Athens night desk</p>
-    <h1>You paid.<br />Leave the brief.</h1>
-    <p class="lead" id="lead">Do not pay again. Name, what you do, email. Phone if you have one. The page goes live on this site.</p>
-    <p class="msg err" id="gate" hidden></p>
-    <form id="brief-form" hidden inert>
-      <label for="biz">Name / business</label>
-      <input id="biz" name="biz" type="text" required maxlength="80" autocomplete="off" />
-      <label for="phone">Phone / WhatsApp (optional)</label>
-      <input id="phone" name="phone" type="tel" maxlength="40" autocomplete="off" />
-      <label for="email">Your email</label>
-      <input id="email" name="email" type="email" required maxlength="120" autocomplete="email" />
-      <label for="city">City</label>
-      <input id="city" name="city" type="text" maxlength="80" placeholder="Kypseli, Athens" />
-      <label for="what">What you do, in one breath</label>
-      <textarea id="what" name="what" required maxlength="450"></textarea>
-      <button class="btn" type="submit" id="go">Put the page live</button>
-      <p class="msg" id="brief-msg" role="status" aria-live="polite"></p>
-    </form>
-    <p class="hint"><a href="https://pay.120.cash/pay.html?plan=cash_120">Need to pay first?</a></p>
-  </main>
-  <script src="./shop.js?v=20260907q"></script>
-  <script>
+  \u003c/style>
+\u003c/head>
+\u003cbody>
+  \u003cmain>
+    \u003cp class="kicker">Athens night desk\u003c/p>
+    \u003ch1>You paid.\u003cbr />Leave the brief.\u003c/h1>
+    \u003cp class="lead" id="lead">Do not pay again. Name, what you do, email. Phone if you have one. The page goes live on this site.\u003c/p>
+    \u003cp class="msg err" id="gate" hidden>\u003c/p>
+    \u003cform id="brief-form" hidden inert>
+      \u003clabel for="biz">Name / business\u003c/label>
+      \u003cinput id="biz" name="biz" type="text" required maxlength="80" autocomplete="off" />
+      \u003clabel for="phone">Phone / WhatsApp (optional)\u003c/label>
+      \u003cinput id="phone" name="phone" type="tel" maxlength="40" autocomplete="off" />
+      \u003clabel for="email">Your email\u003c/label>
+      \u003cinput id="email" name="email" type="email" required maxlength="120" autocomplete="email" />
+      \u003clabel for="city">City\u003c/label>
+      \u003cinput id="city" name="city" type="text" maxlength="80" placeholder="Kypseli, Athens" />
+      \u003clabel for="what">What you do, in one breath\u003c/label>
+      \u003ctextarea id="what" name="what" required maxlength="450">\u003c/textarea>
+      \u003cbutton class="btn" type="submit" id="go">Put the page live\u003c/button>
+      \u003cp class="msg" id="brief-msg" role="status" aria-live="polite">\u003c/p>
+    \u003c/form>
+    \u003cp class="hint">\u003ca href="https://pay.120.cash/pay.html?plan=cash_120">Need to pay first?\u003c/a>\u003c/p>
+  \u003c/main>
+  \u003cscript src="./shop.js?v=20260907q">\u003c/script>
+  \u003cscript>
   (function () {
     var q = new URLSearchParams(location.search);
     var gate = document.getElementById("gate");
@@ -65,6 +65,24 @@
       form.removeAttribute("inert");
     }
 
+    function goLive(brief, paymentId) {
+      NightDesk.save(brief);
+      lead.textContent = "You already paid. Putting the page live now. Do not pay again.";
+      NightDesk.publishPage(brief, paymentId).then(function (href) {
+        location.replace(href);
+      });
+    }
+
+    function afterPaid() {
+      var packed = q.get("p") || q.get("b") || "";
+      var fromPay = packed ? NightDesk.decode(packed) : null;
+      if (fromPay) {
+        goLive(fromPay, sid || order);
+        return;
+      }
+      openForm();
+    }
+
     var sid = q.get("session_id") || "";
     var rail = q.get("rail") || "";
     var order = q.get("order_id") || q.get("token") || "";
@@ -76,12 +94,12 @@
           deny("PayPal has not captured this yet. Finish PayPal, then use the return link again.");
           return;
         }
-        openForm();
+        afterPaid();
       });
     } else if (/^cs_(live|test)_/.test(sid)) {
       NightDesk.stripePaid(sid).then(function (res) {
         if (res.paid) {
-          openForm();
+          afterPaid();
           return;
         }
         if (res.checked) {
@@ -89,7 +107,7 @@
           return;
         }
         if (sid.indexOf("cs_live_") === 0 && sid.length >= 40) {
-          openForm();
+          afterPaid();
           return;
         }
         deny("This page is only after a €120 payment. Open it from the pay.120.cash return after you pay. Do not type a fake session id.");
@@ -118,6 +136,6 @@
       });
     });
   })();
-  </script>
-</body>
-</html>
+  \u003c/script>
+\u003c/body>
+\u003c/html>
