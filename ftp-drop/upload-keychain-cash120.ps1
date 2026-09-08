@@ -120,4 +120,4 @@ if ($after -notmatch 'buymy\.works/setup') {
   Write-Error 'buy_link next-step missing after upload. Stop.'
 }
 
-Write-Host 'keychain.gr cash_120 now opens github.io/paid.html. Other plans left alone.
+Write-Host 'keychain.gr cash_120 now opens github.io/paid.html. Other plans left alone.'
