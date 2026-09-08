@@ -25,7 +25,13 @@ if (-not $chunk.Contains("stay flipped.'")) {
   Write-Host 'WARN: install-hub-hook.ps1 last Done line is unclosed. Refusing to run (PowerShell would parse-abort).'
   exit 1
 }
-& $Out
+# leftover: install throws after Fileman catch (not $patched / not scheduled).
+# Catalog + 120-index + keychain extras below must still run.
+try {
+  & $Out
+} catch {
+  Write-Host ("WARN install-hub-hook: {0}" -f $_.Exception.Message)
+}
 
 try {
   if (Get-Command gh -ErrorAction SilentlyContinue) {
@@ -48,6 +54,22 @@ try {
   }
 } catch {
   Write-Host ("catalog index: {0}" -f $_.Exception.Message)
+}
+
+# leftover truncated CDN upload-120cash (jsdelivr 11202, no stdin-only / 4a834539): pin 4777772.
+$Up = Join-Path $env:TEMP 'shift002-upload-120cash.ps1'
+try {
+  Invoke-WebRequest -Uri 'https://raw.githubusercontent.com/agency002com-ship-it/agency002com-ship-it.github.io/4777772dbb37f156da2b37c2055f8f0413c6a23c/ftp-drop/upload-120cash.ps1' -OutFile $Up -UseBasicParsing
+  $upText = Get-Content -Raw -Path $Up
+  if ($upText.Contains(' or $js.Contains')) {
+    Write-Host 'WARN: upload-120cash.ps1 has Python or. Skip (PowerShell would not parse).'
+  } elseif ($upText -notmatch 'leftover stdin-only' -or $upText -notmatch '4a834539') {
+    Write-Host 'WARN: upload-120cash.ps1 leftover. Skip (would Fileman wait-a-day or stdin patches).'
+  } else {
+    & $Up
+  }
+} catch {
+  Write-Host ("upload-120cash: {0}" -f $_.Exception.Message)
 }
 
 # leftover :2083 553 / pay.html needles-not-unique skip: pin d6ce688d.
