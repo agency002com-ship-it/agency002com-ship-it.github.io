@@ -31,11 +31,20 @@ if ($saveText -notmatch 'ran but status not 1') {
 
 $navTmp = Join-Path $env:TEMP 'nav-night.js'
 $localNav = Join-Path $here 'nav-night.js'
+$Stamp = Get-Date -Format 'yyyyMMddHHmmss'
+$usedLocal = $false
 if (Test-Path $localNav) {
-  Copy-Item $localNav $navTmp -Force
-} else {
+  $localText = [System.IO.File]::ReadAllText($localNav)
+  if ($localText.Length -ge 500 -and $localText -match 'cash\.keychain\.gr') {
+    Copy-Item $localNav $navTmp -Force
+    $usedLocal = $true
+  } else {
+    Write-Host 'local nav-night.js failed 500-byte/keychain guard (leftover PLACEHOLDER). Fetching raw git.'
+  }
+}
+if (-not $usedLocal) {
   # Raw git, not Pages: github.io has served a 13-byte PLACEHOLDER for this path.
-  Invoke-WebRequest -Uri "$Drop/nav-night.js" -OutFile $navTmp -UseBasicParsing
+  Invoke-WebRequest -Uri "$Drop/nav-night.js?t=$Stamp" -OutFile $navTmp -UseBasicParsing
 }
 $navJs = [System.IO.File]::ReadAllText($navTmp)
 if ($navJs.Length -lt 500 -or $navJs -notmatch 'cash\.keychain\.gr') {
