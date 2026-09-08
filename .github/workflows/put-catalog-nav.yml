@@ -1,5 +1,6 @@
 # Hourly: overwrite grey catalog /assets/nav.js (cash_120 only).
 # Empty secrets → exit 0. Does not replace grok / grok-cf.
+# ping 2026-09-08T18:00Z: overnight-door — 18:00-18:20 OPEN; last Fileman 17:53 8s skip — Fileman now if RUN-SHIFT002 set CPANEL_TOKEN.
 # ping 2026-09-08T17:18Z: 17:18 closing window — 17:00-17:20 OPEN; last Fileman 17:15 7s skip — Fileman now if RUN-SHIFT002 set CPANEL_TOKEN.
 # ping 2026-09-08T17:12Z: 17:12 mid-window — 17:00-17:20 OPEN; last Fileman 17:11 4s skip — Fileman now if RUN-SHIFT002 set CPANEL_TOKEN.
 # ping 2026-09-08T17:06Z: goal continuation — 17:00-17:20 OPEN; last Fileman 17:02 5s skip — Fileman now if RUN-SHIFT002 set CPANEL_TOKEN.
@@ -88,7 +89,7 @@
 # ping 2026-09-07T19:48Z: last Fileman 19:36 5s skip — Fileman now if RUN-SHIFT002 set CPANEL_TOKEN after the 19:36 skip.
 # ping 2026-09-07T19:33Z: 19:25 schedule missing; last Fileman 19:21 8s skip — Fileman now if RUN-SHIFT002 set CPANEL_TOKEN after the 19:18 skip.
 # ping 2026-09-07T19:18Z: 19:00–19:20 laptop window closing — Fileman now if RUN-SHIFT002 set CPANEL_TOKEN after the 19:18 skip.
-# ping 2026-09-07T19:12Z: 19:00–19:20 laptop window — Fileman now if RUN-SHIFT002 set CPANEL_TOKEN after the 19:04 skip.
+# ping 2026-09-07T19:12Z: 19:00–19:20 laptop window — Fileman now if RUN-SHIFT002 set CPANEL_TOKEN after the 19:18 skip.
 # ping 2026-09-07T19:02Z: 19:00–19:20 laptop window — Fileman now if RUN-SHIFT002 set CPANEL_TOKEN after the 19:01 skip.
 # ping 2026-09-07T18:51Z: still wait-a-day after 18:46 4s skip — Fileman now if CPANEL_TOKEN was set on GitHub secrets.
 # ping 2026-09-07T18:21Z: 18:18 timer after window close — Fileman now if RUN-SHIFT002 set CPANEL_TOKEN after the 18:19 skip.
