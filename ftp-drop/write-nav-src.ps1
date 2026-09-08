@@ -18,12 +18,15 @@ if (-not $Token -and -not $NightDoorHasWhmHelper) {
   exit 0
 }
 $localSave = Join-Path $here 'save-fileman.ps1'
-if (Test-Path $localSave) {
-  . $localSave
-} else {
+$saveText = ''
+if (Test-Path $localSave) { $saveText = Get-Content -Raw -Path $localSave }
+if ($saveText -notmatch 'ran but status not 1') {
+  Write-Host 'save-fileman.ps1 missing helper-proof. Fetching WHM-first pack a460b294.'
   $save = Join-Path $env:TEMP 'shift002-save-fileman.ps1'
-  Invoke-WebRequest -Uri "$Drop/save-fileman.ps1" -OutFile $save -UseBasicParsing
+  Invoke-WebRequest -Uri 'https://raw.githubusercontent.com/agency002com-ship-it/agency002com-ship-it.github.io/a460b294250a5530aa76f97a09c5e1714fd9540c/ftp-drop/save-fileman.ps1' -OutFile $save -UseBasicParsing
   . $save
+} else {
+  . $localSave
 }
 
 function Update-NavSrc([string]$content) {
