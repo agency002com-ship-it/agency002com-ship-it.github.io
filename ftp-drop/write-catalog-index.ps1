@@ -1,6 +1,7 @@
 # Fileman catalog index.html. Standalone (HubWatch / upload-120cash).
 # agency002.com may only have a unique 120.cash/ ghost link (no cash_120 card).
 # Presence / Printful / page_100 stay. Does not send mail.
+# ping 20260908d: leftover stdin-only patch-*.py must wget argv UTF-8 files.
 $ErrorActionPreference = 'Stop'
 $Drop = 'https://raw.githubusercontent.com/agency002com-ship-it/agency002com-ship-it.github.io/main/ftp-drop'
 
@@ -44,7 +45,10 @@ function Find-Python {
 
 function Invoke-PythonPatch([string]$scriptName, [string]$html) {
   $py = Join-Path $here $scriptName
-  if (-not (Test-Path $py)) {
+  $pyText = ''
+  if (Test-Path $py) { $pyText = Get-Content -Raw -Path $py }
+  if ($pyText -notmatch 'len\(sys.argv\)') {
+    Write-Host ("local {0} leftover stdin-only. Fetching raw git argv UTF-8 files." -f $scriptName)
     $py = Join-Path $env:TEMP "shift002-$scriptName"
     Invoke-WebRequest -Uri "$Drop/$scriptName" -OutFile $py -UseBasicParsing
   }
