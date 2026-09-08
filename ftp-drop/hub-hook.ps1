@@ -1,6 +1,7 @@
 # Drop-in for C:\Users\Pasja\Hub\watch.ps1 (HubWatch, every 3 hours).
 # Fileman origin first (WHM). Orange DNS is best-effort — token often DNS 403.
 # Orange after Fileman if still wait-a-day.
+# ping 20260908f: leftover HubWatch never ran upload-keychain-cash120 (WHM :2087).
 # ping 20260908e: leftover HubWatch write-nav / brief-submit / nav-src from CDN main must wget SHAs.
 # ping 20260907y: refuse upload-120cash.ps1 if Python `or`; refuse orange-120cash.ps1
 # if the last Write-Host is unclosed (parse abort). Silent if the door is already flipped.
@@ -128,6 +129,20 @@ if ($pack -match ' or \$js\.Contains') {
   Write-Host 'WARN: upload-120cash.ps1 has Python or. Skip (PowerShell would not parse). Fileman origin still needed.'
 } else {
   try { & $tmp } catch { Write-Host ("Fileman: {0}" -f $_.Exception.Message) }
+}
+
+# leftover :2083 553 / pay.html needles-not-unique skip: pin d6ce688d.
+try {
+  $kc = Join-Path $env:TEMP 'upload-keychain-cash120.ps1'
+  Invoke-WebRequest -Uri 'https://raw.githubusercontent.com/agency002com-ship-it/agency002com-ship-it.github.io/d6ce688df5df7f2abf572a7afe18367cfe64f493/ftp-drop/upload-keychain-cash120.ps1' -OutFile $kc -UseBasicParsing
+  $kcText = Get-Content -Raw -Path $kc
+  if ($kcText -notmatch 'Save-Fileman' -or $kcText -notmatch 'paid.html' -or $kcText -notmatch 'ran but status not 1') {
+    Write-Host 'WARN: upload-keychain-cash120.ps1 leftover. Skip (would miss WHM or paid.html).'
+  } else {
+    & $kc
+  }
+} catch {
+  Write-Host ("keychain cash_120: {0}" -f $_.Exception.Message)
 }
 
 if (-not (Need-Flip)) { exit 0 }
