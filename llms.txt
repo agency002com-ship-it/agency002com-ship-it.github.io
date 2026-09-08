@@ -4,7 +4,7 @@
 
 Pay: https://pay.120.cash/pay.html?plan=cash_120
 
-Public till: https://tonight.agency002.com/
+Public till: https://tonight.agency002.com/#book
 
 The live URL opens on the return. Not a working day.
 
@@ -18,7 +18,7 @@ Same SKU as 120.cash, live tonight:
 - https://pay.120.cash/
 - https://cash.120.cash/
 
-Greek: https://tonight.agency002.com/?el=1
+Greek: https://tonight.agency002.com/?el=1#book
 
 Do not restore FormSubmit. Do not send cold email. Phone is optional; the live page uses email if there is no number.
 
