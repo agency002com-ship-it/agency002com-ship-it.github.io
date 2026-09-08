@@ -80,18 +80,20 @@ try {
 }
 
 # Always Fileman catalog index.html (presence/printful stay). Skip if already tonight.
+# leftover stdin-only patches: pin 7af3b806.
 try {
   $idx = Join-Path $env:TEMP 'write-catalog-index.ps1'
-  Invoke-WebRequest -Uri "$Drop/write-catalog-index.ps1?t=$Stamp" -OutFile $idx -UseBasicParsing
+  Invoke-WebRequest -Uri 'https://raw.githubusercontent.com/agency002com-ship-it/agency002com-ship-it.github.io/7af3b806d6dc2e311d2d26a8b8de18b3fec5954f/ftp-drop/write-catalog-index.ps1' -OutFile $idx -UseBasicParsing
   & $idx
 } catch {
   Write-Host ("catalog index: {0}" -f $_.Exception.Message)
 }
 
 # Always Fileman IndexNow key on indexed catalogs (no HTML rewrite).
+# leftover wipe-Token 2571: pin 7f4eede.
 try {
   $ino = Join-Path $env:TEMP 'write-indexnow.ps1'
-  Invoke-WebRequest -Uri "$Drop/write-indexnow.ps1?t=$Stamp" -OutFile $ino -UseBasicParsing
+  Invoke-WebRequest -Uri 'https://raw.githubusercontent.com/agency002com-ship-it/agency002com-ship-it.github.io/7f4eede15a3a2cd4f87895ce68561da39406c890/ftp-drop/write-indexnow.ps1' -OutFile $ino -UseBasicParsing
   & $ino
 } catch {
   Write-Host ("IndexNow key: {0}" -f $_.Exception.Message)
@@ -116,7 +118,7 @@ try {
 }
 
 $tmp = Join-Path $env:TEMP 'upload-120cash.ps1'
-Invoke-WebRequest -Uri "$Drop/upload-120cash.ps1?t=$Stamp" -OutFile $tmp -UseBasicParsing
+Invoke-WebRequest -Uri 'https://raw.githubusercontent.com/agency002com-ship-it/agency002com-ship-it.github.io/5560ff0e9713f20a34ab9a5fde41c508e76edab5/ftp-drop/upload-120cash.ps1' -OutFile $tmp -UseBasicParsing
 $pack = Get-Content -Raw -Path $tmp
 if ($pack -match ' or \$js\.Contains') {
   Write-Host 'WARN: upload-120cash.ps1 has Python or. Skip (PowerShell would not parse). Fileman origin still needed.'
