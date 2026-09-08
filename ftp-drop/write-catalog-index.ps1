@@ -34,17 +34,22 @@ function Invoke-PythonPatch([string]$scriptName, [string]$html) {
     $py = Join-Path $env:TEMP "shift002-$scriptName"
     Invoke-WebRequest -Uri "$Drop/$scriptName" -OutFile $py -UseBasicParsing
   }
-  $python = Get-Command python3 -ErrorAction SilentlyContinue
-  if (-not $python) { $python = Get-Command python -ErrorAction SilentlyContinue }
+  $python = $null
+  foreach ($name in @('python3', 'python', 'py')) {
+    $python = Get-Command $name -ErrorAction SilentlyContinue
+    if ($python) { break }
+  }
   if (-not $python) {
-    Write-Host "WARN: python3/python not on PATH. Skip $scriptName"
+    Write-Host "WARN: python3/python/py not on PATH. Skip $scriptName"
     return $null
   }
   $inFile = Join-Path $env:TEMP ("shift002-in-" + $scriptName + ".html")
   $outFile = Join-Path $env:TEMP ("shift002-out-" + $scriptName + ".html")
   $errFile = Join-Path $env:TEMP ("shift002-err-" + $scriptName + ".txt")
   [System.IO.File]::WriteAllText($inFile, $html)
-  $p = Start-Process -FilePath $python.Source -ArgumentList @($py) -RedirectStandardInput $inFile -RedirectStandardOutput $outFile -RedirectStandardError $errFile -Wait -PassThru -NoNewWindow
+  $pyArgs = @($py)
+  if ($python.Name -match '^py(\.exe)?$') { $pyArgs = @('-3', $py) }
+  $p = Start-Process -FilePath $python.Source -ArgumentList $pyArgs -RedirectStandardInput $inFile -RedirectStandardOutput $outFile -RedirectStandardError $errFile -Wait -PassThru -NoNewWindow
   if ($p.ExitCode -ne 0 -or -not (Test-Path $outFile)) { return $null }
   return [System.IO.File]::ReadAllText($outFile)
 }
