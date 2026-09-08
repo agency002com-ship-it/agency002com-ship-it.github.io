@@ -170,8 +170,10 @@
   document.addEventListener('click', function (e) {
     var a = e.target && e.target.closest ? e.target.closest('a') : null;
     if (!a || !a.href) return;
-    if (a.href.indexOf('pay.120.cash/pay.html') === -1) return;
     if (a.href.indexOf('p=') !== -1) return;
+    var cash120Pay = a.href.indexOf('pay.120.cash/pay.html') !== -1 ||
+      (a.href.indexOf('pay.html') !== -1 && a.href.indexOf('plan=cash_120') !== -1);
+    if (!cash120Pay) return;
     if (!document.getElementById('biz')) return;
     var body = payload();
     if (!body.businessName || !body.email || !body.whatYouDo) return;
@@ -181,8 +183,6 @@
     location.href = 'https://pay.120.cash/pay.html?plan=cash_120&p=' + encodeBrief(body);
   });
 
-  // Live keychain still sends cash_120 to https://120.cash/#brief with no session id.
-  // This form is that return: no second charge, page live on github.io.
   var paidForm = document.getElementById('paid-form');
   if (paidForm) {
     paidForm.addEventListener('submit', function (e) {
