@@ -16,7 +16,7 @@
       businessName: trim(document.getElementById(ids.biz).value, 80),
       phone: trim(document.getElementById(ids.phone).value, 40),
       email: trim(document.getElementById(ids.email).value, 120).toLowerCase(),
-      city: trim(document.getElementById(ids.city).value, 80) || (lang === "el" ? "Ελλάδα" : "Greece"),
+      city: trim(document.getElementById(ids.city).value, 80) || (lang === "el" ? "\u0395\u03bb\u03bb\u03ac\u03b4\u03b1" : "Greece"),
       whatYouDo: trim(document.getElementById(ids.what).value, 450),
       language: lang,
     };
@@ -100,8 +100,8 @@
   function esc(s) {
     return String(s)
       .replace(/&/g, "&amp;")
-      .replace(/</g, "&lt;")
-      .replace(/>/g, "&gt;")
+      .replace(/\u003c/g, "&lt;")
+      .replace(/\u003e/g, "&gt;")
       .replace(/"/g, "&quot;");
   }
 
@@ -109,48 +109,48 @@
     var tel = digits(b.phone);
     var wa = tel.replace(/^\+/, "");
     var greek = b.language === "el";
-    var call = greek ? "Κλήση " : "Call ";
+    var call = greek ? "\u039a\u03bb\u03ae\u03c3\u03b7 " : "Call ";
     var mail = greek ? "Email " : "Email ";
     var note = greek
-      ? "Φτιάχτηκε τη νύχτα στην Αθήνα. Έτοιμο το πρωί."
+      ? "\u03a6\u03c4\u03b9\u03ac\u03c7\u03c4\u03b7\u03ba\u03b5 \u03c4\u03b7 \u03bd\u03cd\u03c7\u03c4\u03b1 \u03c3\u03c4\u03b7\u03bd \u0391\u03b8\u03ae\u03bd\u03b1. \u0388\u03c4\u03bf\u03b9\u03bc\u03bf \u03c4\u03bf \u03c0\u03c1\u03c9\u03af."
       : "Built in the Athens night. Ready when you woke up.";
     var hasPhone = usablePhone(b.phone);
     var actions = "";
     if (hasPhone) {
       actions +=
-        '<a class="call" href="tel:' +
+        '\u003ca class="call" href="tel:' +
         esc(tel) +
-        '">' +
+        '"\u003e' +
         call +
         esc(b.phone) +
-        '</a><a class="wa" href="https://wa.me/' +
+        '\u003c/a\u003e\u003ca class="wa" href="https://wa.me/' +
         esc(wa) +
-        '">WhatsApp</a>';
+        '"\u003eWhatsApp\u003c/a\u003e';
     }
     if (b.email) {
       actions +=
-        '<a class="' +
+        '\u003ca class="' +
         (hasPhone ? "wa" : "call") +
         '" href="mailto:' +
         esc(b.email) +
-        '">' +
+        '"\u003e' +
         mail +
         esc(b.email) +
-        "</a>";
+        "\u003c/a\u003e";
     }
     el.innerHTML =
-      "<main>" +
-      '<p class="city">' +
+      "\u003cmain\u003e" +
+      '\u003cp class="city"\u003e' +
       esc(b.city) +
-      "</p><div><h1>" +
+      "\u003c/p\u003e\u003cdiv\u003e\u003ch1\u003e" +
       esc(b.businessName) +
-      '</h1><p class="offer">' +
+      '\u003c/h1\u003e\u003cp class="offer"\u003e' +
       esc(b.whatYouDo) +
-      '</p></div><div class="actions">' +
+      '\u003c/p\u003e\u003c/div\u003e\u003cdiv class="actions"\u003e' +
       actions +
-      '<p class="note">' +
+      '\u003cp class="note"\u003e' +
       note +
-      "</p></div></main>";
+      "\u003c/p\u003e\u003c/div\u003e\u003c/main\u003e";
   }
 
   function postJson(url, body, ms) {
@@ -181,48 +181,49 @@
   async function openCheckout(brief, rail) {
     save(brief);
     var packed = encode(brief);
+    var payDoor = "https://pay.120.cash/pay.html?plan=cash_120&p=" + packed;
     var cancel = HERE + "/?checkout=cancelled";
-    var desc = "120.cash night page — " + brief.businessName;
-    if (rail === "paypal") {
-      var returns = [
-        HERE + "/thanks.html?rail=paypal&p=" + packed,
-        HERE + "/thanks.html?rail=paypal",
-      ];
-      var lastErr = "PayPal did not open.";
-      for (var i = 0; i < returns.length; i++) {
-        var pp = await postJson(KEYCHAIN, {
-          action: "create",
-          amount: 120,
-          currency: "EUR",
-          description: desc,
-          return_url: returns[i],
-          cancel_url: cancel,
-        }, 25000);
-        var approve = (pp.j && (pp.j.approve_url || pp.j.url)) || "";
-        if (/^https:\/\/(www\.)?(sandbox\.)?paypal\.com\//.test(String(approve))) {
-          try {
-            sessionStorage.setItem("shift002-paypal", pp.j.order_id || "");
-          } catch (e) {}
-          return approve;
+    var desc = "120.cash night page \u2014 " + brief.businessName;
+    try {
+      if (rail === "paypal") {
+        var returns = [
+          HERE + "/thanks.html?rail=paypal&p=" + packed,
+          HERE + "/thanks.html?rail=paypal",
+        ];
+        for (var i = 0; i \u003c returns.length; i++) {
+          var pp = await postJson(KEYCHAIN, {
+            action: "create",
+            amount: 120,
+            currency: "EUR",
+            description: desc,
+            return_url: returns[i],
+            cancel_url: cancel,
+          }, 25000);
+          var approve = (pp.j && (pp.j.approve_url || pp.j.url)) || "";
+          if (/^https:\/\/(www\.)?(sandbox\.)?paypal\.com\//.test(String(approve))) {
+            try {
+              sessionStorage.setItem("shift002-paypal", pp.j.order_id || "");
+            } catch (e) {}
+            return approve;
+          }
         }
-        lastErr = (pp.j && pp.j.error) || lastErr;
+        return payDoor;
       }
-      throw new Error(lastErr);
-    }
-    var card = await postJson(KEYCHAIN, {
-      action: "stripe_checkout",
-      plan: "cash_120",
-      description: desc,
-      success_url: HERE + "/thanks.html?session_id={CHECKOUT_SESSION_ID}&p=" + packed,
-      cancel_url: cancel,
-    });
-    var url = card.j && card.j.url ? String(card.j.url) : "";
-    if (url.indexOf("https://checkout.stripe.com/") === 0) return url;
-    throw new Error((card.j && card.j.error) || "Card till did not open.");
+      var card = await postJson(KEYCHAIN, {
+        action: "stripe_checkout",
+        plan: "cash_120",
+        description: desc,
+        success_url: HERE + "/thanks.html?session_id={CHECKOUT_SESSION_ID}&p=" + packed,
+        cancel_url: cancel,
+      });
+      var url = card.j && card.j.url ? String(card.j.url) : "";
+      if (url.indexOf("https://checkout.stripe.com/") === 0) return url;
+    } catch (e) {}
+    return payDoor;
   }
 
   async function paypalCaptured(orderId) {
-    if (!orderId || orderId.length < 8) return false;
+    if (!orderId || orderId.length \u003c 8) return false;
     try {
       var res = await postJson(KEYCHAIN, { action: "capture", order_id: orderId });
       return !!(res.j && res.j.ok === true);
@@ -232,7 +233,7 @@
   }
 
   async function stripePaid(sessionId) {
-    if (!sessionId || sessionId.length < 20) return { paid: false, checked: false };
+    if (!sessionId || sessionId.length \u003c 20) return { paid: false, checked: false };
     if (!/^cs_(live|test)_/.test(sessionId)) return { paid: false, checked: true };
     try {
       var res = await postJson(KEYCHAIN, {
