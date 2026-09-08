@@ -66,8 +66,17 @@ def patch(html: str) -> str:
 
 
 def main() -> None:
-    html = sys.stdin.read()
-    sys.stdout.write(patch(html))
+    if len(sys.argv) > 1:
+        with open(sys.argv[1], encoding="utf-8") as f:
+            html = f.read()
+    else:
+        html = sys.stdin.read()
+    out = patch(html)
+    if len(sys.argv) > 2:
+        with open(sys.argv[2], "w", encoding="utf-8", newline="") as f:
+            f.write(out)
+    else:
+        sys.stdout.write(out)
 
 
 if __name__ == "__main__":

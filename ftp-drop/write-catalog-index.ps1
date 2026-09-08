@@ -28,17 +28,27 @@ if ($saveText -notmatch 'ran but status not 1') {
   . $localSave
 }
 
+function Find-Python {
+  # Windows Store python.exe is a stub that opens the Store. Prefer py -3.
+  foreach ($name in @('py', 'python3', 'python')) {
+    $cmd = Get-Command $name -ErrorAction SilentlyContinue
+    if (-not $cmd) { continue }
+    if ([string]$cmd.Source -match 'WindowsApps') {
+      Write-Host ("skip Windows Store python stub ({0})" -f $cmd.Source)
+      continue
+    }
+    return $cmd
+  }
+  return $null
+}
+
 function Invoke-PythonPatch([string]$scriptName, [string]$html) {
   $py = Join-Path $here $scriptName
   if (-not (Test-Path $py)) {
     $py = Join-Path $env:TEMP "shift002-$scriptName"
     Invoke-WebRequest -Uri "$Drop/$scriptName" -OutFile $py -UseBasicParsing
   }
-  $python = $null
-  foreach ($name in @('python3', 'python', 'py')) {
-    $python = Get-Command $name -ErrorAction SilentlyContinue
-    if ($python) { break }
-  }
+  $python = Find-Python
   if (-not $python) {
     Write-Host "WARN: python3/python/py not on PATH. Skip $scriptName"
     return $null
@@ -46,12 +56,30 @@ function Invoke-PythonPatch([string]$scriptName, [string]$html) {
   $inFile = Join-Path $env:TEMP ("shift002-in-" + $scriptName + ".html")
   $outFile = Join-Path $env:TEMP ("shift002-out-" + $scriptName + ".html")
   $errFile = Join-Path $env:TEMP ("shift002-err-" + $scriptName + ".txt")
-  [System.IO.File]::WriteAllText($inFile, $html)
-  $pyArgs = @($py)
-  if ($python.Name -match '^py(\.exe)?$') { $pyArgs = @('-3', $py) }
-  $p = Start-Process -FilePath $python.Source -ArgumentList $pyArgs -RedirectStandardInput $inFile -RedirectStandardOutput $outFile -RedirectStandardError $errFile -Wait -PassThru -NoNewWindow
-  if ($p.ExitCode -ne 0 -or -not (Test-Path $outFile)) { return $null }
-  return [System.IO.File]::ReadAllText($outFile)
+  $utf8 = New-Object System.Text.UTF8Encoding $false
+  [System.IO.File]::WriteAllText($inFile, $html, $utf8)
+  if (Test-Path $outFile) { Remove-Item -Force $outFile }
+  $oldEnc = $env:PYTHONIOENCODING
+  $oldUtf = $env:PYTHONUTF8
+  $env:PYTHONIOENCODING = 'utf-8'
+  $env:PYTHONUTF8 = '1'
+  $exitCode = 1
+  try {
+    if ($python.Name -match '^py(\.exe)?$') {
+      & $python.Source -3 $py $inFile $outFile 2>$errFile
+    } else {
+      & $python.Source $py $inFile $outFile 2>$errFile
+    }
+    $exitCode = $LASTEXITCODE
+  } finally {
+    $env:PYTHONIOENCODING = $oldEnc
+    $env:PYTHONUTF8 = $oldUtf
+  }
+  if ($exitCode -ne 0 -or -not (Test-Path $outFile) -or (Get-Item $outFile).Length -lt 80) {
+    if (Test-Path $errFile) { Write-Host ("WARN {0}: {1}" -f $scriptName, ((Get-Content -Raw -Path $errFile) -replace '\s+', ' ').Trim()) }
+    return $null
+  }
+  return [System.IO.File]::ReadAllText($outFile, $utf8)
 }
 
 function Write-CatalogIndex([string]$hostName, [string]$scriptName, [string[]]$dirs) {
