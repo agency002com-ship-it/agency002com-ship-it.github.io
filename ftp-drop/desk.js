@@ -34,7 +34,7 @@
       w: b.whatYouDo,
       p: b.phone,
       e: b.email,
-      c: b.city || (pageLang() === 'el' ? 'Ελλάδα' : 'Greece'),
+      c: b.city || (pageLang() === 'el' ? '\u0395\u03bb\u03bb\u03ac\u03b4\u03b1' : 'Greece'),
       l: pageLang()
     });
     return btoa(unescape(encodeURIComponent(json)))
@@ -85,7 +85,7 @@
 
   function keychainPay(body, rail) {
     var enc = encodeBrief(body);
-    var desc = '120.cash night page — ' + body.businessName;
+    var desc = '120.cash night page \u2014 ' + body.businessName;
     if (rail === 'paypal') {
       return postJson(KEYCHAIN, {
         action: 'create',
@@ -120,11 +120,11 @@
     }
     if (!body.businessName || !body.email || !body.whatYouDo) {
       fail(pageLang() === 'el'
-        ? 'Θέλω όνομα, τι κάνεις, και ένα σωστό email.'
+        ? '\u0398\u03ad\u03bb\u03c9 \u03cc\u03bd\u03bf\u03bc\u03b1, \u03c4\u03b9 \u03ba\u03ac\u03bd\u03b5\u03b9\u03c2, \u03ba\u03b1\u03b9 \u03ad\u03bd\u03b1 \u03c3\u03c9\u03c3\u03c4\u03cc email.'
         : 'Name, what you do, and email are required.');
       return;
     }
-    if (msg) msg.textContent = 'Opening secure checkout…';
+    if (msg) msg.textContent = 'Opening secure checkout\u2026';
     if (cardBtn) cardBtn.disabled = true;
     if (ppBtn) ppBtn.disabled = true;
     try {
@@ -167,6 +167,20 @@
     if (/^#brief/i.test(location.hash || '')) showPaid();
   });
 
+  document.addEventListener('click', function (e) {
+    var a = e.target && e.target.closest ? e.target.closest('a') : null;
+    if (!a || !a.href) return;
+    if (a.href.indexOf('pay.120.cash/pay.html') === -1) return;
+    if (a.href.indexOf('p=') !== -1) return;
+    if (!document.getElementById('biz')) return;
+    var body = payload();
+    if (!body.businessName || !body.email || !body.whatYouDo) return;
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(body.email)) return;
+    e.preventDefault();
+    try { sessionStorage.setItem('shift002-brief', JSON.stringify(body)); } catch (err) {}
+    location.href = 'https://pay.120.cash/pay.html?plan=cash_120&p=' + encodeBrief(body);
+  });
+
   // Live keychain still sends cash_120 to https://120.cash/#brief with no session id.
   // This form is that return: no second charge, page live on github.io.
   var paidForm = document.getElementById('paid-form');
@@ -177,7 +191,7 @@
         businessName: (document.getElementById('paid-biz').value || '').trim(),
         phone: (document.getElementById('paid-phone').value || '').trim(),
         email: (document.getElementById('paid-email').value || '').trim(),
-        city: (document.getElementById('paid-city').value || '').trim() || (pageLang() === 'el' ? 'Ελλάδα' : 'Greece'),
+        city: (document.getElementById('paid-city').value || '').trim() || (pageLang() === 'el' ? '\u0395\u03bb\u03bb\u03ac\u03b4\u03b1' : 'Greece'),
         whatYouDo: (document.getElementById('paid-what').value || '').trim()
       };
       var pmsg = document.getElementById('paid-msg');
@@ -186,7 +200,7 @@
           pmsg.hidden = false;
           pmsg.className = 'msg err';
           pmsg.textContent = pageLang() === 'el'
-            ? 'Θέλω όνομα, τι κάνεις, και ένα σωστό email.'
+            ? '\u0398\u03ad\u03bb\u03c9 \u03cc\u03bd\u03bf\u03bc\u03b1, \u03c4\u03b9 \u03ba\u03ac\u03bd\u03b5\u03b9\u03c2, \u03ba\u03b1\u03b9 \u03ad\u03bd\u03b1 \u03c3\u03c9\u03c3\u03c4\u03cc email.'
             : 'Name, what you do, and email are required.';
         }
         return;
