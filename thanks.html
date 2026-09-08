@@ -52,7 +52,21 @@
     }
     var brief = NightDesk.load();
     if (!brief) {
-      fail("This tab does not have the brief. Pay from the brief page in this same browser, then use the return link from Stripe or PayPal.");
+      var sidNeed = q.get("session_id") || "";
+      var orderNeed = q.get("order_id") || q.get("token") || "";
+      var railNeed = q.get("rail") || "";
+      try { orderNeed = orderNeed || sessionStorage.getItem("shift002-paypal") || ""; } catch (e) {}
+      if (/^cs_(live|test)_/.test(sidNeed) || railNeed === "paypal" || orderNeed) {
+        var paid = "./paid.html?";
+        var bits = [];
+        if (sidNeed) bits.push("session_id=" + encodeURIComponent(sidNeed));
+        if (orderNeed) bits.push("token=" + encodeURIComponent(orderNeed));
+        if (railNeed) bits.push("rail=" + encodeURIComponent(railNeed));
+        if (packed) bits.push("p=" + encodeURIComponent(packed));
+        location.replace(paid + bits.join("&"));
+        return;
+      }
+      fail("This tab does not have the brief. Pay from the brief page in this same browser, then use the Stripe or PayPal return link.");
       return;
     }
 
