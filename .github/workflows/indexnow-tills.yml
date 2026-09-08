@@ -1,6 +1,7 @@
 # Ping IndexNow for doors that already sell same-night.
 # One host per POST (mixed-host 422). No secrets.
 # Do not submit https://120.cash/ while it still says one working day.
+# ping 2026-09-08T08:51Z: leftover GitHub cron 40 * * * * missed 06:40/07:40/08:40. Add 10 * * * *.
 # ping 2026-09-08T08:32Z: leftover same-night extra orange hosts only IndexNowed / — use converting paths.
 # ping 2026-09-08T08:29Z: leftover cash.keychain.gr CONVERTING only / and pay.html — till also serves tonight/el/apopse/120cash.
 # ping 2026-09-07T22:47Z: CONVERTING sitemap/llms/feed on tonight.120.cash + cash/pay tills
@@ -19,6 +20,7 @@ on:
   workflow_dispatch:
   schedule:
     - cron: "40 * * * *"
+    - cron: "10 * * * *"
   push:
     branches: ["main"]
     paths:
