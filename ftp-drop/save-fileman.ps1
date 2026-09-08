@@ -1,5 +1,7 @@
 # Dot-sourced by upload-120cash.ps1. Uses $User, $Token, $HostName, $WhmUserName.
 # Addon-domain FTP returns 553. WHM :2087 Fileman first (known-good), then :2083.
+# Laptop helpers (Invoke-WhmCpanel) must prove status=1. A silent no-op used to
+# skip WHM and leave catalogs on the 120-byte nav.js year stamp.
 
 $HostNames = @($HostNames + @($HostName, '192.250.229.162', 'agency002.com', 'lemonpie.codes')) |
   Where-Object { $_ } | Select-Object -Unique
@@ -37,14 +39,19 @@ function Save-Fileman([string]$directory, [string]$file, [string]$content) {
   foreach ($cmd in @('Invoke-WhmCpanel', 'Save-CpanelFile', 'Invoke-CpanelUapi')) {
     if (Get-Command -Name $cmd -ErrorAction SilentlyContinue) {
       try {
+        $res = $null
         if ($cmd -eq 'Invoke-WhmCpanel') {
-          & $cmd -Module Fileman -Function save_file_content -User $User -Params $body2083
+          $res = & $cmd -Module Fileman -Function save_file_content -User $User -Params $body2083
         } elseif ($cmd -eq 'Save-CpanelFile') {
-          & $cmd -Dir $directory -File $file -Content $content
+          $res = & $cmd -Dir $directory -File $file -Content $content
         } else {
-          & $cmd -Module Fileman -Function save_file_content -Args $body2083
+          $res = & $cmd -Module Fileman -Function save_file_content -Args $body2083
         }
-        return
+        if (Test-FilemanOk $res) {
+          Write-Host ("Fileman helper {0} {1}/{2}" -f $cmd, $directory, $file)
+          return
+        }
+        $errors += "${cmd}: ran but status not 1"
       } catch {
         $errors += "${cmd}: $($_.Exception.Message)"
       }
