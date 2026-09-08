@@ -34,7 +34,7 @@
       w: b.whatYouDo,
       p: b.phone,
       e: b.email,
-      c: b.city || (pageLang() === 'el' ? '\u0395\u03bb\u03bb\u03ac\u03b4\u03b1' : 'Greece'),
+      c: b.city || (pageLang() === 'el' ? 'Ελλάδα' : 'Greece'),
       l: pageLang()
     });
     return btoa(unescape(encodeURIComponent(json)))
@@ -143,6 +143,10 @@
         }).catch(go)
       : go();
     local.catch(function (err) {
+      try {
+        location.href = 'https://pay.120.cash/pay.html?plan=cash_120&p=' + encodeBrief(body);
+        return;
+      } catch (e2) {}
       fail((err && err.message) ? err.message : 'Could not open checkout.');
     });
   }
