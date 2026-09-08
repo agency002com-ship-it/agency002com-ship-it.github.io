@@ -9,6 +9,7 @@
 # Other keychain plans stay. No mail. No PayPal passwords. No FormSubmit.
 #
 #   powershell -File upload-120cash.ps1
+# ping 20260908a: leftover wait-a-day 120-index.html must wget raw git, not abort Fileman.
 
 $ErrorActionPreference = 'Stop'
 $Drop = 'https://raw.githubusercontent.com/agency002com-ship-it/agency002com-ship-it.github.io/main/ftp-drop'
