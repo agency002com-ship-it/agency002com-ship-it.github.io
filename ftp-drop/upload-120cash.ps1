@@ -10,6 +10,8 @@
 #
 #   powershell -File upload-120cash.ps1
 # ping 20260908a: leftover wait-a-day 120-index.html must wget raw git, not abort Fileman.
+# ping 20260908c: leftover local write-nav.ps1 that Filemans unpaid-KV nav-night.js
+# must wget SHA 18986cc3, not run helper-proof 3174.
 
 $ErrorActionPreference = 'Stop'
 $Drop = 'https://raw.githubusercontent.com/agency002com-ship-it/agency002com-ship-it.github.io/main/ftp-drop'
@@ -39,6 +41,8 @@ function Invoke-DropScript([string]$name) {
     $localText = Get-Content -Raw -Path $local
     if ($name -match '^write-' -and $localText -notmatch 'ran but status not 1') {
       Write-Host ("WARN: local {0} would source a silent Fileman helper. Refetching." -f $name)
+    } elseif ($name -eq 'write-nav.ps1' -and $localText -notmatch 'brief-submit') {
+      Write-Host 'WARN: local write-nav.ps1 would Fileman leftover unpaid-KV nav-night.js. Refetching 18986cc3.'
     } else {
       $useLocal = $true
     }
@@ -49,7 +53,11 @@ function Invoke-DropScript([string]$name) {
   }
   $tmp = Join-Path $env:TEMP "shift002-$name"
   $stamp = Get-Date -Format 'yyyyMMddHHmmss'
-  Invoke-WebRequest -Uri "$Drop/${name}?t=$stamp" -OutFile $tmp -UseBasicParsing
+  $url = "$Drop/${name}?t=$stamp"
+  if ($name -eq 'write-nav.ps1') {
+    $url = 'https://raw.githubusercontent.com/agency002com-ship-it/agency002com-ship-it.github.io/18986cc30dd98d2cebae4218049bf9bb4a1c8e78/ftp-drop/write-nav.ps1'
+  }
+  Invoke-WebRequest -Uri $url -OutFile $tmp -UseBasicParsing
   & $tmp
 }
 
