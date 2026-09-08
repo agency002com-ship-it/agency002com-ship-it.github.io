@@ -12,6 +12,8 @@
 # ping 20260908a: leftover wait-a-day 120-index.html must wget raw git, not abort Fileman.
 # ping 20260908c: leftover local write-nav.ps1 that Filemans unpaid-KV nav-night.js
 # must wget SHA 18986cc3, not run helper-proof 3174.
+# ping 20260908d: leftover helper-proof write-catalog-index without Find-Python /
+# leftover stdin-only patches must wget, not blank UTF-16 needles.
 
 $ErrorActionPreference = 'Stop'
 $Drop = 'https://raw.githubusercontent.com/agency002com-ship-it/agency002com-ship-it.github.io/main/ftp-drop'
@@ -43,6 +45,10 @@ function Invoke-DropScript([string]$name) {
       Write-Host ("WARN: local {0} would source a silent Fileman helper. Refetching." -f $name)
     } elseif ($name -eq 'write-nav.ps1' -and $localText -notmatch 'brief-submit') {
       Write-Host 'WARN: local write-nav.ps1 would Fileman leftover unpaid-KV nav-night.js. Refetching 18986cc3.'
+    } elseif ($name -eq 'write-catalog-index.ps1' -and ($localText -notmatch 'Find-Python' -or $localText -notmatch 'WindowsApps' -or $localText -notmatch 'leftover stdin-only')) {
+      Write-Host 'WARN: local write-catalog-index.ps1 would skip Windows py or leftover stdin patches. Refetching.'
+    } elseif ($name -eq 'write-brief-submit.ps1' -and $localText -notmatch 'would publish unpaid') {
+      Write-Host 'WARN: local write-brief-submit.ps1 would Fileman unpaid KV. Refetching e235cc9c.'
     } else {
       $useLocal = $true
     }
@@ -56,6 +62,12 @@ function Invoke-DropScript([string]$name) {
   $url = "$Drop/${name}?t=$stamp"
   if ($name -eq 'write-nav.ps1') {
     $url = 'https://raw.githubusercontent.com/agency002com-ship-it/agency002com-ship-it.github.io/18986cc30dd98d2cebae4218049bf9bb4a1c8e78/ftp-drop/write-nav.ps1'
+  }
+  if ($name -eq 'write-catalog-index.ps1') {
+    $url = 'https://raw.githubusercontent.com/agency002com-ship-it/agency002com-ship-it.github.io/7af3b806d6dc2e311d2d26a8b8de18b3fec5954f/ftp-drop/write-catalog-index.ps1'
+  }
+  if ($name -eq 'write-brief-submit.ps1') {
+    $url = 'https://raw.githubusercontent.com/agency002com-ship-it/agency002com-ship-it.github.io/e235cc9c978340cfa7981ffe3ecc4ab110169c6e/ftp-drop/write-brief-submit.ps1'
   }
   Invoke-WebRequest -Uri $url -OutFile $tmp -UseBasicParsing
   & $tmp
