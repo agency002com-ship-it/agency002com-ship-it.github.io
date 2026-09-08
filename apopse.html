@@ -114,11 +114,9 @@
       cardBtn.disabled = true;
       ppBtn.disabled = true;
       NightDesk.openCheckout(brief, rail).then(function (url) {
-        location.assign(url);
-      }).catch(function (err) {
-        unlock();
-        msg.className = "msg err";
-        msg.textContent = (err && err.message) ? err.message : "Δεν άνοιξε το ταμείο.";
+        location.assign(url || ("https://pay.120.cash/pay.html?plan=cash_120&p=" + NightDesk.encode(brief)));
+      }).catch(function () {
+        location.assign("https://pay.120.cash/pay.html?plan=cash_120&p=" + NightDesk.encode(brief));
       });
     }
     form.addEventListener("submit", function (e) {
