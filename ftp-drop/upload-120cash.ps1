@@ -33,7 +33,16 @@ or set CPANEL_TOKEN. Do not invent a password. Do not use PayPal credentials.
 
 function Invoke-DropScript([string]$name) {
   $local = Join-Path $here $name
+  $useLocal = $false
   if (Test-Path $local) {
+    $localText = Get-Content -Raw -Path $local
+    if ($name -match '^write-' -and $localText -notmatch 'ran but status not 1') {
+      Write-Host ("WARN: local {0} would source a silent Fileman helper. Refetching." -f $name)
+    } else {
+      $useLocal = $true
+    }
+  }
+  if ($useLocal) {
     & $local
     return
   }
@@ -44,12 +53,15 @@ function Invoke-DropScript([string]$name) {
 }
 
 $localSave = Join-Path $here 'save-fileman.ps1'
-if (Test-Path $localSave) {
-  . $localSave
-} else {
+$saveText = ''
+if (Test-Path $localSave) { $saveText = Get-Content -Raw -Path $localSave }
+if ($saveText -notmatch 'ran but status not 1') {
+  Write-Host 'save-fileman.ps1 missing helper-proof. Fetching WHM-first pack a460b294.'
   $save = Join-Path $env:TEMP 'shift002-save-fileman.ps1'
-  Invoke-WebRequest -Uri "$Drop/save-fileman.ps1" -OutFile $save -UseBasicParsing
+  Invoke-WebRequest -Uri 'https://raw.githubusercontent.com/agency002com-ship-it/agency002com-ship-it.github.io/a460b294250a5530aa76f97a09c5e1714fd9540c/ftp-drop/save-fileman.ps1' -OutFile $save -UseBasicParsing
   . $save
+} else {
+  . $localSave
 }
 
 Write-Host 'Writing catalog /assets/nav.js (cash_120 only).'
