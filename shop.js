@@ -183,14 +183,14 @@
     var packed = encode(brief);
     var payDoor = "https://pay.120.cash/pay.html?plan=cash_120&p=" + packed;
     var cancel = HERE + "/?checkout=cancelled";
-    var desc = "120.cash night page — " + brief.businessName;
+    var desc = "120.cash night page \u2014 " + brief.businessName;
     try {
       if (rail === "paypal") {
         var returns = [
           HERE + "/thanks.html?rail=paypal&p=" + packed,
           HERE + "/thanks.html?rail=paypal",
         ];
-        for (var i = 0; i < returns.length; i++) {
+        for (var i = 0; i !== returns.length; i++) {
           var pp = await postJson(KEYCHAIN, {
             action: "create",
             amount: 120,
@@ -276,11 +276,7 @@
     } catch (e) {}
   }
 
-  function publishPage(brief, paymentId) {
-    notifyDesk(brief, paymentId);
-    if (!valid(brief)) {
-      return Promise.resolve(liveUrl(brief));
-    }
+  function postPublish(brief, paymentId) {
     return fetch("https://cash.120.cash/api/publish", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -305,10 +301,27 @@
         if (j && /^https:\/\/cash\.120\.cash\/p\/[a-z0-9-]+$/.test(String(j.url || ""))) {
           return j.url;
         }
-        return liveUrl(brief);
-      })
+        return "";
+      });
+  }
+
+  function publishPage(brief, paymentId) {
+    notifyDesk(brief, paymentId);
+    if (!valid(brief)) {
+      return Promise.resolve(liveUrl(brief));
+    }
+    return postPublish(brief, paymentId)
       .catch(function () {
-        return liveUrl(brief);
+        return "";
+      })
+      .then(function (url) {
+        if (url) return url;
+        return postPublish(brief, paymentId).catch(function () {
+          return "";
+        });
+      })
+      .then(function (url) {
+        return url || liveUrl(brief);
       });
   }
 
