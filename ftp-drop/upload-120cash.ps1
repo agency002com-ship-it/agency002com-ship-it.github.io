@@ -14,6 +14,7 @@
 # must wget SHA 18986cc3, not run helper-proof 3174.
 # ping 20260908d: leftover helper-proof write-catalog-index without Find-Python /
 # leftover stdin-only patches must wget, not blank UTF-16 needles.
+# ping 20260908e: leftover CDN 120-index.html must wget SHA 4a834539 (20432), not a truncated main.
 
 $ErrorActionPreference = 'Stop'
 $Drop = 'https://raw.githubusercontent.com/agency002com-ship-it/agency002com-ship-it.github.io/main/ftp-drop'
@@ -117,9 +118,9 @@ if ($needDesk) {
     $deskHtml = [System.IO.File]::ReadAllText($indexFile)
   }
   if ($deskHtml -notmatch '#book' -or $deskHtml -match 'one working day' -or $deskHtml -notmatch 'ftp-drop/desk.js') {
-    Write-Host 'local 120-index.html is not the same-night desk. Fetching raw git.'
+    Write-Host 'local 120-index.html is not the same-night desk. Fetching SHA 4a834539.'
     $indexFile = Join-Path $env:TEMP 'shift002-120-index.html'
-    Invoke-WebRequest -Uri "$Drop/120-index.html?t=$stamp" -OutFile $indexFile -UseBasicParsing
+    Invoke-WebRequest -Uri 'https://raw.githubusercontent.com/agency002com-ship-it/agency002com-ship-it.github.io/4a8345392093f10183bbd5f70537c720a4c4d15e/ftp-drop/120-index.html' -OutFile $indexFile -UseBasicParsing
     $deskHtml = [System.IO.File]::ReadAllText($indexFile)
   }
   if ($deskHtml -notmatch '#book' -or $deskHtml -match 'one working day' -or $deskHtml -notmatch 'ftp-drop/desk.js') {
