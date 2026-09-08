@@ -16,7 +16,7 @@
       businessName: trim(document.getElementById(ids.biz).value, 80),
       phone: trim(document.getElementById(ids.phone).value, 40),
       email: trim(document.getElementById(ids.email).value, 120).toLowerCase(),
-      city: trim(document.getElementById(ids.city).value, 80) || (lang === "el" ? "\u0395\u03bb\u03bb\u03ac\u03b4\u03b1" : "Greece"),
+      city: trim(document.getElementById(ids.city).value, 80) || (lang === "el" ? "Ελλάδα" : "Greece"),
       whatYouDo: trim(document.getElementById(ids.what).value, 450),
       language: lang,
     };
@@ -109,10 +109,10 @@
     var tel = digits(b.phone);
     var wa = tel.replace(/^\+/, "");
     var greek = b.language === "el";
-    var call = greek ? "\u039a\u03bb\u03ae\u03c3\u03b7 " : "Call ";
+    var call = greek ? "Κλήση " : "Call ";
     var mail = greek ? "Email " : "Email ";
     var note = greek
-      ? "\u03a6\u03c4\u03b9\u03ac\u03c7\u03c4\u03b7\u03ba\u03b5 \u03c4\u03b7 \u03bd\u03cd\u03c7\u03c4\u03b1 \u03c3\u03c4\u03b7\u03bd \u0391\u03b8\u03ae\u03bd\u03b1. \u0388\u03c4\u03bf\u03b9\u03bc\u03bf \u03c4\u03bf \u03c0\u03c1\u03c9\u03af."
+      ? "Φτιάχτηκε τη νύχτα στην Αθήνα. Έτοιμο το πρωί."
       : "Built in the Athens night. Ready when you woke up.";
     var hasPhone = usablePhone(b.phone);
     var actions = "";
@@ -120,12 +120,12 @@
       actions +=
         '\u003ca class="call" href="tel:' +
         esc(tel) +
-        '"\u003e' +
+        '\u003e' +
         call +
         esc(b.phone) +
         '\u003c/a\u003e\u003ca class="wa" href="https://wa.me/' +
         esc(wa) +
-        '"\u003eWhatsApp\u003c/a\u003e';
+        '\u003eWhatsApp\u003c/a\u003e';
     }
     if (b.email) {
       actions +=
@@ -133,16 +133,16 @@
         (hasPhone ? "wa" : "call") +
         '" href="mailto:' +
         esc(b.email) +
-        '"\u003e' +
+        '\u003e' +
         mail +
         esc(b.email) +
-        "\u003c/a\u003e";
+        '\u003c/a\u003e';
     }
     el.innerHTML =
-      "\u003cmain\u003e" +
+      '\u003cmain\u003e' +
       '\u003cp class="city"\u003e' +
       esc(b.city) +
-      "\u003c/p\u003e\u003cdiv\u003e\u003ch1\u003e" +
+      '\u003c/p\u003e\u003cdiv\u003e\u003ch1\u003e' +
       esc(b.businessName) +
       '\u003c/h1\u003e\u003cp class="offer"\u003e' +
       esc(b.whatYouDo) +
@@ -150,7 +150,7 @@
       actions +
       '\u003cp class="note"\u003e' +
       note +
-      "\u003c/p\u003e\u003c/div\u003e\u003c/main\u003e";
+      '\u003c/p\u003e\u003c/div\u003e\u003c/main\u003e';
   }
 
   function postJson(url, body, ms) {
@@ -183,14 +183,14 @@
     var packed = encode(brief);
     var payDoor = "https://pay.120.cash/pay.html?plan=cash_120&p=" + packed;
     var cancel = HERE + "/?checkout=cancelled";
-    var desc = "120.cash night page \u2014 " + brief.businessName;
+    var desc = "120.cash night page — " + brief.businessName;
     try {
       if (rail === "paypal") {
         var returns = [
           HERE + "/thanks.html?rail=paypal&p=" + packed,
           HERE + "/thanks.html?rail=paypal",
         ];
-        for (var i = 0; i \u003c returns.length; i++) {
+        for (var i = 0; i < returns.length; i++) {
           var pp = await postJson(KEYCHAIN, {
             action: "create",
             amount: 120,
@@ -223,7 +223,7 @@
   }
 
   async function paypalCaptured(orderId) {
-    if (!orderId || orderId.length \u003c 8) return false;
+    if (!orderId || orderId.length < 8) return false;
     try {
       var res = await postJson(KEYCHAIN, { action: "capture", order_id: orderId });
       return !!(res.j && res.j.ok === true);
@@ -233,7 +233,7 @@
   }
 
   async function stripePaid(sessionId) {
-    if (!sessionId || sessionId.length \u003c 20) return { paid: false, checked: false };
+    if (!sessionId || sessionId.length < 20) return { paid: false, checked: false };
     if (!/^cs_(live|test)_/.test(sessionId)) return { paid: false, checked: true };
     try {
       var res = await postJson(KEYCHAIN, {
