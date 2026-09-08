@@ -1,6 +1,8 @@
 # Tiny Fileman: overwrite grey /assets/nav.js on 120.cash and indexed catalogs.
 # ping 20260907t: also Fileman addon docroot /home/agency00/domains/120.cash/public_html.
-# Pay €120 → cash.keychain.gr. cash_120 brief → tonight KV.
+# Pay €120 → cash.keychain.gr. Do not publish unpaid briefs to KV.
+# ping 20260908c: leftover Origin nav-night.js that POSTs brief-submit.php
+# would skip the €120. Fetch github.io pack a84f8620 instead.
 # Does not rewrite other keychain plans. Does not send mail.
 $ErrorActionPreference = 'Stop'
 $Drop = 'https://raw.githubusercontent.com/agency002com-ship-it/agency002com-ship-it.github.io/main/ftp-drop'
@@ -35,11 +37,11 @@ $Stamp = Get-Date -Format 'yyyyMMddHHmmss'
 $usedLocal = $false
 if (Test-Path $localNav) {
   $localText = [System.IO.File]::ReadAllText($localNav)
-  if ($localText.Length -ge 500 -and $localText -match 'cash\.keychain\.gr') {
+  if ($localText.Length -ge 500 -and $localText -match 'cash\.keychain\.gr' -and $localText -notmatch 'brief-submit\.php') {
     Copy-Item $localNav $navTmp -Force
     $usedLocal = $true
   } else {
-    Write-Host 'local nav-night.js failed 500-byte/keychain guard (leftover PLACEHOLDER). Fetching raw git.'
+    Write-Host 'local nav-night.js leftover (PLACEHOLDER, unpaid KV publish, or guard fail). Fetching raw git.'
   }
 }
 if (-not $usedLocal) {
@@ -47,8 +49,8 @@ if (-not $usedLocal) {
   Invoke-WebRequest -Uri "$Drop/nav-night.js?t=$Stamp" -OutFile $navTmp -UseBasicParsing
 }
 $navJs = [System.IO.File]::ReadAllText($navTmp)
-if ($navJs.Length -lt 500 -or $navJs -notmatch 'cash\.keychain\.gr') {
-  Write-Error 'nav-night.js missing cash.keychain.gr (would overwrite catalogs with the 120-byte year stamp). Skip.'
+if ($navJs.Length -lt 500 -or $navJs -notmatch 'cash\.keychain\.gr' -or $navJs -match 'brief-submit\.php') {
+  Write-Error 'nav-night.js missing cash.keychain.gr or still publishes unpaid briefs. Skip.'
   exit 1
 }
 
