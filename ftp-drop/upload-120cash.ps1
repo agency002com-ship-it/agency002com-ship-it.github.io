@@ -90,11 +90,17 @@ $needDesk = ($page120 -match 'one working day') -or ($page120 -notmatch '#book')
 if ($needDesk) {
   Write-Host 'Writing 120.cash index.html from 120-index.html (same-night #book desk).'
   $indexFile = Join-Path $here '120-index.html'
-  if (-not (Test-Path $indexFile)) {
-    $indexFile = Join-Path $env:TEMP 'shift002-120-index.html'
-    Invoke-WebRequest -Uri "$Drop/120-index.html" -OutFile $indexFile -UseBasicParsing
+  $stamp = Get-Date -Format 'yyyyMMddHHmmss'
+  $deskHtml = ''
+  if (Test-Path $indexFile) {
+    $deskHtml = [System.IO.File]::ReadAllText($indexFile)
   }
-  $deskHtml = [System.IO.File]::ReadAllText($indexFile)
+  if ($deskHtml -notmatch '#book' -or $deskHtml -match 'one working day' -or $deskHtml -notmatch 'ftp-drop/desk.js') {
+    Write-Host 'local 120-index.html is not the same-night desk. Fetching raw git.'
+    $indexFile = Join-Path $env:TEMP 'shift002-120-index.html'
+    Invoke-WebRequest -Uri "$Drop/120-index.html?t=$stamp" -OutFile $indexFile -UseBasicParsing
+    $deskHtml = [System.IO.File]::ReadAllText($indexFile)
+  }
   if ($deskHtml -notmatch '#book' -or $deskHtml -match 'one working day' -or $deskHtml -notmatch 'ftp-drop/desk.js') {
     Write-Error '120-index.html is not the same-night desk. Refusing to overwrite origin index.html.'
   }
