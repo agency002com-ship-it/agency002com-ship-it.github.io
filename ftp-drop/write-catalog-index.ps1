@@ -71,11 +71,12 @@ function Invoke-PythonPatch([string]$scriptName, [string]$html) {
       & $python.Source $py $inFile $outFile 2>$errFile
     }
     $exitCode = $LASTEXITCODE
+    if ($null -eq $exitCode) { $exitCode = 0 }
   } finally {
     $env:PYTHONIOENCODING = $oldEnc
     $env:PYTHONUTF8 = $oldUtf
   }
-  if ($exitCode -ne 0 -or -not (Test-Path $outFile) -or (Get-Item $outFile).Length -lt 80) {
+  if (($null -ne $exitCode -and $exitCode -ne 0) -or -not (Test-Path $outFile) -or (Get-Item $outFile).Length -lt 80) {
     if (Test-Path $errFile) { Write-Host ("WARN {0}: {1}" -f $scriptName, ((Get-Content -Raw -Path $errFile) -replace '\s+', ' ').Trim()) }
     return $null
   }
