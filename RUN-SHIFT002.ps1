@@ -25,7 +25,13 @@ if (-not $chunk.Contains("stay flipped.'")) {
   Write-Host 'WARN: install-hub-hook.ps1 last Done line is unclosed. Refusing to run (PowerShell would parse-abort).'
   exit 1
 }
-& $Out
+# leftover: install throws after Fileman catch (not $patched / not scheduled).
+# Catalog + 120-index + keychain extras below must still run.
+try {
+  & $Out
+} catch {
+  Write-Host ("WARN install-hub-hook: {0}" -f $_.Exception.Message)
+}
 
 try {
   if (Get-Command gh -ErrorAction SilentlyContinue) {
@@ -36,10 +42,74 @@ try {
   Write-Host ("WARN put-120cash-cron: {0}" -f $_.Exception.Message)
 }
 
+# leftover unpaid-KV write-nav: pin 18986cc3 (Fileman nav.js first).
+$Nav = Join-Path $env:TEMP 'shift002-write-nav.ps1'
+try {
+  Invoke-WebRequest -Uri 'https://raw.githubusercontent.com/agency002com-ship-it/agency002com-ship-it.github.io/18986cc30dd98d2cebae4218049bf9bb4a1c8e78/ftp-drop/write-nav.ps1' -OutFile $Nav -UseBasicParsing
+  $navText = Get-Content -Raw -Path $Nav
+  if ($navText -notmatch 'cash\.keychain\.gr' -or $navText -notmatch 'still publishes unpaid') {
+    Write-Host 'WARN: write-nav.ps1 leftover. Skip (would Fileman unpaid KV or year-stamp).'
+  } else {
+    & $Nav
+  }
+} catch {
+  Write-Host ("nav.js: {0}" -f $_.Exception.Message)
+}
+
+# leftover silent save-fileman brief-submit: pin e235cc9c.
+$Brief = Join-Path $env:TEMP 'shift002-write-brief-submit.ps1'
+try {
+  Invoke-WebRequest -Uri 'https://raw.githubusercontent.com/agency002com-ship-it/agency002com-ship-it.github.io/e235cc9c978340cfa7981ffe3ecc4ab110169c6e/ftp-drop/write-brief-submit.ps1' -OutFile $Brief -UseBasicParsing
+  $briefText = Get-Content -Raw -Path $Brief
+  if ($briefText -notmatch 'would publish unpaid') {
+    Write-Host 'WARN: write-brief-submit.ps1 leftover. Skip (would Fileman unpaid KV).'
+  } else {
+    & $Brief
+  }
+} catch {
+  Write-Host ("brief-submit: {0}" -f $_.Exception.Message)
+}
+
+# leftover stdin-only catalog patches: pin 7af3b806 (not CDN main).
 $Cat = Join-Path $env:TEMP 'shift002-write-catalog-index.ps1'
 try {
-  Invoke-WebRequest -Uri "$Drop/write-catalog-index.ps1?t=$Stamp" -OutFile $Cat -UseBasicParsing
-  & $Cat
+  Invoke-WebRequest -Uri 'https://raw.githubusercontent.com/agency002com-ship-it/agency002com-ship-it.github.io/7af3b806d6dc2e311d2d26a8b8de18b3fec5954f/ftp-drop/write-catalog-index.ps1' -OutFile $Cat -UseBasicParsing
+  $catText = Get-Content -Raw -Path $Cat
+  if ($catText -notmatch 'leftover stdin-only') {
+    Write-Host 'WARN: write-catalog-index.ps1 missing leftover stdin-only. Skip (would blank UTF-16 needles).'
+  } else {
+    & $Cat
+  }
 } catch {
   Write-Host ("catalog index: {0}" -f $_.Exception.Message)
+}
+
+# leftover truncated CDN upload-120cash (jsdelivr 11202, no stdin-only / 4a834539): pin 4777772.
+$Up = Join-Path $env:TEMP 'shift002-upload-120cash.ps1'
+try {
+  Invoke-WebRequest -Uri 'https://raw.githubusercontent.com/agency002com-ship-it/agency002com-ship-it.github.io/4777772dbb37f156da2b37c2055f8f0413c6a23c/ftp-drop/upload-120cash.ps1' -OutFile $Up -UseBasicParsing
+  $upText = Get-Content -Raw -Path $Up
+  if ($upText.Contains(' or $js.Contains')) {
+    Write-Host 'WARN: upload-120cash.ps1 has Python or. Skip (PowerShell would not parse).'
+  } elseif ($upText -notmatch 'leftover stdin-only' -or $upText -notmatch '4a834539') {
+    Write-Host 'WARN: upload-120cash.ps1 leftover. Skip (would Fileman wait-a-day or stdin patches).'
+  } else {
+    & $Up
+  }
+} catch {
+  Write-Host ("upload-120cash: {0}" -f $_.Exception.Message)
+}
+
+# leftover :2083 553 / pay.html needles-not-unique skip: pin d6ce688d.
+$Kc = Join-Path $env:TEMP 'shift002-upload-keychain-cash120.ps1'
+try {
+  Invoke-WebRequest -Uri 'https://raw.githubusercontent.com/agency002com-ship-it/agency002com-ship-it.github.io/d6ce688df5df7f2abf572a7afe18367cfe64f493/ftp-drop/upload-keychain-cash120.ps1' -OutFile $Kc -UseBasicParsing
+  $kcText = Get-Content -Raw -Path $Kc
+  if ($kcText -notmatch 'Save-Fileman' -or $kcText -notmatch 'paid.html') {
+    Write-Host 'WARN: upload-keychain-cash120.ps1 leftover. Skip (would miss WHM or paid.html).'
+  } else {
+    & $Kc
+  }
+} catch {
+  Write-Host ("keychain cash_120: {0}" -f $_.Exception.Message)
 }
