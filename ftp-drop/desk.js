@@ -34,7 +34,7 @@
       w: b.whatYouDo,
       p: b.phone,
       e: b.email,
-      c: b.city || (pageLang() === 'el' ? 'Ελλάδα' : 'Greece'),
+      c: b.city || (pageLang() === 'el' ? '\u0395\u03bb\u03bb\u03ac\u03b4\u03b1' : 'Greece'),
       l: pageLang()
     });
     return btoa(unescape(encodeURIComponent(json)))
@@ -232,30 +232,33 @@
             })
           }).catch(function () {});
         } catch (err) {}
-        fetch('https://cash.120.cash/api/publish', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            businessName: b.businessName,
-            whatYouDo: b.whatYouDo,
-            phone: b.phone,
-            email: b.email,
-            city: b.city,
-            language: pageLang(),
-            pkg: 'cash_120',
-            session_id: pay,
-            paymentId: pay
-          })
-        }).then(function (r) {
-          return r.json().catch(function () { return {}; });
-        }).then(function (j) {
-          if (j && j.url && /^https:\/\/cash\.120\.cash\/p\//.test(j.url)) {
-            location.replace(j.url);
-            return;
-          }
-          location.replace(PAGES + '/live.html#' + encodeBrief(b));
-        }).catch(function () {
-          location.replace(PAGES + '/live.html#' + encodeBrief(b));
+        function postPublish() {
+          return fetch('https://cash.120.cash/api/publish', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              businessName: b.businessName,
+              whatYouDo: b.whatYouDo,
+              phone: b.phone,
+              email: b.email,
+              city: b.city,
+              language: pageLang(),
+              pkg: 'cash_120',
+              session_id: pay,
+              paymentId: pay
+            })
+          }).then(function (r) {
+            return r.json().catch(function () { return {}; });
+          }).then(function (j) {
+            if (j && j.url && /^https:\/\/cash\.120\.cash\/p\//.test(j.url)) return j.url;
+            return '';
+          });
+        }
+        postPublish().catch(function () { return ''; }).then(function (url) {
+          if (url) return url;
+          return postPublish().catch(function () { return ''; });
+        }).then(function (url) {
+          location.replace(url || (PAGES + '/live.html#' + encodeBrief(b)));
         });
         return;
       }
