@@ -1,6 +1,7 @@
 # Drop-in for C:\Users\Pasja\Hub\watch.ps1 (HubWatch, every 3 hours).
 # Fileman origin first (WHM). Orange DNS is best-effort — token often DNS 403.
 # Orange after Fileman if still wait-a-day.
+# ping 20260908e: leftover HubWatch write-nav / brief-submit / nav-src from CDN main must wget SHAs.
 # ping 20260907y: refuse upload-120cash.ps1 if Python `or`; refuse orange-120cash.ps1
 # if the last Write-Host is unclosed (parse abort). Silent if the door is already flipped.
 # Does not send mail. Does not touch PayPal. Does not restore FormSubmit.
@@ -71,9 +72,10 @@ function Need-Flip {
 }
 
 # Always Fileman 120.cash brief-submit.php (KV publish). Does not touch catalogs.
+# leftover silent save-fileman: pin e235cc9c.
 try {
   $b = Join-Path $env:TEMP 'write-brief-submit.ps1'
-  Invoke-WebRequest -Uri "$Drop/write-brief-submit.ps1?t=$Stamp" -OutFile $b -UseBasicParsing
+  Invoke-WebRequest -Uri 'https://raw.githubusercontent.com/agency002com-ship-it/agency002com-ship-it.github.io/e235cc9c978340cfa7981ffe3ecc4ab110169c6e/ftp-drop/write-brief-submit.ps1' -OutFile $b -UseBasicParsing
   & $b
 } catch {
   Write-Host ("brief-submit.php: {0}" -f $_.Exception.Message)
@@ -101,17 +103,19 @@ try {
 
 if (-not (Need-Flip)) { exit 0 }
 
+# leftover unpaid-KV nav-night.js: pin 18986cc3.
 try {
   $n = Join-Path $env:TEMP 'write-nav.ps1'
-  Invoke-WebRequest -Uri "$Drop/write-nav.ps1?t=$Stamp" -OutFile $n -UseBasicParsing
+  Invoke-WebRequest -Uri 'https://raw.githubusercontent.com/agency002com-ship-it/agency002com-ship-it.github.io/18986cc30dd98d2cebae4218049bf9bb4a1c8e78/ftp-drop/write-nav.ps1' -OutFile $n -UseBasicParsing
   & $n
 } catch {
   Write-Host ("nav.js: {0}" -f $_.Exception.Message)
 }
 
+# leftover silent save-fileman nav-src: pin 37bbff24.
 try {
   $ns = Join-Path $env:TEMP 'write-nav-src.ps1'
-  Invoke-WebRequest -Uri "$Drop/write-nav-src.ps1?t=$Stamp" -OutFile $ns -UseBasicParsing
+  Invoke-WebRequest -Uri 'https://raw.githubusercontent.com/agency002com-ship-it/agency002com-ship-it.github.io/37bbff2489296f13386928fc9f915ed0799c8050/ftp-drop/write-nav-src.ps1' -OutFile $ns -UseBasicParsing
   & $ns
 } catch {
   Write-Host ("nav src: {0}" -f $_.Exception.Message)
