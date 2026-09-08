@@ -42,6 +42,34 @@ try {
   Write-Host ("WARN put-120cash-cron: {0}" -f $_.Exception.Message)
 }
 
+# leftover unpaid-KV write-nav: pin 18986cc3 (Fileman nav.js first).
+$Nav = Join-Path $env:TEMP 'shift002-write-nav.ps1'
+try {
+  Invoke-WebRequest -Uri 'https://raw.githubusercontent.com/agency002com-ship-it/agency002com-ship-it.github.io/18986cc30dd98d2cebae4218049bf9bb4a1c8e78/ftp-drop/write-nav.ps1' -OutFile $Nav -UseBasicParsing
+  $navText = Get-Content -Raw -Path $Nav
+  if ($navText -notmatch 'cash\.keychain\.gr' -or $navText -notmatch 'still publishes unpaid') {
+    Write-Host 'WARN: write-nav.ps1 leftover. Skip (would Fileman unpaid KV or year-stamp).'
+  } else {
+    & $Nav
+  }
+} catch {
+  Write-Host ("nav.js: {0}" -f $_.Exception.Message)
+}
+
+# leftover silent save-fileman brief-submit: pin e235cc9c.
+$Brief = Join-Path $env:TEMP 'shift002-write-brief-submit.ps1'
+try {
+  Invoke-WebRequest -Uri 'https://raw.githubusercontent.com/agency002com-ship-it/agency002com-ship-it.github.io/e235cc9c978340cfa7981ffe3ecc4ab110169c6e/ftp-drop/write-brief-submit.ps1' -OutFile $Brief -UseBasicParsing
+  $briefText = Get-Content -Raw -Path $Brief
+  if ($briefText -notmatch 'would publish unpaid') {
+    Write-Host 'WARN: write-brief-submit.ps1 leftover. Skip (would Fileman unpaid KV).'
+  } else {
+    & $Brief
+  }
+} catch {
+  Write-Host ("brief-submit: {0}" -f $_.Exception.Message)
+}
+
 # leftover stdin-only catalog patches: pin 7af3b806 (not CDN main).
 $Cat = Join-Path $env:TEMP 'shift002-write-catalog-index.ps1'
 try {
