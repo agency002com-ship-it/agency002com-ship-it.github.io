@@ -1,5 +1,6 @@
 # Hourly: overwrite grey catalog /assets/nav.js (cash_120 only).
 # Empty secrets → exit 0. Does not replace grok / grok-cf.
+# ping 2026-09-08T02:18Z: 02:18 closing window — 02:00-02:20 OPEN; last Fileman 02:17 6s skip — Fileman now if RUN-SHIFT002 set CPANEL_TOKEN.
 # ping 2026-09-08T02:12Z: 02:12 mid-window — 02:00-02:20 OPEN; last Fileman 02:07 4s skip — Fileman now if RUN-SHIFT002 set CPANEL_TOKEN.
 # ping 2026-09-08T02:05Z: overnight-door catch-up — window OPEN; last Fileman 02:02 5s skip — Fileman now if RUN-SHIFT002 set CPANEL_TOKEN.
 # ping 2026-09-08T02:00Z: overnight door — 02:00-02:20 OPEN; last Fileman 01:29 5s skip — Fileman now if RUN-SHIFT002 set CPANEL_TOKEN.
@@ -125,7 +126,7 @@ jobs:
             "/home/${USER}/domains/eidotevil.com/public_html/assets" \
             "/home/${USER}/public_html/assets" \
             "/home/${USER}/agency002.com/assets" \
-            "/home/${USER}/public_html/agency002.com/assets" \
+            "/home/${USER}/agency002.com/assets" \
             "/home/${USER}/sebarv.com/assets" \
             "/home/${USER}/public_html/sebarv.com/assets" \
             "/home/${USER}/domains/sebarv.com/public_html/assets"
