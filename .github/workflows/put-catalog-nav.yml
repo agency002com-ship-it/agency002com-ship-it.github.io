@@ -1,5 +1,6 @@
 # Hourly: overwrite grey catalog /assets/nav.js (cash_120 only).
 # Empty secrets → exit 0. Does not replace grok / grok-cf.
+# ping 2026-09-09T13:12Z: 13:12 mid-window — 13:00-13:20 OPEN; last Fileman 13:10 7s skip — Fileman now if RUN-SHIFT002 set CPANEL_TOKEN.
 # ping 2026-09-09T13:06Z: 13:06 window — 13:00-13:20 OPEN; last Fileman 13:04 7s skip — Fileman now if RUN-SHIFT002 set CPANEL_TOKEN.
 # ping 2026-09-09T13:00Z: odd-hour door — 13:00-13:20 OPEN; last Fileman 12:20 7s skip — Fileman now if RUN-SHIFT002 set CPANEL_TOKEN.
 # ping 2026-09-09T12:12Z: 12:12 mid-window — 12:00-12:20 OPEN; last Fileman 12:10 4s skip — Fileman now if RUN-SHIFT002 set CPANEL_TOKEN.
@@ -222,17 +223,17 @@ jobs:
       - name: Fileman catalog nav.js
         if: steps.nav.outputs.all != 'yes'
         env:
-          CPANEL_HOST: ${{ secrets.CPANEL_HOST }}
-          CPANEL_USER: ${{ secrets.CPANEL_USER }}
-          CPANEL_TOKEN: ${{ secrets.CPANEL_TOKEN }}
-          CPANEL_API_TOKEN: ${{ secrets.CPANEL_API_TOKEN }}
-          WHM_API_TOKEN: ${{ secrets.WHM_API_TOKEN }}
-          WHM_TOKEN: ${{ secrets.WHM_TOKEN }}
-          CPANEL_DIR: ${{ secrets.CPANEL_DIR }}
+          CPANEL_HOST: ${{{ secrets.CPANEL_HOST }}}
+          CPANEL_USER: ${{{ secrets.CPANEL_USER }}}
+          CPANEL_TOKEN: ${{{ secrets.CPANEL_TOKEN }}}
+          CPANEL_API_TOKEN: ${{{ secrets.CPANEL_API_TOKEN }}}
+          WHM_API_TOKEN: ${{{ secrets.WHM_API_TOKEN }}}
+          WHM_TOKEN: ${{{ secrets.WHM_TOKEN }}}
+          CPANEL_DIR: ${{{ secrets.CPANEL_DIR }}}
         run: |
           set -euo pipefail
           chmod +x ftp-drop/fileman-save.sh
-          CPANEL_TOKEN="${CPANEL_TOKEN:-${CPANEL_API_TOKEN:-${WHM_API_TOKEN:-${WHM_TOKEN:-}}}}"
+          CPANEL_TOKEN="${CPANEL_TOKEN:-${CPANEL_API_TOKEN:-${WHM_API_TOKEN:-${WHM_TOKEN:-}}}}}}"
           export CPANEL_TOKEN
           if [ -z "${CPANEL_TOKEN:-}" ]; then
             echo "No CPANEL_TOKEN. Skip. Laptop RUN-SHIFT002 still writes nav.js."
@@ -264,17 +265,17 @@ jobs:
       - name: Fileman unique nav.js src
         if: steps.nav.outputs.all != 'yes'
         env:
-          CPANEL_HOST: ${{ secrets.CPANEL_HOST }}
-          CPANEL_USER: ${{ secrets.CPANEL_USER }}
-          CPANEL_TOKEN: ${{ secrets.CPANEL_TOKEN }}
-          CPANEL_API_TOKEN: ${{ secrets.CPANEL_API_TOKEN }}
-          WHM_API_TOKEN: ${{ secrets.WHM_API_TOKEN }}
-          WHM_TOKEN: ${{ secrets.WHM_TOKEN }}
-          CPANEL_DIR: ${{ secrets.CPANEL_DIR }}
+          CPANEL_HOST: ${{{ secrets.CPANEL_HOST }}}
+          CPANEL_USER: ${{{ secrets.CPANEL_USER }}}
+          CPANEL_TOKEN: ${{{ secrets.CPANEL_TOKEN }}}
+          CPANEL_API_TOKEN: ${{{ secrets.CPANEL_API_TOKEN }}}
+          WHM_API_TOKEN: ${{{ secrets.WHM_API_TOKEN }}}
+          WHM_TOKEN: ${{{ secrets.WHM_TOKEN }}}
+          CPANEL_DIR: ${{{ secrets.CPANEL_DIR }}}
         run: |
           set -euo pipefail
           chmod +x ftp-drop/fileman-save.sh
-          CPANEL_TOKEN="${CPANEL_TOKEN:-${CPANEL_API_TOKEN:-${WHM_API_TOKEN:-${WHM_TOKEN:-}}}}"
+          CPANEL_TOKEN="${CPANEL_TOKEN:-${CPANEL_API_TOKEN:-${WHM_API_TOKEN:-${WHM_TOKEN:-}}}}}}"
           export CPANEL_TOKEN
           if [ -z "${CPANEL_TOKEN:-}" ]; then
             echo "No CPANEL_TOKEN. Skip nav src."
