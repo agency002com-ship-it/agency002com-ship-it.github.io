@@ -87,6 +87,14 @@
     var rail = q.get("rail") || "";
     var order = q.get("order_id") || q.get("token") || "";
 
+    function leftoverRail(id) {
+      return /^(cs_live_a1giuGCjjfeIVf29ABo8uWNBwN10PUVowRljkt0ngW6lueAGsRNwGKMDi7|cs_live_a10Bka0JR6GY4q7w|cs_live_a1ttidtn|cs_live_a1jXQJjw)/i.test(String(id || ""));
+    }
+    if (leftoverRail(sid)) {
+      deny("This leftover unpaid checkout was not published. Finish a real €120, then use the return link. Do not pay twice.");
+      return;
+    }
+
     if (rail === "paypal" || order) {
       try { order = order || sessionStorage.getItem("shift002-paypal") || ""; } catch (e) {}
       NightDesk.paypalCaptured(order).then(function (ok) {

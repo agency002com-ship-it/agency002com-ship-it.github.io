@@ -45,6 +45,14 @@
       });
     }
 
+    function leftoverRail(id) {
+      return /^(cs_live_a1giuGCjjfeIVf29ABo8uWNBwN10PUVowRljkt0ngW6lueAGsRNwGKMDi7|cs_live_a10Bka0JR6GY4q7w|cs_live_a1ttidtn|cs_live_a1jXQJjw)/i.test(String(id || ""));
+    }
+    if (leftoverRail(q.get("session_id"))) {
+      fail("This leftover unpaid checkout was not published. Finish a real €120, then use the return link.");
+      return;
+    }
+
     var packed = q.get("p") || q.get("b") || "";
     if (packed) {
       var fromPay = NightDesk.decode(packed);
