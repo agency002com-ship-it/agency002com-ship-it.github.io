@@ -223,17 +223,17 @@ jobs:
       - name: Fileman catalog nav.js
         if: steps.nav.outputs.all != 'yes'
         env:
-          CPANEL_HOST: ${{{ secrets.CPANEL_HOST }}}
-          CPANEL_USER: ${{{ secrets.CPANEL_USER }}}
-          CPANEL_TOKEN: ${{{ secrets.CPANEL_TOKEN }}}
-          CPANEL_API_TOKEN: ${{{ secrets.CPANEL_API_TOKEN }}}
-          WHM_API_TOKEN: ${{{ secrets.WHM_API_TOKEN }}}
-          WHM_TOKEN: ${{{ secrets.WHM_TOKEN }}}
-          CPANEL_DIR: ${{{ secrets.CPANEL_DIR }}}
+          CPANEL_HOST: ${{ secrets.CPANEL_HOST }}
+          CPANEL_USER: ${{ secrets.CPANEL_USER }}
+          CPANEL_TOKEN: ${{ secrets.CPANEL_TOKEN }}
+          CPANEL_API_TOKEN: ${{ secrets.CPANEL_API_TOKEN }}
+          WHM_API_TOKEN: ${{ secrets.WHM_API_TOKEN }}
+          WHM_TOKEN: ${{ secrets.WHM_TOKEN }}
+          CPANEL_DIR: ${{ secrets.CPANEL_DIR }}
         run: |
           set -euo pipefail
           chmod +x ftp-drop/fileman-save.sh
-          CPANEL_TOKEN="${CPANEL_TOKEN:-${CPANEL_API_TOKEN:-${WHM_API_TOKEN:-${WHM_TOKEN:-}}}}}"
+          CPANEL_TOKEN="${CPANEL_TOKEN:-${CPANEL_API_TOKEN:-${WHM_API_TOKEN:-${WHM_TOKEN:-}}}}"
           export CPANEL_TOKEN
           if [ -z "${CPANEL_TOKEN:-}" ]; then
             echo "No CPANEL_TOKEN. Skip. Laptop RUN-SHIFT002 still writes nav.js."
@@ -265,17 +265,17 @@ jobs:
       - name: Fileman unique nav.js src
         if: steps.nav.outputs.all != 'yes'
         env:
-          CPANEL_HOST: ${{{ secrets.CPANEL_HOST }}}
-          CPANEL_USER: ${{{ secrets.CPANEL_USER }}}
-          CPANEL_TOKEN: ${{{ secrets.CPANEL_TOKEN }}}
-          CPANEL_API_TOKEN: ${{{ secrets.CPANEL_API_TOKEN }}}
-          WHM_API_TOKEN: ${{{ secrets.WHM_API_TOKEN }}}
-          WHM_TOKEN: ${{{ secrets.WHM_TOKEN }}}
-          CPANEL_DIR: ${{{ secrets.CPANEL_DIR }}}
+          CPANEL_HOST: ${{ secrets.CPANEL_HOST }}
+          CPANEL_USER: ${{ secrets.CPANEL_USER }}
+          CPANEL_TOKEN: ${{ secrets.CPANEL_TOKEN }}
+          CPANEL_API_TOKEN: ${{ secrets.CPANEL_API_TOKEN }}
+          WHM_API_TOKEN: ${{ secrets.WHM_API_TOKEN }}
+          WHM_TOKEN: ${{ secrets.WHM_TOKEN }}
+          CPANEL_DIR: ${{ secrets.CPANEL_DIR }}
         run: |
           set -euo pipefail
           chmod +x ftp-drop/fileman-save.sh
-          CPANEL_TOKEN="${CPANEL_TOKEN:-${CPANEL_API_TOKEN:-${WHM_API_TOKEN:-${WHM_TOKEN:-}}}}}"
+          CPANEL_TOKEN="${CPANEL_TOKEN:-${CPANEL_API_TOKEN:-${WHM_API_TOKEN:-${WHM_TOKEN:-}}}}"
           export CPANEL_TOKEN
           if [ -z "${CPANEL_TOKEN:-}" ]; then
             echo "No CPANEL_TOKEN. Skip nav src."
