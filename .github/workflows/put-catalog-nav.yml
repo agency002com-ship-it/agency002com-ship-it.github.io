@@ -72,7 +72,7 @@ jobs:
         run: |
           set -euo pipefail
           night=0
-          for host in eidotevil.com agency002.com sebarv.com sebarv.com 120.cash; do
+          for host in eidotevil.com agency002.com sebarv.com 120.cash; do
             html="$(curl -fsSL \"https://${host}/\" || true)"
             js="$(curl -fsSL \"https://${host}/assets/nav.js\" || true)"
             if echo "$html" | grep -Fq 'ftp-drop/nav-night.js' || echo "$js" | grep -Fq 'cash.keychain.gr'; then
