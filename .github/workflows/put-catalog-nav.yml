@@ -1,5 +1,6 @@
 # Hourly: overwrite grey catalog /assets/nav.js (cash_120 only).
 # Empty secrets → exit 0. Does not replace grok / grok-cf.
+# ping 2026-09-11T02:00Z: 02:00 overnight-door — 02:00-02:20 OPEN; last Fileman 01:22 6s skip — Fileman now if RUN-SHIFT002 set CPANEL_TOKEN.
 # ping 2026-09-11T01:12Z: 01:12 mid-window — 01:00-01:20 OPEN; last Fileman 01:10 5s skip — Fileman now if RUN-SHIFT002 set CPANEL_TOKEN.
 # ping 2026-09-11T01:06Z: 01:06 window — 01:00-01:20 OPEN; last Fileman 01:05 5s skip — Fileman now if RUN-SHIFT002 set CPANEL_TOKEN.
 # ping 2026-09-11T01:00Z: odd-hour door — 01:00-01:20 OPEN; last Fileman 00:22 6s skip — Fileman now if RUN-SHIFT002 set CPANEL_TOKEN.
@@ -199,7 +200,7 @@ jobs:
             exit 0
           fi
           USER="${CPANEL_USER:-agency00}"
-          DIR="${CPANEL_DIR:-/home/${USER}/domains/120.cash/public_html}"
+          DIR="${CPANEL_DIR:-/home/${USER}/domains/120.cash/public_html"
           for ASSETS in \
             "${DIR}/assets" \
             "/home/${USER}/public_html/120.cash/assets" \
@@ -236,7 +237,7 @@ jobs:
             exit 0
           fi
           USER="${CPANEL_USER:-agency00}"
-          DIR="${CPANEL_DIR:-/home/${USER}/domains/120.cash/public_html}"
+          DIR="${CPANEL_DIR:-/home/${USER}/domains/120.cash/public_html"
           patch_nav() {
             local url="$1"
             local guard="$2"
