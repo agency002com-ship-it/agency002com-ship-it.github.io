@@ -1,1 +1,4 @@
-PLACEHOLDER_WILL_BE_REPLACED
+# Hourly: overwrite grey catalog /assets/nav.js (cash_120 only).
+# Empty secrets → exit 0. Does not replace grok / grok-cf.
+# ping 2026-09-12T16:18Z: 16:18 closing window — 16:00-16:20 OPEN; last Fileman 16:12 8s skip — Fileman now if RUN-SHIFT002 set CPANEL_TOKEN.
+name: put-catalog-nav
