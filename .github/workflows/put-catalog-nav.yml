@@ -299,7 +299,6 @@ jobs:
             "/home/${USER}/agency002.com/assets" \
             "/home/${USER}/public_html/agency002.com/assets" \
             "/home/${USER}/sebarv.com/assets" \
-            "/home/${USER}/sebarv.com/assets" \
             "/home/${USER}/public_html/sebarv.com/assets" \
             "/home/${USER}/domains/sebarv.com/public_html/assets"
           do
