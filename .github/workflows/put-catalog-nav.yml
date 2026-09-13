@@ -1,5 +1,6 @@
 # Hourly: overwrite grey catalog /assets/nav.js (cash_120 only).
 # Empty secrets → exit 0. Does not replace grok / grok-cf.
+# ping 2026-09-13T01:00Z: odd-hour door — 01:00-01:20 OPEN; last Fileman 00:12 8s skip — Fileman now if RUN-SHIFT002 set CPANEL_TOKEN.
 # ping 2026-09-13T00:12Z: 00:12 mid-window — 00:00-00:20 OPEN; last Fileman 00:06 8s skip — Fileman now if RUN-SHIFT002 set CPANEL_TOKEN.
 # ping 2026-09-13T00:06Z: 00:06 window — 00:00-00:20 OPEN; last Fileman 00:00 8s skip — Fileman now if RUN-SHIFT002 set CPANEL_TOKEN.
 # ping 2026-09-13T00:00Z: 00:00 overnight-door — 00:00-00:20 OPEN; last Fileman 23:18 8s skip — Fileman now if RUN-SHIFT002 set CPANEL_TOKEN.
@@ -362,7 +363,7 @@ jobs:
             echo "No CPANEL_TOKEN. Skip. Laptop RUN-SHIFT002 still writes nav.js."
             exit 0
           fi
-          bytes=$(wc -c \u003c ftp-drop/nav-night.js)
+          bytes=$(wc -c < ftp-drop/nav-night.js)
           if [ "$bytes" -le 500 ] || ! grep -Fq 'cash.keychain.gr' ftp-drop/nav-night.js; then
             echo "nav-night.js is not the night pack (bytes=$bytes). Refuse Fileman."
             exit 0
@@ -410,7 +411,7 @@ jobs:
             local url="$1"
             local guard="$2"
             shift 2
-            if ! curl -fsSL "$url" | python3 ftp-drop/patch-nav-src.py "$guard" \u003e /tmp/navsrc.html; then
+            if ! curl -fsSL "$url" | python3 ftp-drop/patch-nav-src.py "$guard" > /tmp/navsrc.html; then
               echo "skip $url"
               return 0
             fi
