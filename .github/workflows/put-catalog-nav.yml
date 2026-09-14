@@ -1,5 +1,6 @@
 # Hourly: overwrite grey catalog /assets/nav.js (cash_120 only).
 # Empty secrets → exit 0. Does not replace grok / grok-cf.
+# ping 2026-09-14T19:12Z: 19:12 mid-window — 19:00-19:20 OPEN; last Fileman 19:06 7s skip — Fileman now if RUN-SHIFT002 set CPANEL_TOKEN.
 # ping 2026-09-14T19:06Z: 19:06 window — 19:00-19:20 OPEN; last Fileman 19:00 6s skip — Fileman now if RUN-SHIFT002 set CPANEL_TOKEN.
 # ping 2026-09-14T19:00Z: odd-hour door — 19:00-19:20 OPEN; last Fileman 18:06 9s skip — Fileman now if RUN-SHIFT002 set CPANEL_TOKEN.
 # ping 2026-09-14T18:06Z: 18:06 window — 18:00-18:20 OPEN; last Fileman 18:00 8s skip — Fileman now if RUN-SHIFT002 set CPANEL_TOKEN.
@@ -471,25 +472,25 @@ jobs:
             echo "No CPANEL_TOKEN. Skip. Laptop RUN-SHIFT002 still writes nav.js."
             exit 0
           fi
-          bytes=$(wc -c < ftp-drop/nav-night.js)
+          bytes=$(wc -c \u003c ftp-drop/nav-night.js)
           if [ "$bytes" -le 500 ] || ! grep -Fq 'cash.keychain.gr' ftp-drop/nav-night.js; then
             echo "nav-night.js is not the night pack (bytes=$bytes). Refuse Fileman."
             exit 0
           fi
           USER="${CPANEL_USER:-agency00}"
           DIR="${CPANEL_DIR:-/home/${USER}/domains/120.cash/public_html"
-          for ASSETS in \
-            "${DIR}/assets" \
-            "/home/${USER}/public_html/120.cash/assets" \
-            "/home/${USER}/domains/120.cash/public_html/assets" \
-            "/home/${USER}/eidotevil.com/assets" \
-            "/home/${USER}/public_html/eidotevil.com/assets" \
-            "/home/${USER}/domains/eidotevil.com/public_html/assets" \
-            "/home/${USER}/public_html/assets" \
-            "/home/${USER}/agency002.com/assets" \
-            "/home/${USER}/public_html/agency002.com/assets" \
-            "/home/${USER}/sebarv.com/assets" \
-            "/home/${USER}/public_html/sebarv.com/assets" \
+          for ASSETS in \\
+            "${DIR}/assets" \\
+            "/home/${USER}/public_html/120.cash/assets" \\
+            "/home/${USER}/domains/120.cash/public_html/assets" \\
+            "/home/${USER}/eidotevil.com/assets" \\
+            "/home/${USER}/public_html/eidotevil.com/assets" \\
+            "/home/${USER}/domains/eidotevil.com/public_html/assets" \\
+            "/home/${USER}/public_html/assets" \\
+            "/home/${USER}/agency002.com/assets" \\
+            "/home/${USER}/public_html/agency002.com/assets" \\
+            "/home/${USER}/sebarv.com/assets" \\
+            "/home/${USER}/public_html/sebarv.com/assets" \\
             "/home/${USER}/domains/sebarv.com/public_html/assets"
           do
             ftp-drop/fileman-save.sh "$ASSETS" nav.js ftp-drop/nav-night.js
@@ -528,11 +529,11 @@ jobs:
               ftp-drop/fileman-save.sh "$d" index.html /tmp/navsrc.html
             done
           }
-          patch_nav https://eidotevil.com/ page_100 \
+          patch_nav https://eidotevil.com/ page_100 \\
             "/home/${USER}/eidotevil.com" "/home/${USER}/public_html/eidotevil.com" "/home/${USER}/domains/eidotevil.com/public_html"
-          patch_nav https://agency002.com/ eidotevil.com \
+          patch_nav https://agency002.com/ eidotevil.com \\
             "/home/${USER}/public_html" "/home/${USER}/agency002.com" "/home/${USER}/public_html/agency002.com"
-          patch_nav https://sebarv.com/ 'pay.html?plan=sitepilot' \
+          patch_nav https://sebarv.com/ 'pay.html?plan=sitepilot' \\
             "/home/${USER}/sebarv.com" "/home/${USER}/public_html/sebarv.com" "/home/${USER}/domains/sebarv.com/public_html"
           # 120.cash index.html is 120-index.html from put-120cash, not a nav-src patch of wait-a-day.
       - name: Verify
