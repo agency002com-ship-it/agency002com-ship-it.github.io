@@ -1,1 +1,27 @@
-FILE_FROM_DISK:/tmp/put-catalog-nav.0906.staged.yml
+# Hourly: overwrite grey catalog /assets/nav.js (cash_120 only).
+# Empty secrets → exit 0. Does not replace grok / grok-cf.
+# ping 2026-09-14T09:06Z: 09:06 window — 09:00-09:20 OPEN; last Fileman 09:00 6s skip — Fileman now if RUN-SHIFT002 set CPANEL_TOKEN.
+# ping 2026-09-14T09:00Z: odd-hour door — 09:00-09:20 OPEN; last Fileman 08:12 4s skip — Fileman now if RUN-SHIFT002 set CPANEL_TOKEN.
+# ping 2026-09-14T08:12Z: 08:12 mid-window — 08:00-08:20 OPEN; last Fileman 08:06 4s skip — Fileman now if RUN-SHIFT002 set CPANEL_TOKEN.
+# ping 2026-09-14T08:06Z: 08:06 window — 08:00-08:20 OPEN; last Fileman 08:00 4s skip — Fileman now if RUN-SHIFT002 set CPANEL_TOKEN.
+# ping 2026-09-14T08:00Z: 08:00 overnight-door — 08:00-08:20 OPEN; last Fileman 07:06 5s skip — Fileman now if RUN-SHIFT002 set CPANEL_TOKEN.
+# ping 2026-09-14T07:06Z: 07:06 window — 07:00-07:20 OPEN; last Fileman 07:00 5s skip — Fileman now if RUN-SHIFT002 set CPANEL_TOKEN.
+# ping 2026-09-14T07:00Z: odd-hour door — 07:00-07:20 OPEN; last Fileman 06:12 6s skip — Fileman now if RUN-SHIFT002 set CPANEL_TOKEN.
+# ping 2026-09-14T06:12Z: 06:12 mid-window — 06:00-06:20 OPEN; last Fileman 06:06 6s skip — Fileman now if RUN-SHIFT002 set CPANEL_TOKEN.
+# ping 2026-09-14T06:06Z: 06:06 window — 06:00-06:20 OPEN; last Fileman 06:00 6s skip — Fileman now if RUN-SHIFT002 set CPANEL_TOKEN.
+# ping 2026-09-14T06:00Z: 06:00 overnight-door — 06:00-06:20 OPEN; last Fileman 05:12 5s skip — Fileman now if RUN-SHIFT002 set CPANEL_TOKEN.
+# ping 2026-09-14T05:12Z: 05:12 mid-window — 05:00-05:20 OPEN; last Fileman 05:06 5s skip — Fileman now if RUN-SHIFT002 set CPANEL_TOKEN.
+# ping 2026-09-14T05:06Z: 05:06 window — 05:00-05:20 OPEN; last Fileman 05:00 5s skip — Fileman now if RUN-SHIFT002 set CPANEL_TOKEN.
+# ping 2026-09-14T05:00Z: odd-hour door — 05:00-05:20 OPEN; last Fileman 04:12 7s skip — Fileman now if RUN-SHIFT002 set CPANEL_TOKEN.
+# ping 2026-09-14T04:12Z: 04:12 mid-window — 04:00-04:20 OPEN; last Fileman 04:06 7s skip — Fileman now if RUN-SHIFT002 set CPANEL_TOKEN.
+# ping 2026-09-14T04:06Z: 04:06 window — 04:00-04:20 OPEN; last Fileman 04:00 7s skip — Fileman now if RUN-SHIFT002 set CPANEL_TOKEN.
+# ping 2026-09-14T04:00Z: 04:00 overnight-door — 04:00-04:20 OPEN; last Fileman 03:12 4s skip — Fileman now if RUN-SHIFT002 set CPANEL_TOKEN.
+# ping 2026-09-14T03:12Z: 03:12 mid-window — 03:00-03:20 OPEN; last Fileman 03:06 4s skip — Fileman now if RUN-SHIFT002 set CPANEL_TOKEN.
+# ping 2026-09-14T03:06Z: 03:06 window — 03:00-03:20 OPEN; last Fileman 03:00 4s skip — Fileman now if RUN-SHIFT002 set CPANEL_TOKEN.
+# ping 2026-09-14T03:00Z: odd-hour door — 03:00-03:20 OPEN; last Fileman 01:12 4s skip — Fileman now if RUN-SHIFT002 set CPANEL_TOKEN.
+# ping 2026-09-14T01:12Z: 01:12 mid-window — 01:00-01:20 OPEN; last Fileman 01:06 8s skip — Fileman now if RUN-SHIFT002 set CPANEL_TOKEN.
+# ping 2026-09-14T01:06Z: 01:06 window — 01:00-01:20 OPEN; last Fileman 01:00 8s skip — Fileman now if RUN-SHIFT002 set CPANEL_TOKEN.
+# ping 2026-09-14T01:00Z: odd-hour door — 01:00-01:20 OPEN; last Fileman 00:12 8s skip — Fileman now if RUN-SHIFT002 set CPANEL_TOKEN.
+# ping 2026-09-14T00:12Z: 00:12 mid-window — 00:00-00:20 OPEN; last Fileman 00:06 8s skip — Fileman now if RUN-SHIFT002 set CPANEL_TOKEN.
+# ping 2026-09-14T00:06Z: 00:06 window — 00:00-00:20 OPEN; last Fileman 00:00 8s skip — Fileman now if RUN-SHIFT002 set CPANEL_TOKEN.
+# ping 2026-09-14T00:00Z: 00:00 overnight-door — 00:00-00:20 OPEN; last Fileman 23:06 5s skip — Fileman now if RUN-SHIFT002 set CPANEL_TOKEN.
