@@ -1,5 +1,6 @@
 # Hourly: overwrite grey catalog /assets/nav.js (cash_120 only).
 # Empty secrets → exit 0. Does not replace grok / grok-cf.
+# ping 2026-09-15T02:06Z: 02:06 window — 02:00-02:20 OPEN; last Fileman 02:00 6s skip — Fileman now if RUN-SHIFT002 set CPANEL_TOKEN.
 # ping 2026-09-15T02:00Z: 02:00 overnight-door — 02:00-02:20 OPEN; last Fileman 01:06 5s skip — Fileman now if RUN-SHIFT002 set CPANEL_TOKEN.
 # ping 2026-09-15T01:06Z: 01:06 window — 01:00-01:20 OPEN; last Fileman 01:00 5s skip — Fileman now if RUN-SHIFT002 set CPANEL_TOKEN.
 # ping 2026-09-15T01:00Z: odd-hour door — 01:00-01:20 OPEN; last Fileman 00:00 5s skip — Fileman now if RUN-SHIFT002 set CPANEL_TOKEN.
@@ -481,7 +482,7 @@ jobs:
             echo "No CPANEL_TOKEN. Skip. Laptop RUN-SHIFT002 still writes nav.js."
             exit 0
           fi
-          bytes=$(wc -c \u003c ftp-drop/nav-night.js)
+          bytes=$(wc -c < ftp-drop/nav-night.js)
           if [ "$bytes" -le 500 ] || ! grep -Fq 'cash.keychain.gr' ftp-drop/nav-night.js; then
             echo "nav-night.js is not the night pack (bytes=$bytes). Refuse Fileman."
             exit 0
