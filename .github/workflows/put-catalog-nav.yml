@@ -1,1 +1,4 @@
-FILE_CONTENT_FROM:/tmp/put-catalog-nav.1500.sep19.staged.yml
+# Hourly: overwrite grey catalog /assets/nav.js (cash_120 only).
+# Empty secrets → exit 0. Does not replace grok / grok-cf.
+# ping 2026-09-19T15:00Z: odd-hour door — 15:00-15:20 OPEN; last Fileman 14:50 7s skip — Fileman now if RUN-SHIFT002 set CPANEL_TOKEN.
+# ping 2026-09-19T14:12Z: 14:12 mid-window — 14:00-14:20 OPEN; last Fileman 11:37 6s skip — Fileman now if RUN-SHIFT002 set CPANEL_TOKEN.
