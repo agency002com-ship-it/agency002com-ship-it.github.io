@@ -1,1 +1,2 @@
-FILE_LOAD_FROM:/tmp/put-catalog-nav.1800.sep19.staged.yml
+# Hourly: overwrite grey catalog /assets/nav.js (cash_120 only).
+# Empty secrets → exit 0. Does not replace grok / grok-cf.
