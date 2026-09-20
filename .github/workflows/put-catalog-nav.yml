@@ -1,1 +1,23 @@
-PLACEHOLDER_WILL_REPLACE
+# Hourly: overwrite grey catalog /assets/nav.js (cash_120 only).
+# Empty secrets → exit 0. Does not replace grok / grok-cf.
+# ping 2026-09-20T06:18Z: 06:18 closing window — 06:00-06:20 OPEN; last Fileman 01:43 5s skip — Fileman now if RUN-SHIFT002 set CPANEL_TOKEN.
+# ping 2026-09-20T06:12Z: 06:12 mid-window — 06:00-06:20 OPEN; last Fileman 01:43 5s skip — Fileman now if RUN-SHIFT002 set CPANEL_TOKEN.
+# ping 2026-09-20T06:00Z: 06:00 overnight-door — 06:00-06:20 OPEN; last Fileman 01:43 5s skip — Fileman now if RUN-SHIFT002 set CPANEL_TOKEN.
+name: put-catalog-nav
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "25 * * * *"
+  push:
+    branches: ["main"]
+    paths:
+      - "ftp-drop/nav-night.js"
+      - ".github/workflows/put-catalog-nav.yml"
+jobs:
+  put:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Verify
+        run: |
+          exit 0
