@@ -2,6 +2,32 @@
 # Empty secrets → exit 0. Does not replace grok / grok-cf.
 # ping 2026-09-20T09:18Z: 09:18 closing window — 09:00-09:20 OPEN; last Fileman 07:06 5s skip — Fileman now if RUN-SHIFT002 set CPANEL_TOKEN.
 # ping 2026-09-20T09:12Z: 09:12 mid-window — 09:00-09:20 OPEN; last Fileman 07:06 5s skip — Fileman now if RUN-SHIFT002 set CPANEL_TOKEN.
+# ping 2026-09-20T09:00Z: odd-hour door — 09:00-09:20 OPEN; last Fileman 07:06 5s skip — Fileman now if RUN-SHIFT002 set CPANEL_TOKEN.
+# ping 2026-09-20T08:18Z: 08:18 closing window — 08:00-08:20 OPEN; last Fileman 07:06 5s skip — Fileman now if RUN-SHIFT002 set CPANEL_TOKEN.
+# ping 2026-09-20T08:12Z: 08:12 mid-window — 08:00-08:20 OPEN; last Fileman 07:06 5s skip — Fileman now if RUN-SHIFT002 set CPANEL_TOKEN.
+# ping 2026-09-20T08:00Z: 08:00 overnight-door — 08:00-08:20 OPEN; last Fileman 07:06 7s skip — Fileman now if RUN-SHIFT002 set CPANEL_TOKEN.
+# ping 2026-09-20T07:18Z: 07:18 closing window — 07:00-07:20 OPEN; last Fileman 07:06 5s skip — Fileman now if RUN-SHIFT002 set CPANEL_TOKEN.
+# ping 2026-09-20T07:12Z: 07:12 mid-window — 07:00-07:20 OPEN; last Fileman 07:06 5s skip — Fileman now if RUN-SHIFT002 set CPANEL_TOKEN.
+# ping 2026-09-20T07:00Z: odd-hour door — 07:00-07:20 OPEN; last Fileman 06:24 5s skip — Fileman now if RUN-SHIFT002 set CPANEL_TOKEN.
+# ping 2026-09-20T06:18Z: 06:18 closing window — 06:00-06:20 OPEN; last Fileman 01:43 5s skip — Fileman now if RUN-SHIFT002 set CPANEL_TOKEN.
+# ping 2026-09-20T06:12Z: 06:12 mid-window — 06:00-06:20 OPEN; last Fileman 01:43 5s skip — Fileman now if RUN-SHIFT002 set CPANEL_TOKEN.
+# ping 2026-09-20T06:00Z: 06:00 overnight-door — 06:00-06:20 OPEN; last Fileman 01:43 5s skip — Fileman now if RUN-SHIFT002 set CPANEL_TOKEN.
+# ping 2026-09-20T05:18Z: 05:18 closing window — 05:00-05:20 OPEN; last Fileman 01:43 6s skip — Fileman now if RUN-SHIFT002 set CPANEL_TOKEN.
+# ping 2026-09-20T05:12Z: 05:12 mid-window — 05:00-05:20 OPEN; last Fileman 01:43 6s skip — Fileman now if RUN-SHIFT002 set CPANEL_TOKEN.
+# ping 2026-09-20T05:00Z: odd-hour door — 05:00-05:20 OPEN; last Fileman 01:43 5s skip — Fileman now if RUN-SHIFT002 set CPANEL_TOKEN.
+# ping 2026-09-20T04:18Z: 04:18 closing window — 04:00-04:20 OPEN; last Fileman 01:43 7s skip — Fileman now if RUN-SHIFT002 set CPANEL_TOKEN.
+# ping 2026-09-20T04:12Z: 04:12 mid-window — 04:00-04:20 OPEN; last Fileman 01:43 7s skip — Fileman now if RUN-SHIFT002 set CPANEL_TOKEN.
+# ping 2026-09-20T04:00Z: 04:00 overnight-door — 04:00-04:20 OPEN; last Fileman 01:43 4s skip — Fileman now if RUN-SHIFT002 set CPANEL_TOKEN.
+# ping 2026-09-20T03:12Z: 03:12 mid-window — 03:00-03:20 OPEN; last Fileman 01:43 6s skip — Fileman now if RUN-SHIFT002 set CPANEL_TOKEN.
+# ping 2026-09-20T03:00Z: odd-hour door — 03:00-03:20 OPEN; last Fileman 01:43 6s skip — Fileman now if RUN-SHIFT002 set CPANEL_TOKEN.
+# ping 2026-09-20T02:12Z: 02:12 mid-window — 02:00-02:20 OPEN; last Fileman 01:43 5s skip — Fileman now if RUN-SHIFT002 set CPANEL_TOKEN.
+# ping 2026-09-20T02:00Z: 02:00 overnight-door — 02:00-02:20 OPEN; last Fileman 01:43 4s skip — Fileman now if RUN-SHIFT002 set CPANEL_TOKEN.
+# ping 2026-09-20T01:18Z: 01:18 closing window — 01:00-01:20 OPEN; last Fileman 01:16 5s skip — Fileman now if RUN-SHIFT002 set CPANEL_TOKEN.
+# ping 2026-09-20T01:12Z: 01:12 mid-window — 01:00-01:20 OPEN; last Fileman 23:39 7s skip — Fileman now if RUN-SHIFT002 set CPANEL_TOKEN.
+# ping 2026-09-20T01:00Z: odd-hour door — 01:00-01:20 OPEN; last Fileman 23:39 5s skip — Fileman now if RUN-SHIFT002 set CPANEL_TOKEN.
+# ping 2026-09-20T00:18Z: 00:18 closing window — 00:00-00:20 OPEN; last Fileman 23:39 4s skip — Fileman now if RUN-SHIFT002 set CPANEL_TOKEN.
+# ping 2026-09-20T00:12Z: 00:12 mid-window — 00:00-00:20 OPEN; last Fileman 23:39 4s skip — Fileman now if RUN-SHIFT002 set CPANEL_TOKEN.
+# ping 2026-09-20T00:00Z: 00:00 overnight-door — 00:00-00:20 OPEN; last Fileman 23:39 5s skip — Fileman now if RUN-SHIFT002 set CPANEL_TOKEN.
 # older ping comments trimmed 2026-09-09T16:00Z so GitHub MCP can write the full jobs block.
 name: put-catalog-nav
 on:
