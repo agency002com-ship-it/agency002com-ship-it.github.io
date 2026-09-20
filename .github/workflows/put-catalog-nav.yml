@@ -1,7 +1,1 @@
-# Hourly: overwrite grey catalog /assets/nav.js (cash_120 only).
-# Empty secrets → exit 0. Does not replace grok / grok-cf.
-# ping 2026-09-20T09:18Z: 09:18 closing window — 09:00-09:20 OPEN; last Fileman 07:06 5s skip — Fileman now if RUN-SHIFT002 set CPANEL_TOKEN.
-# ping 2026-09-20T09:12Z: 09:12 mid-window — 09:00-09:20 OPEN; last Fileman 07:06 5s skip — Fileman now if RUN-SHIFT002 set CPANEL_TOKEN.
-jobs:
-  put:
-    runs-on: ubuntu-latest
+LOAD_CHUNKS_0_1_2_FROM_/tmp/push-files-0918.args.json
