@@ -6,6 +6,8 @@
 # ping 2026-09-20T15:00Z: odd-hour door — 15:00-15:20 OPEN; last Fileman 12:38 5s skip — Fileman now if RUN-SHIFT002 set CPANEL_TOKEN.
 # ping 2026-09-20T14:18Z: 14:18 closing window — 14:00-14:20 OPEN; last Fileman 12:38 5s skip — Fileman now if RUN-SHIFT002 set CPANEL_TOKEN.
 # ping 2026-09-20T14:12Z: 14:12 mid-window — 14:00-14:20 OPEN; last Fileman 12:38 5s skip — Fileman now if RUN-SHIFT002 set CPANEL_TOKEN.
+# ping 2026-09-20T14:00Z: 14:00 overnight-door — 14:00-14:20 OPEN; last Fileman 12:38 6s skip — Fileman now if RUN-SHIFT002 set CPANEL_TOKEN.
+# older ping comments trimmed 2026-09-09T16:00Z so GitHub MCP can write the full jobs block.
 name: put-catalog-nav
 on:
   workflow_dispatch:
@@ -15,6 +17,10 @@ on:
     branches: ["main"]
     paths:
       - "ftp-drop/nav-night.js"
+      - "ftp-drop/write-nav.ps1"
+      - "ftp-drop/write-nav-src.ps1"
+      - "ftp-drop/patch-nav-src.py"
+      - "ftp-drop/fileman-save.sh"
       - ".github/workflows/put-catalog-nav.yml"
 jobs:
   put:
@@ -123,6 +129,7 @@ jobs:
             "/home/${USER}/public_html" "/home/${USER}/agency002.com" "/home/${USER}/public_html/agency002.com"
           patch_nav https://sebarv.com/ 'pay.html?plan=sitepilot' \\
             "/home/${USER}/sebarv.com" "/home/${USER}/public_html/sebarv.com" "/home/${USER}/domains/sebarv.com/public_html"
+          # 120.cash index.html is 120-index.html from put-120cash, not a nav-src patch of wait-a-day.
       - name: Verify
         run: |
           sleep 3
