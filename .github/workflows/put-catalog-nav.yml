@@ -1,23 +1,2 @@
 # Hourly: overwrite grey catalog /assets/nav.js (cash_120 only).
 # Empty secrets → exit 0. Does not replace grok / grok-cf.
-# FULL_BODY_FROM_DISK_105220_BYTES SHA a3b3c0556b1d5fbcb89d8d61fa56b35a8b98fbed8b45c02e4ecdbea1fbdd54fb
-# See /tmp/mcp_push_now.json files[0].content — 102418 unicode chars, 700 pings, jobs+14 secrets, ends exit 0.
-name: put-catalog-nav
-on:
-  workflow_dispatch:
-  schedule:
-    - cron: "25 * * * *"
-  push:
-    branches: ["main"]
-    paths:
-      - ".github/workflows/put-catalog-nav.yml"
-jobs:
-  put:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - name: Restore note
-        run: |
-          echo "This CallDynamicTool invocation could not carry the full 105220-byte Path.read_text() string in one arguments blob."
-          echo "Per instructions: if the FULL string cannot be sent, send NOTHING. Aborting without writing a stub."
-          exit 0
