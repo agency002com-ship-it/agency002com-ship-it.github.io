@@ -377,7 +377,7 @@ jobs:
             shift 2
             if ! curl -fsSL "$url" | python3 ftp-drop/patch-nav-src.py "$guard" > /tmp/navsrc.html; then
               echo "skip $url"
-            return 0
+              return 0
             fi
             local d
             for d in "$@"; do
