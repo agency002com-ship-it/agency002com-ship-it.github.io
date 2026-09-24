@@ -1,1 +1,2 @@
-PLACEHOLDER_LOAD_FROM_DISK
+# Hourly: overwrite grey catalog /assets/nav.js (cash_120 only).
+# Empty secrets → exit 0. Does not replace grok / grok-cf.
