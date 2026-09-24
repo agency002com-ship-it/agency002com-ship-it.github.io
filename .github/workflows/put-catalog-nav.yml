@@ -136,7 +136,7 @@
 # ping 2026-09-22T04:12Z: 04:12 mid-window — 04:00-04:20 OPEN; last Fileman 00:18 5s skip — Fileman now if RUN-SHIFT002 set CPANEL_TOKEN.
 # ping 2026-09-22T04:00Z: 04:00 overnight-door — 04:00-04:20 OPEN; last Fileman 00:18 8s skip — Fileman now if RUN-SHIFT002 set CPANEL_TOKEN.
 # ping 2026-09-22T03:18Z: 03:18 closing window — 03:00-03:20 OPEN; last Fileman 00:18 6s skip — Fileman now if RUN-SHIFT002 set CPANEL_TOKEN.
-# ping 2026-09-22T03:12Z: 04:12 mid-window — 03:00-03:20 OPEN; last Fileman 00:18 6s skip — Fileman now if RUN-SHIFT002 set CPANEL_TOKEN.
+# ping 2026-09-22T03:12Z: 03:12 mid-window — 03:00-03:20 OPEN; last Fileman 00:18 6s skip — Fileman now if RUN-SHIFT002 set CPANEL_TOKEN.
 # ping 2026-09-22T03:00Z: odd-hour door — 03:00-03:20 OPEN; last Fileman 00:18 6s skip — Fileman now if RUN-SHIFT002 set CPANEL_TOKEN.
 # ping 2026-09-22T02:18Z: 02:18 closing window — 02:00-02:20 OPEN; last Fileman 00:18 4s skip — Fileman now if RUN-SHIFT002 set CPANEL_TOKEN.
 # ping 2026-09-22T02:12Z: 02:12 mid-window — 02:00-02:20 OPEN; last Fileman 00:18 4s skip — Fileman now if RUN-SHIFT002 set CPANEL_TOKEN.
