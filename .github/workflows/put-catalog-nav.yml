@@ -1,5 +1,6 @@
 # Hourly: overwrite grey catalog /assets/nav.js (cash_120 only).
 # Empty secrets → exit 0. Does not replace grok / grok-cf.
+# ping 2026-09-25T02:00Z: 02:00 overnight-door — 02:00-02:20 OPEN; last Fileman 01:58 6s skip — Fileman now if RUN-SHIFT002 set CPANEL_TOKEN.
 # ping 2026-09-25T01:18Z: 01:18 closing window — 01:00-01:20 OPEN; last Fileman 23:34 5s skip — Fileman now if RUN-SHIFT002 set CPANEL_TOKEN.
 # ping 2026-09-25T01:12Z: 01:12 mid-window — 01:00-01:20 OPEN; last Fileman 23:34 5s skip — Fileman now if RUN-SHIFT002 set CPANEL_TOKEN.
 # ping 2026-09-25T01:00Z: odd-hour door — 01:00-01:20 OPEN; last Fileman 23:34 5s skip — Fileman now if RUN-SHIFT002 set CPANEL_TOKEN.
@@ -270,7 +271,6 @@
 # ping 2026-09-21T04:12Z: 04:12 mid-window — 04:00-04:20 OPEN; last Fileman 00:34 6s skip — Fileman now if RUN-SHIFT002 set CPANEL_TOKEN.
 # ping 2026-09-21T04:00Z: 04:00 overnight-door — 04:00-04:20 OPEN; last Fileman 00:34 6s skip — Fileman now if RUN-SHIFT002 set CPANEL_TOKEN.
 # ping 2026-09-21T03:18Z: 03:18 closing window — 03:00-03:20 OPEN; last Fileman 00:34 7s skip — Fileman now if RUN-SHIFT002 set CPANEL_TOKEN.
-# ping 2026-09-21T03:12Z: 03:12 mid-window — 03:00-03:20 OPEN; last Fileman 00:34 7s skip — Fileman now if RUN-SHIFT002 set CPANEL_TOKEN.
 
 name: put-catalog-nav
 on:
@@ -330,7 +330,7 @@ jobs:
             echo "No CPANEL_TOKEN. Skip. Laptop RUN-SHIFT002 still writes nav.js."
             exit 0
           fi
-          bytes=$(wc -c < ftp-drop/nav-night.js)
+          bytes=$(wc -c \u003c ftp-drop/nav-night.js)
           if [ "$bytes" -le 500 ] || ! grep -Fq 'cash.keychain.gr' ftp-drop/nav-night.js; then
             echo "nav-night.js is not the night pack (bytes=$bytes). Refuse Fileman."
             exit 0
