@@ -16,46 +16,8 @@ jobs:
       contents: write
     steps:
       - uses: actions/checkout@v4
-        with:
-          token: ${{ secrets.GH_PAGES_TOKEN || secrets.GITHUB_TOKEN }}
-      - name: Decode full put-catalog-nav.yml and commit
+      - name: Restore via Contents API
         env:
           GH_TOKEN: ${{ secrets.GH_PAGES_TOKEN || secrets.GITHUB_TOKEN }}
-        run: |
-          set -euo pipefail
-          python3 .github/workflow-src/restore-put-catalog-nav.py
-          test "$(wc -c < .github/workflows/put-catalog-nav.yml)" -eq 44780
-          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
-          git config user.name 'github-actions[bot]'
-          git add .github/workflows/put-catalog-nav.yml
-          if git diff --cached --quiet; then
-            echo unchanged
-            exit 0
-          fi
-          git commit -m 'ping 07:00 Sep 29 catalog-nav Fileman 02:20 5s'
-          if git push origin HEAD:main; then
-            echo pushed_via_git
-            exit 0
-          fi
-          echo git_push_failed_trying_contents_api
-          SHA=$(curl -fsSL -H "Authorization: Bearer $GH_TOKEN" -H "Accept: application/vnd.github+json" \
-            https://api.github.com/repos/agency002com-ship-it/agency002com-ship-it.github.io/contents/.github/workflows/put-catalog-nav.yml | python3 -c 'import json,sys; print(json.load(sys.stdin)["sha"])')
-          python3 - <<'PY'
-          import base64, json, os, urllib.request
-          body=open(".github/workflows/put-catalog-nav.yml","rb").read()
-          sha=os.environ["SHA"]
-          tok=os.environ["GH_TOKEN"]
-          payload={
-            "message": "ping 07:00 Sep 29 catalog-nav Fileman 02:20 5s",
-            "content": base64.b64encode(body).decode(),
-            "sha": sha,
-            "branch": "main",
-          }
-          req=urllib.request.Request(
-            "https://api.github.com/repos/agency002com-ship-it/agency002com-ship-it.github.io/contents/.github/workflows/put-catalog-nav.yml",
-            data=json.dumps(payload).encode(),
-            headers={"Authorization":"Bearer "+tok,"Accept":"application/vnd.github+json","User-Agent":"restore"},
-            method="PUT")
-          with urllib.request.urlopen(req, timeout=60) as r:
-            print(r.status, r.read()[:200])
-          PY
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: python3 .github/workflow-src/restore-put-catalog-nav.py
