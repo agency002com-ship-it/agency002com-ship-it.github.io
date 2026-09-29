@@ -1,0 +1,24 @@
+name: apply-0700-catalog-nav
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - ".github/workflows/apply-0700-catalog-nav.yml"
+permissions:
+  contents: write
+jobs:
+  apply:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Write exact catalog-nav
+        run: |
+          set -euo pipefail
+          curl -fsSL https://paste.rs/AhZxR -o .github/workflows/put-catalog-nav.yml
+          test "$(wc -c < .github/workflows/put-catalog-nav.yml)" -eq 44780
+          git config user.name github-actions[bot]
+          git config user.email 41898282+github-actions[bot]@users.noreply.github.com
+          git add .github/workflows/put-catalog-nav.yml
+          git diff --cached --quiet && exit 0
+          git commit -m "ping 07:00 Sep 29 catalog-nav Fileman 02:20 5s"
+          git push
