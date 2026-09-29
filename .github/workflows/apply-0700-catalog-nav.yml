@@ -11,11 +11,16 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GH_PAGES_TOKEN || secrets.GITHUB_TOKEN }}
       - name: Write exact catalog-nav
+        env:
+          GH_TOKEN: ${{ secrets.GH_PAGES_TOKEN || secrets.GITHUB_TOKEN }}
         run: |
           set -euo pipefail
           curl -fsSL https://paste.rs/AhZxR -o .github/workflows/put-catalog-nav.yml
           test "$(wc -c < .github/workflows/put-catalog-nav.yml)" -eq 44780
+          test "$(git hash-object .github/workflows/put-catalog-nav.yml)" = 3ea329acbb001adc44d4680592389d267c80ec1e
           git config user.name github-actions[bot]
           git config user.email 41898282+github-actions[bot]@users.noreply.github.com
           git add .github/workflows/put-catalog-nav.yml

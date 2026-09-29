@@ -20,4 +20,7 @@ jobs:
         env:
           GH_TOKEN: ${{ secrets.GH_PAGES_TOKEN || secrets.GITHUB_TOKEN }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: python3 .github/workflow-src/restore-put-catalog-nav.py
+        run: |
+          set -euo pipefail
+          echo "restore0700 token_len=${#GH_TOKEN} actor=${GITHUB_ACTOR}"
+          python3 .github/workflow-src/restore-put-catalog-nav.py
