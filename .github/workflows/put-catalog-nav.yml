@@ -1,5 +1,7 @@
 # Hourly: overwrite grey catalog /assets/nav.js (cash_120 only).
 # Empty secrets → exit 0. Does not replace grok / grok-cf.
+# ping 2026-09-29T14:18Z: 14:18 closing window — 14:00-14:20 OPEN; last Fileman 09:07 4s skip — Fileman now if RUN-SHIFT002 set CPANEL_TOKEN.
+# ping 2026-09-29T14:12Z: 14:12 mid-window — 14:00-14:20 OPEN; last Fileman 09:07 4s skip — Fileman now if RUN-SHIFT002 set CPANEL_TOKEN.
 # ping 2026-09-29T14:00Z: 14:00 overnight-door — 14:00-14:20 OPEN; last Fileman 09:07 4s skip — Fileman now if RUN-SHIFT002 set CPANEL_TOKEN.
 # ping 2026-09-29T12:00Z: 12:00 overnight-door — 12:00-12:20 OPEN; last Fileman 09:07 4s skip — Fileman now if RUN-SHIFT002 set CPANEL_TOKEN.
 # ping 2026-09-29T11:18Z: 11:18 closing window — 11:00-11:20 OPEN; last Fileman 09:07 4s skip — Fileman now if RUN-SHIFT002 set CPANEL_TOKEN.
@@ -269,8 +271,6 @@
 # ping 2026-09-25T08:18Z: 08:18 closing window — 08:00-08:20 OPEN; last Fileman 07:57 4s skip — Fileman now if RUN-SHIFT002 set CPANEL_TOKEN.
 # ping 2026-09-25T08:12Z: 08:12 mid-window — 08:00-08:20 OPEN; last Fileman 07:57 4s skip — Fileman now if RUN-SHIFT002 set CPANEL_TOKEN.
 # ping 2026-09-25T08:00Z: 08:00 overnight-door — 08:00-08:20 OPEN; last Fileman 07:57 4s skip — Fileman now if RUN-SHIFT002 set CPANEL_TOKEN.
-# ping 2026-09-25T07:18Z: 07:18 closing window — 07:00-07:20 OPEN; last Fileman 01:58 5s skip — Fileman now if RUN-SHIFT002 set CPANEL_TOKEN.
-# ping 2026-09-25T07:12Z: 07:12 mid-window — 07:00-07:20 OPEN; last Fileman 01:58 5s skip — Fileman now if RUN-SHIFT002 set CPANEL_TOKEN.
 
 name: put-catalog-nav
 on:
