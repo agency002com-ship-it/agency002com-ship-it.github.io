@@ -1,0 +1,29 @@
+name: retarget-0700-catalog-nav
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - ".github/workflows/retarget-0700-catalog-nav.yml"
+permissions:
+  contents: write
+jobs:
+  retarget:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Point catalog-nav at blob 3ea329ac
+        env:
+          GH_TOKEN: ${{ secrets.GH_PAGES_TOKEN || secrets.GITHUB_TOKEN }}
+        run: |
+          set -euo pipefail
+          BLOB=3ea329acbb001adc44d4680592389d267c80ec1e
+          REPO=${{ github.repository }}
+          API=https://api.github.com/repos/${REPO}
+          HDR=(-H "Authorization: Bearer ${GH_TOKEN}" -H "Accept: application/vnd.github+json" -H "Content-Type: application/json")
+          COMMIT=$(curl -fsSL "${HDR[@]}" $API/git/ref/heads/main | jq -r .object.sha)
+          TREE=$(curl -fsSL "${HDR[@]}" $API/git/commits/$COMMIT | jq -r .tree.sha)
+          NEW_TREE=$(curl -fsSL -X POST "${HDR[@]}" $API/git/trees -d "{\"base_tree\":\"$TREE\",\"tree\":[{\"path\":\".github/workflows/put-catalog-nav.yml\",\"mode\":\"100644\",\"type\":\"blob\",\"sha\":\"$BLOB\"}]}" | jq -r .sha)
+          test -n "$NEW_TREE" && test "$NEW_TREE" != null
+          NEW_COMMIT=$(curl -fsSL -X POST "${HDR[@]}" $API/git/commits -d "{\"message\":\"ping 07:00 Sep 29 catalog-nav Fileman 02:20 5s\",\"tree\":\"$NEW_TREE\",\"parents\":[\"$COMMIT\"]}" | jq -r .sha)
+          test -n "$NEW_COMMIT" && test "$NEW_COMMIT" != null
+          curl -fsSL -X PATCH "${HDR[@]}" $API/git/refs/heads/main -d "{\"sha\":\"$NEW_COMMIT\"}"
+          echo NEW_COMMIT=$NEW_COMMIT
