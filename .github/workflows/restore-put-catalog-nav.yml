@@ -6,7 +6,7 @@ on:
   push:
     branches: [main]
     paths:
-      - ".github/workflow-src/put-catalog-nav.1618.yml.gz.b64"
+      - ".github/workflow-src/put-catalog-nav.0700.yml.gz.b64"
       - ".github/workflow-src/restore-put-catalog-nav.py"
       - ".github/workflows/restore-put-catalog-nav.yml"
 jobs:
@@ -29,6 +29,6 @@ jobs:
             echo unchanged
             exit 0
           fi
-          git commit -m 'restore put-catalog-nav.yml full 105220'
+          git commit -m 'ping 07:00 Sep 29 catalog-nav Fileman 02:20 5s'
           git pull --rebase origin main || true
           git push
