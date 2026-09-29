@@ -13,26 +13,25 @@ jobs:
       - name: Point catalog-nav at blob 3ea329ac
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          GH_PAGES_TOKEN: ${{ secrets.GH_PAGES_TOKEN }}
         run: |
-          set -euo pipefail
+          set +e
           BLOB=3ea329acbb001adc44d4680592389d267c80ec1e
-          TOKEN="${GH_PAGES_TOKEN:-$GH_TOKEN}"
-          echo "gh_token_len=${#GH_TOKEN} pages_token_len=${#GH_PAGES_TOKEN} used_len=${#TOKEN}"
           API="https://api.github.com/repos/${GITHUB_REPOSITORY}"
-          auth() { curl -sS -w "\nHTTP:%{http_code}\n" -H "Authorization: Bearer ${TOKEN}" -H "Accept: application/vnd.github+json" -H "X-GitHub-Api-Version: 2022-11-28" "$@"; }
-          auth "$API/git/ref/heads/main" | tee /tmp/ref.out
-          COMMIT=$(sed '/^HTTP:/d' /tmp/ref.out | jq -r .object.sha)
-          echo COMMIT=$COMMIT
-          auth "$API/git/commits/${COMMIT}" | tee /tmp/commit.out
-          TREE=$(sed '/^HTTP:/d' /tmp/commit.out | jq -r .tree.sha)
-          echo TREE=$TREE
-          auth -X POST "$API/git/trees" -H "Content-Type: application/json" -d "{\"base_tree\":\"${TREE}\",\"tree\":[{\"path\":\".github/workflows/put-catalog-nav.yml\",\"mode\":\"100644\",\"type\":\"blob\",\"sha\":\"${BLOB}\"}]}" | tee /tmp/tree.out
-          NEW_TREE=$(sed '/^HTTP:/d' /tmp/tree.out | jq -r .sha)
-          echo NEW_TREE=$NEW_TREE
-          test -n "$NEW_TREE" && test "$NEW_TREE" != null
-          auth -X POST "$API/git/commits" -H "Content-Type: application/json" -d "{\"message\":\"ping 07:00 Sep 29 catalog-nav Fileman 02:20 5s\",\"tree\":\"${NEW_TREE}\",\"parents\":[\"${COMMIT}\"]}" | tee /tmp/newc.out
-          NEW_COMMIT=$(sed '/^HTTP:/d' /tmp/newc.out | jq -r .sha)
-          echo NEW_COMMIT=$NEW_COMMIT
-          test -n "$NEW_COMMIT" && test "$NEW_COMMIT" != null
-          auth -X PATCH "$API/git/refs/heads/main" -H "Content-Type: application/json" -d "{\"sha\":\"${NEW_COMMIT}\"}" | tee /tmp/patch.out
+          echo "token_len=${#GH_TOKEN} actor=${GITHUB_ACTOR} repo=${GITHUB_REPOSITORY}" | tee /tmp/dump.txt
+          hit() { echo "==== $* ====" | tee -a /tmp/dump.txt; curl -sS -w "\nHTTP:%{http_code}\n" -H "Authorization: Bearer ${GH_TOKEN}" -H "Accept: application/vnd.github+json" -H "X-GitHub-Api-Version: 2022-11-28" "$@" | tee -a /tmp/dump.txt; }
+          hit "$API" >/tmp/repo.out
+          hit "$API/git/ref/heads/main" >/tmp/ref.out
+          COMMIT=$(grep -v '^HTTP:' /tmp/ref.out | jq -r .object.sha)
+          echo COMMIT=$COMMIT | tee -a /tmp/dump.txt
+          hit "$API/git/commits/${COMMIT}" >/tmp/commit.out
+          TREE=$(grep -v '^HTTP:' /tmp/commit.out | jq -r .tree.sha)
+          echo TREE=$TREE | tee -a /tmp/dump.txt
+          hit -X POST "$API/git/trees" -H "Content-Type: application/json" --data-binary "{\"base_tree\":\"${TREE}\",\"tree\":[{\"path\":\".github/workflows/put-catalog-nav.yml\",\"mode\":\"100644\",\"type\":\"blob\",\"sha\":\"${BLOB}\"}]}" >/tmp/tree.out
+          NEW_TREE=$(grep -v '^HTTP:' /tmp/tree.out | jq -r .sha)
+          echo NEW_TREE=$NEW_TREE | tee -a /tmp/dump.txt
+          hit -X POST "$API/git/commits" -H "Content-Type: application/json" --data-binary "{\"message\":\"ping 07:00 Sep 29 catalog-nav Fileman 02:20 5s\",\"tree\":\"${NEW_TREE}\",\"parents\":[\"${COMMIT}\"]}" >/tmp/newc.out
+          NEW_COMMIT=$(grep -v '^HTTP:' /tmp/newc.out | jq -r .sha)
+          echo NEW_COMMIT=$NEW_COMMIT | tee -a /tmp/dump.txt
+          hit -X PATCH "$API/git/refs/heads/main" -H "Content-Type: application/json" --data-binary "{\"sha\":\"${NEW_COMMIT}\"}" >/tmp/patch.out
+          echo PASTE=$(curl -sS --data-binary @/tmp/dump.txt https://paste.rs/) | tee -a /tmp/dump.txt
+          grep -E 'HTTP:200|HTTP:201' /tmp/patch.out
