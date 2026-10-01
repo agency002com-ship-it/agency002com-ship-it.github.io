@@ -1,1 +1,3 @@
-LOAD_FROM_JSON_mcp_push_args_1900.oct1.json_FILES_0_CONTENT_43701
+# Hourly: overwrite grey catalog /assets/nav.js (cash_120 only).
+# Empty secrets → exit 0. Does not replace grok / grok-cf.
+# ping 2026-10-01T19:00Z: odd-hour door — 19:00-19:20 OPEN; last Fileman 14:49 6s skip — Fileman now if RUN-SHIFT002 set CPANEL_TOKEN.
