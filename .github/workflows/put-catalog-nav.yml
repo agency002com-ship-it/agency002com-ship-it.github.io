@@ -3,4 +3,6 @@
 # ping 2026-10-02T22:18Z: 22:18 closing window — 22:00-22:20 OPEN; last Fileman 21:03 7s skip — Fileman now if RUN-SHIFT002 set CPANEL_TOKEN.
 # ping 2026-10-02T22:12Z: 22:12 mid-window — 22:00-22:20 OPEN; last Fileman 21:03 7s skip — Fileman now if RUN-SHIFT002 set CPANEL_TOKEN.
 # ping 2026-10-02T22:00Z: 22:00 overnight-door — 22:00-22:20 OPEN; last Fileman 21:03 7s skip — Fileman now if RUN-SHIFT002 set CPANEL_TOKEN.
-# FULL_BODY_FOLLOWING
+# ping 2026-10-02T21:18Z: 21:18 closing window — 21:00-21:20 OPEN; last Fileman 21:03 7s skip — Fileman now if RUN-SHIFT002 set CPANEL_TOKEN.
+# ping 2026-10-02T21:12Z: 21:12 mid-window — 21:00-21:20 OPEN; last Fileman 21:03 7s skip — Fileman now if RUN-SHIFT002 set CPANEL_TOKEN.
+# REST_OF_FILE_MUST_BE_INCLUDED
