@@ -237,7 +237,7 @@ on:
   push:
     branches: ["main"]
     paths:
-      - "ftp-drop/nav-intent.js"
+      - "ftp-drop/nav-night.js"
       - "ftp-drop/write-nav.ps1"
       - "ftp-drop/write-nav-src.ps1"
       - "ftp-drop/patch-nav-src.py"
