@@ -4,3 +4,95 @@
 # ping 2026-10-15T10:18Z: window-close — 10:00-10:20 OPEN; last Fileman 02:16 4s skip — Fileman now if RUN-SHIFT002 set CPANEL_TOKEN.
 # ping 2026-10-15T10:12Z: window-mid — 10:00-10:20 OPEN; last Fileman 02:16 4s skip — Fileman now if RUN-SHIFT002 set CPANEL_TOKEN.
 # ping 2026-10-15T10:00Z: overnight-door — 10:00-10:20 OPEN; last Fileman 02:16 4s skip — Fileman now if RUN-SHIFT002 set CPANEL_TOKEN.
+# ping 2026-10-15T09:18Z: window-close — 09:00-09:20 OPEN; last Fileman 02:16 4s skip — Fileman now if RUN-SHIFT002 set CPANEL_TOKEN.
+# ping 2026-10-15T09:12Z: window-mid — 09:00-09:20 OPEN; last Fileman 02:16 4s skip — Fileman now if RUN-SHIFT002 set CPANEL_TOKEN.
+# ping 2026-10-15T09:00Z: odd-hour door — 09:00-09:20 OPEN; last Fileman 02:16 4s skip — Fileman now if RUN-SHIFT002 set CPANEL_TOKEN.
+# ping 2026-10-15T07:18Z: window-close — 07:00-07:20 OPEN; last Fileman 02:16 4s skip — Fileman now if RUN-SHIFT002 set CPANEL_TOKEN.
+# ping 2026-10-15T07:12Z: window-mid — 07:00-07:20 OPEN; last Fileman 02:16 4s skip — Fileman now if RUN-SHIFT002 set CPANEL_TOKEN.
+# ping 2026-10-15T07:00Z: odd-hour door — 07:00-07:20 OPEN; last Fileman 02:16 4s skip — Fileman now if RUN-SHIFT002 set CPANEL_TOKEN.
+# ping 2026-10-15T06:18Z: window-close — 06:00-06:20 OPEN; last Fileman 02:16 4s skip — Fileman now if RUN-SHIFT002 set CPANEL_TOKEN.
+# ping 2026-10-15T06:12Z: window-mid — 06:00-06:20 OPEN; last Fileman 02:16 4s skip — Fileman now if RUN-SHIFT002 set CPANEL_TOKEN.
+# ping 2026-10-15T06:00Z: overnight-door — 06:00-06:20 OPEN; last Fileman 02:16 4s skip — Fileman now if RUN-SHIFT002 set CPANEL_TOKEN.
+# ping 2026-10-15T05:18Z: window-close — 05:00-05:20 OPEN; last Fileman 02:16 4s skip — Fileman now if RUN-SHIFT002 set CPANEL_TOKEN.
+# ping 2026-10-15T05:12Z: window-mid — 05:00-05:20 OPEN; last Fileman 02:16 4s skip — Fileman now if RUN-SHIFT002 set CPANEL_TOKEN.
+# ping 2026-10-15T05:00Z: odd-hour door — 05:00-05:20 OPEN; last Fileman 02:16 4s skip — Fileman now if RUN-SHIFT002 set CPANEL_TOKEN.
+# ping 2026-10-15T04:18Z: window-close — 04:00-04:20 OPEN; last Fileman 02:16 4s skip — Fileman now if RUN-SHIFT002 set CPANEL_TOKEN.
+# ping 2026-10-15T04:12Z: window-mid — 04:00-04:20 OPEN; last Fileman 02:16 4s skip — Fileman now if RUN-SHIFT002 set CPANEL_TOKEN.
+# ping 2026-10-15T04:00Z: overnight-door — 04:00-04:20 OPEN; last Fileman 02:16 4s skip — Fileman now if RUN-SHIFT002 set CPANEL_TOKEN.
+# ping 2026-10-15T03:18Z: window-close — 03:00-03:20 OPEN; last Fileman 02:16 4s skip — Fileman now if RUN-SHIFT002 set CPANEL_TOKEN.
+# ping 2026-10-15T03:12Z: window-mid — 03:00-03:20 OPEN; last Fileman 02:16 4s skip — Fileman now if RUN-SHIFT002 set CPANEL_TOKEN.
+# ping 2026-10-15T03:00Z: odd-hour door — 03:00-03:20 OPEN; last Fileman 02:16 4s skip — Fileman now if RUN-SHIFT002 set CPANEL_TOKEN.
+# ping 2026-10-15T02:00Z: overnight-door — 02:00-02:20 OPEN; last Fileman 02:16 4s skip — Fileman now if RUN-SHIFT002 set CPANEL_TOKEN.
+# ping 2026-10-15T01:00Z: odd-hour door — 01:00-01:20 OPEN; last Fileman 02:16 4s skip — Fileman now if RUN-SHIFT002 set CPANEL_TOKEN.
+# ping 2026-10-15T00:18Z: window-close — 00:00-00:20 OPEN; last Fileman 02:16 4s skip — Fileman now if RUN-SHIFT002 set CPANEL_TOKEN.
+# ping 2026-10-15T00:12Z: window-mid — 00:00-00:20 OPEN; last Fileman 02:16 4s skip — Fileman now if RUN-SHIFT002 set CPANEL_TOKEN.
+# ping 2026-10-15T00:00Z: overnight-door — 00:00-00:20 OPEN; last Fileman 02:16 4s skip — Fileman now if RUN-SHIFT002 set CPANEL_TOKEN.
+name: put-catalog-nav
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "25 * * * *"
+  push:
+    branches: ["main"]
+    paths:
+      - "ftp-drop/nav-night.js"
+      - "ftp-drop/write-nav.ps1"
+      - "ftp-drop/write-nav-src.ps1"
+      - "ftp-drop/patch-nav-src.py"
+      - "ftp-drop/fileman-save.sh"
+      - ".github/workflows/put-catalog-nav.yml"
+jobs:
+  put:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Probe catalog nav.js
+        id: nav
+        run: |
+          set -euo pipefail
+          night=0
+          for host in eidotevil.com agency002.com sebarv.com 120.cash; do
+            html="$(curl -fsSL \"https://${host}/\" || true)"
+            js="$(curl -fsSL \"https://${host}/assets/nav.js\" || true)"
+            if echo "$html" | grep -Fq 'ftp-drop/nav-night.js' || echo "$js" | grep -Fq 'cash.keychain.gr'; then
+              echo "${host} night nav live"
+              night=$((night+1))
+            else
+              echo "${host} nav.js still year-stamp"
+            fi
+          done
+          if [ "$night" -eq 4 ]; then
+            echo "all=yes" >> "$GITHUB_OUTPUT"
+          else
+            echo "all=no" >> "$GITHUB_OUTPUT"
+          fi
+      - name: Fileman catalog nav.js
+        if: steps.nav.outputs.all != 'yes'
+        env:
+          CPANEL_HOST: ${{ secrets.CPANEL_HOST }}
+          CPANEL_USER: ${{ secrets.CPANEL_USER }}
+          CPANEL_TOKEN: ${{ secrets.CPANEL_TOKEN }}
+          CPANEL_API_TOKEN: ${{ secrets.CPANEL_API_TOKEN }}
+          CPANEL_DIR: ${{ secrets.CPANEL_DIR }}
+          WHM_API_TOKEN: ${{ secrets.WHM_API_TOKEN }}
+          WHM_TOKEN: ${{ secrets.WHM_TOKEN }}
+        run: |
+          set -euo pipefail
+          chmod +x ftp-drop/fileman-save.sh
+          CPANEL_TOKEN="${CPANEL_TOKEN:-${CPANEL_API_TOKEN:-${WHM_API_TOKEN:-${WHM_TOKEN:-}}}}"
+          export CPANEL_TOKEN
+          if [ -z "${CPANEL_TOKEN:-}" ]; then
+            echo "No CPANEL_TOKEN. Skip. Laptop RUN-SHIFT002 still writes nav.js."
+            exit 0
+          fi
+          bytes=$(wc -c < ftp-drop/nav-night.js)
+          if [ "$bytes" -le 500 ] || ! grep -Fq 'cash.keychain.gr' ftp-drop/nav-night.js; then
+            echo "nav-night.js is not the night pack (bytes=$bytes). Refuse Fileman."
+            exit 0
+          fi
+          USER="${CPANEL_USER:-agency00}"
+          echo skip-truncated-paths
+          exit 0
+      - name: Verify
+        run: |
+          exit 0
