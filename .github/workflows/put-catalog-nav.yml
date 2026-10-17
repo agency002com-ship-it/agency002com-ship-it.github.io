@@ -119,7 +119,7 @@ jobs:
           for host in eidotevil.com agency002.com sebarv.com 120.cash; do
             html="$(curl -fsSL \"https://${host}/\" || true)"
             js="$(curl -fsSL \"https://${host}/assets/nav.js\" || true)"
-            if echo "$html" | grep -Fq 'ftp-nocrop/nav-night.js' || echo "$js" | grep -Fq 'cash.keychain.gr'; then
+            if echo "$html" | grep -Fq 'ftp-drop/nav-night.js' || echo "$js" | grep -Fq 'cash.keychain.gr'; then
               echo "${host} night nav live"
               night=$((night+1))
             else
