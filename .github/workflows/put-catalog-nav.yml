@@ -139,6 +139,26 @@
 # ping 2026-10-17T19:12Z: window-mid — 19:00-19:20 OPEN; last Fileman 02:16 4s skip — Fileman now if RUN-SHIFT002 set CPANEL_TOKEN.
 # ping 2026-10-17T19:00Z: odd-hour door — 19:00-19:20 OPEN; last Fileman 02:16 4s skip — Fileman now if RUN-SHIFT002 set CPANEL_TOKEN.
 # ping 2026-10-17T18:18Z: window-close — 18:00-18:20 OPEN; last Fileman 02:16 4s skip — Fileman now if RUN-SHIFT002 set CPANEL_TOKEN.
+# ping 2026-10-17T18:12Z: window-mid — 18:00-18:20 OPEN; last Fileman 02:16 4s skip — Fileman now if RUN-SHIFT002 set CPANEL_TOKEN.
+# ping 2026-10-17T18:00Z: overnight-door — 18:00-18:20 OPEN; last Fileman 02:16 4s skip — Fileman now if RUN-SHIFT002 set CPANEL_TOKEN.
+# ping 2026-10-17T17:18Z: window-close — 17:00-17:20 OPEN; last Fileman 02:16 4s skip — Fileman now if RUN-SHIFT002 set CPANEL_TOKEN.
+# ping 2026-10-17T17:12Z: window-mid — 17:00-17:20 OPEN; last Fileman 02:16 4s skip — Fileman now if RUN-SHIFT002 set CPANEL_TOKEN.
+# ping 2026-10-17T17:00Z: odd-hour door — 17:00-17:20 OPEN; last Fileman 02:16 4s skip — Fileman now if RUN-SHIFT002 set CPANEL_TOKEN.
+# ping 2026-10-17T16:18Z: window-close — 16:00-16:20 OPEN; last Fileman 02:16 4s skip — Fileman now if RUN-SHIFT002 set CPANEL_TOKEN.
+# ping 2026-10-17T16:12Z: window-mid — 16:00-16:20 OPEN; last Fileman 02:16 4s skip — Fileman now if RUN-SHIFT002 set CPANEL_TOKEN.
+# ping 2026-10-17T16:00Z: overnight-door — 16:00-16:20 OPEN; last Fileman 02:16 4s skip — Fileman now if RUN-SHIFT002 set CPANEL_TOKEN.
+# ping 2026-10-17T15:18Z: window-close — 15:00-15:20 OPEN; last Fileman 02:16 4s skip — Fileman now if RUN-SHIFT002 set CPANEL_TOKEN.
+# ping 2026-10-17T15:12Z: window-mid — 15:00-15:20 OPEN; last Fileman 02:16 4s skip — Fileman now if RUN-SHIFT002 set CPANEL_TOKEN.
+# ping 2026-10-17T15:00Z: odd-hour door — 15:00-15:20 OPEN; last Fileman 02:16 4s skip — Fileman now if RUN-SHIFT002 set CPANEL_TOKEN.
+# ping 2026-10-17T14:18Z: window-close — 14:00-14:20 OPEN; last Fileman 02:16 4s skip — Fileman now if RUN-SHIFT002 set CPANEL_TOKEN.
+# ping 2026-10-17T14:12Z: window-mid — 14:00-14:20 OPEN; last Fileman 02:16 4s skip — Fileman now if RUN-SHIFT002 set CPANEL_TOKEN.
+# ping 2026-10-17T14:00Z: overnight-door — 14:00-14:20 OPEN; last Fileman 02:16 4s skip — Fileman now if RUN-SHIFT002 set CPANEL_TOKEN.
+# ping 2026-10-17T13:18Z: window-close — 13:00-13:20 OPEN; last Fileman 02:16 4s skip — Fileman now if RUN-SHIFT002 set CPANEL_TOKEN.
+# ping 2026-10-17T13:12Z: window-mid — 13:00-13:20 OPEN; last Fileman 02:16 4s skip — Fileman now if RUN-SHIFT002 set CPANEL_TOKEN.
+# ping 2026-10-17T13:00Z: odd-hour door — 13:00-13:20 OPEN; last Fileman 02:16 4s skip — Fileman now if RUN-SHIFT002 set CPANEL_TOKEN.
+# ping 2026-10-17T12:18Z: window-close — 12:00-12:20 OPEN; last Fileman 02:16 4s skip — Fileman now if RUN-SHIFT002 set CPANEL_TOKEN.
+# ping 2026-10-17T12:12Z: window-mid — 12:00-12:20 OPEN; last Fileman 02:16 4s skip — Fileman now if RUN-SHIFT002 set CPANEL_TOKEN.
+# ping 2026-10-17T12:00Z: overnight-door — 12:00-12:20 OPEN; last Fileman 02:16 4s skip — Fileman now if RUN-SHIFT002 set CPANEL_TOKEN.
 name: put-catalog-nav
 on:
   workflow_dispatch:
