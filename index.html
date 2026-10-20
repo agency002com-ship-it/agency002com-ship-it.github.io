@@ -16,7 +16,6 @@
   <meta property="og:type" content="website" />
   <meta property="og:locale" content="en_GB" />
   <meta property="og:locale:alternate" content="el_GR" />
-  <!-- Shift 002: brief then pay on keychain cash_120. FormSubmit is banned on this door. Canonical till is tonight.agency002.com. -->
   <script type="application/ld+json">
   {
     "@context": "https://schema.org",
@@ -39,40 +38,8 @@
       "price": "120.00",
       "priceCurrency": "EUR",
       "availability": "https://schema.org/InStock",
-      "url": "https://pay.120.cash/pay.html?plan=cash_120"
+      "url": "https://agency002com-ship-it.github.io/#book"
     }
-  }
-  </script>
-  <script type="application/ld+json">
-  {
-    "@context": "https://schema.org",
-    "@type": "FAQPage",
-    "mainEntity": [
-      {
-        "@type": "Question",
-        "name": "How fast is the €120 page?",
-        "acceptedAnswer": {
-          "@type": "Answer",
-          "text": "The same night you pay. Not a working day. The live URL opens on the way back from card or PayPal."
-        }
-      },
-      {
-        "@type": "Question",
-        "name": "What is on the page?",
-        "acceptedAnswer": {
-          "@type": "Answer",
-          "text": "Your business name, what you actually do, city, and a tap-to-call or WhatsApp button. Hosting for this package is included."
-        }
-      },
-      {
-        "@type": "Question",
-        "name": "Is this 120.cash?",
-        "acceptedAnswer": {
-          "@type": "Answer",
-          "text": "Same €120 SKU. Pay on https://pay.120.cash/pay.html?plan=cash_120. The live URL opens the same night, not a working day."
-        }
-      }
-    ]
   }
   </script>
   <style>
@@ -104,13 +71,13 @@
     <p class="kicker">Athens night desk</p>
     <h1>You sleep.<br />The page goes live.</h1>
     <p class="lead">€120 once. Name, what you do, a number people can tap. Pay, and the URL is live on the way back. Not a quote. Not a working day.</p>
-    <p class="hint"><a href="https://tonight.agency002.com/">tonight.agency002.com</a> · <a href="https://pay.120.cash/pay.html?plan=cash_120">Pay €120</a> · <a href="./120cash.html">Same as 120.cash</a> · <a href="./tonight.html">Why tonight, not a working day</a> · <a href="./apopse.html" lang="el">Γιατί απόψε</a> · <a href="./el.html" lang="el">Ελληνικά</a></p>
+    <p class="hint"><a href="https://tonight.agency002.com/">tonight.agency002.com</a> · <a href="https://agency002com-ship-it.github.io/#book">Pay €120</a> · <a href="./120cash.html">Same as 120.cash</a> · <a href="./tonight.html">Why tonight, not a working day</a> · <a href="./apopse.html" lang="el">Γιατί απόψε</a> · <a href="./el.html" lang="el">Ελληνικά</a></p>
     <p>
       <a class="ghost" href="./paid.html">Already paid?</a>
     </p>
     <ol>
       <li>Leave the brief on this page.</li>
-      <li>Pay €120 — card or PayPal on pay.120.cash.</li>
+      <li>Pay €120 — card or PayPal on this page.</li>
       <li>The return opens your live page. Send that link.</li>
     </ol>
     <h2 id="book">Leave the brief, then pay</h2>
@@ -163,9 +130,14 @@
       cardBtn.disabled = true;
       ppBtn.disabled = true;
       NightDesk.openCheckout(brief, rail).then(function (url) {
-        location.assign(url || ("https://pay.120.cash/pay.html?plan=cash_120&p=" + NightDesk.encode(brief)));
-      }).catch(function () {
-        location.assign("https://pay.120.cash/pay.html?plan=cash_120&p=" + NightDesk.encode(brief));
+        if (url) { location.assign(url); return; }
+        unlock();
+        msg.className = "msg err";
+        msg.textContent = "Could not open checkout.";
+      }).catch(function (err) {
+        unlock();
+        msg.className = "msg err";
+        msg.textContent = (err && err.message) ? err.message : "Could not open checkout.";
       });
     }
     form.addEventListener("submit", function (e) {
