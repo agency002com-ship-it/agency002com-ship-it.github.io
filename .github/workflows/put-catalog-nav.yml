@@ -285,7 +285,7 @@ on:
       - "ftp-drop/nav-night.js"
       - "ftp-drop/write-nav.ps1"
       - "ftp-drop/write-nav-src.ps1"
-      - "ftp-drop/patch-name-src.py"
+      - "ftp-drop/patch-nav-src.py"
       - "ftp-drop/fileman-save.sh"
       - ".github/workflows/put-catalog-nav.yml"
 jobs:
