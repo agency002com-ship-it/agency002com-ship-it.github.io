@@ -312,7 +312,7 @@ jobs:
           set -euo pipefail
           chmod +x ftp-drop/fileman-save.sh
           CPANEL_TOKEN="${CPANEL_TOKEN:-${CPANEL_API_TOKEN:-${WHM_API_TOKEN:-${WHM_TOKEN:-}}}}"
-          export T_TOKEN
+          export CPANEL_TOKEN
           if [ -z "${CPANEL_TOKEN:-}" ]; then
             echo "No CPANEL_TOKEN. Skip. Laptop RUN-SHIFT002 still writes nav.js."
             exit 0
