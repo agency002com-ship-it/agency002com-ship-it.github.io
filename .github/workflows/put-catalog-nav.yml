@@ -1,5 +1,7 @@
 # Hourly: overwrite grey catalog /assets/nav.js (cash_120 only).
 # Empty secrets → exit 0. Does not replace grok / grok-cf.
+# ping 2026-10-20T14:12Z: window-mid — 14:00-14:20 OPEN; last Fileman 02:16 4s skip — Fileman now if RUN-SHIFT002 set CPANEL_TOKEN.
+# ping 2026-10-20T14:18Z: window-close — 14:00-14:20 OPEN; last Fileman 02:16 4s skip — Fileman now if RUN-SHIFT002 set CPANEL_TOKEN.
 # ping 2026-10-20T14:00Z: overnight-door — 14:00-14:20 OPEN; last Fileman 02:16 4s skip — Fileman now if RUN-SHIFT002 set CPANEL_TOKEN.
 # ping 2026-10-20T13:12Z: window-mid — 13:00-13:20 OPEN; last Fileman 02:16 4s skip — Fileman now if RUN-SHIFT002 set CPANEL_TOKEN.
 # ping 2026-10-20T13:18Z: window-close — 13:00-13:20 OPEN; last Fileman 02:16 4s skip — Fileman now if RUN-SHIFT002 set CPANEL_TOKEN.
@@ -302,7 +304,7 @@ jobs:
           for host in eidotevil.com agency002.com sebarv.com 120.cash; do
             html="$(curl -fsSL \"https://${host}/\" || true)"
             js="$(curl -fsSL \"https://${host}/assets/nav.js\" || true)"
-            if echo "$html" | grep -Fq 'ftp-drop/nav-night.js' || echo "$js" | grep -Fq 'cash.keychain.gr'; then
+            if echo "$html" | grep -Fq 'ftp-drop/nav-night.js' || echo "$event" | grep -Fq 'cash.keychain.gr'; then
               echo "${host} night nav live"
               night=$((night+1))
             else
